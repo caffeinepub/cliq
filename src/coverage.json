@@ -1,0 +1,85 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T21:52:27.549Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 3,
+    "items": [
+      {
+        "id": "REQ-28",
+        "summary": "Ensure users can attach and play back video media on posts end-to-end (create post with a video attachment from the composer, store it, and render it in the feed and post detail views), with clear validation errors for unsupported file types and oversized uploads.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/posts/PostComposer.tsx",
+          "frontend/src/components/posts/PostCard.tsx",
+          "frontend/src/pages/PostDetailPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/PostDetailPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-29",
+        "summary": "Implement nested (threaded) comments so users can reply to an existing comment on a post, and display comment threads in the post detail view with appropriate indentation and ordering.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/comments/CommentThread.tsx",
+          "frontend/src/pages/PostDetailPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/comments/CommentThread.tsx",
+          "frontend/src/pages/PostDetailPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-30",
+        "summary": "Integrate a ticket marketplace experience that lets users browse ticketed events and obtain a ticket for an event from within the app (in addition to the existing ticket hosting and verifier flows).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/TicketMarketplacePage.tsx",
+          "frontend/src/pages/TicketMarketplaceEventDetailPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/pages/TicketsPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/TicketMarketplacePage.tsx",
+          "frontend/src/pages/TicketMarketplaceEventDetailPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/pages/TicketsPage.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/comments/CommentThread.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/PostDetailPage.tsx",
+    "frontend/src/pages/TicketMarketplaceEventDetailPage.tsx",
+    "frontend/src/pages/TicketMarketplacePage.tsx",
+    "frontend/src/pages/TicketsPage.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-ensure-users-can-attach-and-play-back-video-media-on-posts-end-to-end-create-post-with-a-video-attachment-from-the-composer-store-it-and-render-it-in-the-feed-and-post-detail-views-with-clear-validation-errors-for-unsupported-file-types-and-oversized-uploads",
+      "featureTitle": "Ensure users can attach and play back video media on posts end-to-end (create post with a video attachment from the composer, store it, and render it in the feed and post detail views), with clear validation errors for unsupported file types and oversized uploads.",
+      "files": [
+        "frontend/src/pages/PostDetailPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-28"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-nested-threaded-comments-so-users-can-reply-to-an-existing-comment-on-a-post-and-display-comment-threads-in-the-post-detail-view-with-appropriate-indentation-and-ordering",
+      "featureTitle": "Implement nested (threaded) comments so users can reply to an existing comment on a post, and display comment threads in the post detail view with appropriate indentation and ordering.",
+      "files": [
+        "frontend/src/components/comments/CommentThread.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/PostDetailPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-29"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-integrate-a-ticket-marketplace-experience-that-lets-users-browse-ticketed-events-and-obtain-a-ticket-for-an-event-from-within-the-app-in-addition-to-the-existing-ticket-hosting-and-verifier-flows",
+      "featureTitle": "Integrate a ticket marketplace experience that lets users browse ticketed events and obtain a ticket for an event from within the app (in addition to the existing ticket hosting and verifier flows).",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/TicketMarketplaceEventDetailPage.tsx",
+        "frontend/src/pages/TicketMarketplacePage.tsx",
+        "frontend/src/pages/TicketsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-30"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

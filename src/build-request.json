@@ -1,0 +1,79 @@
+{
+  "kind": "build_request",
+  "title": "Add threaded comment replies and ticket marketplace browsing/obtaining",
+  "projectName": "CLIQ",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-28",
+      "text": "Ensure users can attach and play back video media on posts end-to-end (create post with a video attachment from the composer, store it, and render it in the feed and post detail views), with clear validation errors for unsupported file types and oversized uploads.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-user-1"
+        ],
+        "quotes": [
+          "Can you add an option to post videos too \nNot just pictures"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Post creation accepts either an image or a video attachment (or no media) and succeeds when a valid video file is selected.",
+        "Video posts render using an HTML <video> player with controls in both the feed post card and the post detail page.",
+        "If the user selects a non-image/non-video file, the UI shows an English error message and prevents posting.",
+        "If the user selects an oversized media file, the UI shows an English error message and prevents posting."
+      ]
+    },
+    {
+      "id": "REQ-29",
+      "text": "Implement nested (threaded) comments so users can reply to an existing comment on a post, and display comment threads in the post detail view with appropriate indentation and ordering.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-user-1"
+        ],
+        "quotes": [
+          "Also add nested comment feature so others can comment on others comment"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend supports creating a comment either as a top-level comment on a post or as a reply to another comment (parent comment).",
+        "Post detail UI allows replying to a specific comment (not only adding top-level comments).",
+        "Post detail UI displays comments as threads (top-level comments with nested replies).",
+        "Only authenticated users can create comments/replies; existing delete-own-comment behavior remains functional for both top-level comments and replies."
+      ]
+    },
+    {
+      "id": "REQ-30",
+      "text": "Integrate a ticket marketplace experience that lets users browse ticketed events and obtain a ticket for an event from within the app (in addition to the existing ticket hosting and verifier flows).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-user-1"
+        ],
+        "quotes": [
+          "Also integrate the ticket marketplace too"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Users can access a ticket marketplace view that lists available events (at minimum: title, university, date/time) and can open an event detail view.",
+        "From an event’s marketplace detail view, an authenticated user can obtain a ticket for themself, and that ticket then appears under “My Tickets”.",
+        "Backend exposes canister APIs to (a) list events available for marketplace browsing and (b) create/issue a ticket to the caller for a selected event, with server-side checks to prevent duplicate tickets for the same caller+event (or provide a clear error).",
+        "All user-facing text in the ticket marketplace flow is in English."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor in backend/main.mo; do not introduce additional backend services.",
+    "Only generate backend/migration.mo if required to preserve existing canister state when adding nested comment threading fields.",
+    "Do not modify any frontend files under frontend/src/components/ui (immutable shadcn UI sources) or other immutablePaths; compose components instead."
+  ],
+  "nonGoals": [
+    "Implementing third-party or external payment processing for ticket purchases (no Stripe/Paystack flows unless explicitly requested later).",
+    "Adding real-time updates via WebSockets or push notifications for new comments or ticket marketplace changes.",
+    "Overhauling the overall app navigation beyond what is necessary to expose the ticket marketplace entry point."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

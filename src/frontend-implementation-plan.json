@@ -1,0 +1,98 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "CLIQ: Video posts, threaded comments, and ticket marketplace browsing",
+  "requirements": [
+    {
+      "id": "REQ-28",
+      "summary": "Support video attachments in post composer with validation and render videos in feed and post detail views.",
+      "acceptanceCriteria": [
+        "Post creation accepts either an image or a video attachment (or no media) and succeeds when a valid video file is selected.",
+        "Video posts render using an HTML <video> player with controls in both the feed post card and the post detail page.",
+        "If the user selects a non-image/non-video file, the UI shows an English error message and prevents posting.",
+        "If the user selects an oversized media file, the UI shows an English error message and prevents posting."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/posts/PostComposer.tsx",
+          "operation": "modify",
+          "description": "Harden media selection validation (unsupported MIME types and oversized files) by showing English errors, preventing submission, and resetting the file input when invalid; keep image/video previews and upload progress using blob-storage ExternalBlob uploads (Verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/components/posts/PostCard.tsx",
+          "operation": "modify",
+          "description": "Ensure post cards render media via blob-storage ExternalBlob direct URLs and use an HTML <video> player with controls for video attachments (Verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/pages/PostDetailPage.tsx",
+          "operation": "modify",
+          "description": "Ensure the post detail view renders attached videos using an HTML <video> player with controls, sourcing URLs from blob-storage ExternalBlob getDirectURL (Verify the component's usage instructions before implementing)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-29",
+      "summary": "Implement nested (threaded) comment replies UI in post detail with indentation, ordering, and reply-to-comment interactions.",
+      "acceptanceCriteria": [
+        "Backend supports creating a comment either as a top-level comment on a post or as a reply to another comment (parent comment).",
+        "Post detail UI allows replying to a specific comment (not only adding top-level comments).",
+        "Post detail UI displays comments as threads (top-level comments with nested replies).",
+        "Only authenticated users can create comments/replies; existing delete-own-comment behavior remains functional for both top-level comments and replies."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update comment hooks to support threading: allow addComment to accept an optional parentComment ID (passing null for top-level), add a deleteComment mutation hook, and (optionally) add a query hook that can fetch threaded replies when needed; ensure auth-related errors are surfaced as English UI errors consistent with the authorization setup (Verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/components/comments/CommentThread.tsx",
+          "operation": "create",
+          "description": "Create a reusable threaded comment UI that renders comments as a tree with indentation, consistent ordering, per-comment Reply actions (sets parent comment), and delete-own-comment controls based on the current authenticated principal per the authorization guidance (Verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/pages/PostDetailPage.tsx",
+          "operation": "modify",
+          "description": "Replace the flat comments list with the CommentThread component, wire reply-to-comment flow (parent comment targeting), maintain top-level comment creation, and keep all user-facing text in English; ensure authenticated-only comment/reply actions align with the app's authorization gating (Verify the component's usage instructions before implementing)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-30",
+      "summary": "Add a ticket marketplace UI to browse events, view event details, and obtain tickets that then appear under My Tickets.",
+      "acceptanceCriteria": [
+        "Users can access a ticket marketplace view that lists available events (at minimum: title, university, date/time) and can open an event detail view.",
+        "From an event’s marketplace detail view, an authenticated user can obtain a ticket for themself, and that ticket then appears under “My Tickets”.",
+        "Backend exposes canister APIs to (a) list events available for marketplace browsing and (b) create/issue a ticket to the caller for a selected event, with server-side checks to prevent duplicate tickets for the same caller+event (or provide a clear error).",
+        "All user-facing text in the ticket marketplace flow is in English."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add React Query hooks for ticket marketplace browsing and obtaining: a browse hook that calls the backend capability for browsing ticket events (with optional university filtering/pagination as supported) and a purchase/obtain hook that calls the backend capability to purchase a ticket; on success invalidate/refetch My Tickets so the new ticket appears."
+        },
+        {
+          "path": "frontend/src/pages/TicketMarketplacePage.tsx",
+          "operation": "create",
+          "description": "Create a ticket marketplace page that lists available events (title, university, date/time) and navigates to an event marketplace detail view; ensure all user-facing text is in English."
+        },
+        {
+          "path": "frontend/src/pages/TicketMarketplaceEventDetailPage.tsx",
+          "operation": "create",
+          "description": "Create an event marketplace detail page that shows event info and allows an authenticated user to obtain a ticket for themself; handle duplicate/availability errors gracefully with clear English messages and trigger My Tickets refresh on success."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire the ticket marketplace routes into the TanStack Router tree (a marketplace list view and an event detail view) without changing unrelated navigation."
+        },
+        {
+          "path": "frontend/src/pages/TicketsPage.tsx",
+          "operation": "modify",
+          "description": "Add a clear entry point from the existing Tickets area into the ticket marketplace experience (e.g., an additional tab or button leading to the marketplace view) while preserving existing ticket hosting, verification, and My Tickets functionality; ensure English-only user-facing text."
+        }
+      ]
+    }
+  ]
+}

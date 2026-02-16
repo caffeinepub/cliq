@@ -1,0 +1,309 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 9,
+  "summary": "Expand CLIQ MVP scope to include a protected super-admin management area and an optional Supabase frontend integration (in addition to video posts, three feed tabs, cross-university viewing, real-time notifications, marketplace, messaging, search/explore, and ticket hosting/verifier).",
+  "architectural_notes": [
+    "Due to build/generator size limits, implement the app in smaller modules (e.g., auth/profile, feed/posts, messaging, marketplace, ticketing, monetization) rather than as a single step.",
+    "Supabase integration should be frontend-only (via supabase-js); IC canister backend should not depend on calling Supabase APIs directly due to common IPv6/connectivity limitations."
+  ],
+  "known_issues": [
+    "Automated build generation fails when attempting to implement the full app in one step (prompt/spec too large); requires modular breakdown."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-ic-native-authentication-using-internet-identity-and-create-an-app-wide-session-model-so-a-signed-in-user-can-create-content-and-interact-with-others",
+      "title": "Implement IC-native authentication using Internet Identity and create an app-wide session model so a signed-in user can create content and interact with others.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-user-profile-system-oriented-to-students-with-username-display-name-university-selected-from-a-predefined-dropdown-list-bio-and-avatar-image-stored-as-bytes-in-the-ic-backend",
+      "title": "Create a user profile system oriented to students with: username, display name, university (selected from a predefined dropdown list), bio, and avatar image (stored as bytes in the IC backend).",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-follow-unfollow-between-users-and-expose-follower-following-counts-on-profiles",
+      "title": "Implement follow/unfollow between users and expose follower/following counts on profiles.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-posting-for-an-x-like-experience-create-posts-with-text-content-and-optional-media-attachments-images-only-for-mvp-and-display-a-chronological-campus-feed-filtered-by-the-signed-in-user-s-selected-university",
+      "title": "Implement posting for an X-like experience: create posts with text content and optional media attachments (images only for MVP), and display a chronological campus feed filtered by the signed-in user's selected university.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-post-interactions-like-unlike-bookmark-unbookmark-and-basic-share-via-copy-link-client-side-with-visible-counts-for-likes-and-comments-on-each-post-card",
+      "title": "Implement post interactions: like/unlike, bookmark/unbookmark, and basic share via copy-link (client-side) with visible counts for likes and comments on each post card.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-comments-with-nested-replies-threaded-on-posts-including-creating-listing-and-deleting-own-comments",
+      "title": "Implement comments with nested replies (threaded) on posts, including creating, listing, and deleting own comments.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-moderation-lite-controls-aligned-with-an-x-like-mvp-allow-users-to-delete-their-own-posts-edit-their-own-posts-and-report-a-post-user-stored-as-a-backend-report-record-for-admin-review",
+      "title": "Add moderation-lite controls aligned with an X-like MVP: allow users to delete their own posts, edit their own posts, and report a post/user (stored as a backend report record for admin review).",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-notifications-non-realtime-for-key-social-events-likes-comments-mentions-username-and-follows-include-a-notifications-page-and-bell-icon-with-unread-badge",
+      "title": "Implement notifications (non-realtime) for key social events: likes, comments, mentions (@username), and follows; include a notifications page and bell icon with unread badge.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-search-and-explore-search-users-by-username-display-name-and-search-posts-by-keywords-with-optional-filtering-by-university",
+      "title": "Implement search and explore: search users by username/display name and search posts by keywords, with optional filtering by university.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-coherent-student-centric-visual-theme-not-blue-purple-applied-consistently-across-navigation-feed-profile-and-forms-using-tailwind-shadcn-ui-components-composed-without-modifying-immutable-component-sources",
+      "title": "Create a coherent, student-centric visual theme (not blue/purple) applied consistently across navigation, feed, profile, and forms, using Tailwind + shadcn UI components (composed without modifying immutable component sources).",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-minimal-app-navigation-structure-similar-to-x-home-campus-feed-explore-search-notifications-bookmarks-profile-include-responsive-layout-suitable-for-mobile-and-desktop",
+      "title": "Add a minimal app navigation structure similar to X: Home (Campus Feed), Explore (Search), Notifications, Bookmarks, Profile; include responsive layout suitable for mobile and desktop.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-backend-support-for-video-media-uploads-and-video-attachments-on-posts-in-addition-to-existing-text-image-post-capabilities-using-the-existing-blob-storage-mixin-so-media-is-stored-on-the-ic-and-can-be-played-back-via-a-direct-url",
+      "title": "Add backend support for video media uploads and video attachments on posts, in addition to existing text/image post capabilities, using the existing blob storage mixin so media is stored on the IC and can be played back via a direct URL.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-three-distinct-feed-views-1-following-feed-posts-from-users-the-signed-in-user-follows-2-campus-feed-posts-from-the-signed-in-user-s-selected-university-and-3-universal-feed-posts-across-all-universities-and-provide-a-clear-ui-tab-switcher-for-these-feeds",
+      "title": "Implement three distinct feed views: (1) Following feed (posts from users the signed-in user follows), (2) Campus feed (posts from the signed-in user’s selected university), and (3) Universal feed (posts across all universities), and provide a clear UI tab switcher for these feeds.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-simulated-post-creation-feed-placeholders-with-functional-post-crud-backed-by-the-motoko-canister-for-creating-posts-listing-feeds-and-fetching-post-details-while-preserving-existing-ui-structure-and-routes-e-g-post-detail-route",
+      "title": "Replace simulated post creation/feed placeholders with functional post CRUD backed by the Motoko canister for creating posts, listing feeds, and fetching post details, while preserving existing UI structure and routes (e.g., post detail route).",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-marketplace-feature-where-users-can-create-listings-for-materials-items-for-sale-and-browse-search-listings-including-listing-detail-pages",
+      "title": "Add a Marketplace feature where users can create listings for materials/items for sale and browse/search listings, including listing detail pages.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-in-app-messaging-feature-that-allows-authenticated-users-to-start-a-conversation-with-another-user-and-exchange-messages-in-a-threaded-conversation-ui",
+      "title": "Add an in-app messaging feature that allows authenticated users to start a conversation with another user and exchange messages in a threaded conversation UI.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-upgrade-notifications-from-non-realtime-to-realtime-like-delivery-for-key-events-at-minimum-new-message-like-comment-follow-by-adding-backend-apis-for-incremental-notification-fetch-and-updating-the-frontend-to-poll-and-update-the-unread-badge-and-notifications-list-automatically",
+      "title": "Upgrade notifications from non-realtime to realtime-like delivery for key events (at minimum: new message, like, comment, follow) by adding backend APIs for incremental notification fetch and updating the frontend to poll and update the unread badge and notifications list automatically.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-ticket-hosting-and-ticket-verifier-features-users-can-create-ticketed-events-issue-tickets-to-attendees-as-unique-codes-and-authorized-verifiers-can-validate-a-ticket-code-as-valid-invalid-and-mark-it-as-checked-in",
+      "title": "Implement ticket hosting and ticket verifier features: users can create ticketed events, issue tickets to attendees (as unique codes), and authorized verifiers can validate a ticket code as valid/invalid and mark it as checked-in.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-app-navigation-to-include-entry-points-for-marketplace-messages-and-tickets-keeping-the-existing-responsive-sidebar-mobile-bottom-navigation-behavior",
+      "title": "Extend the app navigation to include entry points for Marketplace, Messages, and Tickets, keeping the existing responsive sidebar + mobile bottom navigation behavior.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-protected-admin-section-at-route-admin-that-is-only-accessible-to-authenticated-users-who-have-admin-privileges-non-admin-users-must-see-an-access-denied-state-and-must-not-be-able-to-load-admin-data",
+      "title": "Add a protected admin section at route \"/admin\" that is only accessible to authenticated users who have admin privileges; non-admin users must see an access-denied state and must not be able to load admin data.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-admin-dashboard-ui-within-the-admin-section-that-provides-management-views-for-core-entities-users-profiles-posts-marketplace-listings-tickets-events-conversations-messages-notifications-and-reports-if-present-using-the-existing-app-layout-patterns-and-shadcn-ui-components",
+      "title": "Implement an Admin Dashboard UI within the \"/admin\" section that provides management views for core entities: users (profiles), posts, marketplace listings, tickets/events, conversations/messages, notifications, and reports (if present), using the existing app layout patterns and shadcn UI components.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-role-management-to-support-a-super-admin-who-can-grant-and-revoke-admin-privileges-for-other-principals-and-expose-corresponding-backend-apis-and-an-admin-ui-screen-to-manage-admins",
+      "title": "Implement role management to support a \"super admin\" who can grant and revoke admin privileges for other principals, and expose corresponding backend APIs and an admin UI screen to manage admins.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-optional-supabase-support-in-the-frontend-only-by-adding-a-supabase-client-setup-supabase-js-configured-via-environment-variables-and-wire-it-into-the-admin-area-as-an-optional-module-e-g-a-supabase-panel-that-can-verify-configuration-and-perform-a-simple-test-call",
+      "title": "Integrate optional Supabase support in the frontend only by adding a Supabase client setup (supabase-js) configured via environment variables, and wire it into the admin area as an optional module (e.g., a \"Supabase\" panel) that can verify configuration and perform a simple test call.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-users-can-attach-and-play-back-video-media-on-posts-end-to-end-create-post-with-a-video-attachment-from-the-composer-store-it-and-render-it-in-the-feed-and-post-detail-views-with-clear-validation-errors-for-unsupported-file-types-and-oversized-uploads",
+      "title": "Ensure users can attach and play back video media on posts end-to-end (create post with a video attachment from the composer, store it, and render it in the feed and post detail views), with clear validation errors for unsupported file types and oversized uploads.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-nested-threaded-comments-so-users-can-reply-to-an-existing-comment-on-a-post-and-display-comment-threads-in-the-post-detail-view-with-appropriate-indentation-and-ordering",
+      "title": "Implement nested (threaded) comments so users can reply to an existing comment on a post, and display comment threads in the post detail view with appropriate indentation and ordering.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-a-ticket-marketplace-experience-that-lets-users-browse-ticketed-events-and-obtain-a-ticket-for-an-event-from-within-the-app-in-addition-to-the-existing-ticket-hosting-and-verifier-flows",
+      "title": "Integrate a ticket marketplace experience that lets users browse ticketed events and obtain a ticket for an event from within the app (in addition to the existing ticket hosting and verifier flows).",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Build CLIQ MVP: student-focused X/Twitter-like app with core user system, feed/posts, messaging, notifications, search/explore, marketplace, ticket marketplace, and Paystack-based monetization per provided spec.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Define backend data models and stable canister APIs in a single Motoko actor to support the above features (profiles, follows, posts, media blobs, likes, bookmarks, comments, notifications, search, reports), with stable storage so data persists across upgrades.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Add video posting support: allow users to create posts with uploaded video media (in addition to text/images) and play videos in the feed.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Implement three distinct feeds: Following feed (posts from followed users), Campus feed (current university), and Universal feed (cross-university/all universities), enabling viewing posts from other universities.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Upgrade notifications from non-realtime to real-time delivery for key social events (likes, comments, mentions, follows, messages as applicable).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Add ticket verifier capability in the ticket hosting area (e.g., verify a ticket’s validity for entry/check-in).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Add stable storage and upgrade-safe persistence for newly added data (posts, media references, feeds, marketplace, messaging, notifications, tickets) while preserving existing user profiles across upgrades; introduce a conditional backend migration only if required to retain existing stored profile data.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Add a protected super-admin management area (/admin) with role-based access and management tools for users, posts, reports, tickets, marketplace listings, and related moderation/operations.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Integrate Supabase in the frontend (supabase-js) for admin-side/optional functions, including Supabase client setup/config and wiring to the new admin area as needed.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Add backend canister APIs required by the admin dashboard to retrieve platform-wide data for management (admin-only access), including at minimum: list all user profiles, list posts (with paging), list marketplace listings (with paging), list ticket events (with paging), and list conversations/messages (with paging).",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Add backend admin moderation actions that can be triggered from the admin dashboard, including at minimum: delete any post, delete any comment, mark marketplace listing as sold, and delete any marketplace listing, with proper admin-only authorization.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Integrate a ticket marketplace flow (in addition to ticket hosting/verifier): enable users to browse/discover ticketed events and purchase/obtain tickets through an in-app marketplace experience.",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "CLIQ",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

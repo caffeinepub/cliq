@@ -1,0 +1,40 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T21:52:27.544Z",
+  "summary": "Diff implements nested comment threading (backend parentComment field + threaded UI component) and adds ticket marketplace browsing/detail pages with new routes. Video rendering is added at least on the post detail view, and file summaries indicate composer/card support, but some backend-side ticket-issuance constraints (duplicate prevention / clear error) are not evidenced in the provided diff snippet.",
+  "missing_requirements": [
+    {
+      "id": "REQ-30",
+      "requirement": "Backend create/issue ticket API must include server-side checks to prevent duplicate tickets for the same caller+event (or provide a clear error).",
+      "reason": "Frontend handles an error message containing 'already have a ticket', but the diff summary does not show backend logic enforcing duplicate prevention or the exact error behavior; backend/main.mo content is truncated before any ticket issuance implementation details are visible.",
+      "evidence": [
+        "frontend/src/pages/TicketMarketplaceEventDetailPage.tsx",
+        "backend/main.mo (truncated)"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Admin route/page wiring included in the main router.",
+      "reason": "BuildRequest does not request adding or modifying an admin area; it explicitly says not to overhaul navigation beyond exposing the ticket marketplace entry point.",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.58,
+  "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/App.tsx",
+    "frontend/src/components/comments/CommentThread.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/PostDetailPage.tsx",
+    "frontend/src/pages/TicketMarketplaceEventDetailPage.tsx",
+    "frontend/src/pages/TicketMarketplacePage.tsx",
+    "frontend/src/pages/TicketsPage.tsx",
+    "project_state.json"
+  ]
+}
