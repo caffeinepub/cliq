@@ -172,7 +172,16 @@ export function FeedComposer() {
           className="flex flex-1 cursor-pointer items-center rounded-full bg-muted px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           style={{ minHeight: "40px" }}
         >
-          What&apos;s happening on campus?
+          {anonymous ? (
+            <span className="flex items-center gap-1.5">
+              <span>🥷</span>
+              <span className="text-primary font-semibold">
+                Anonymous mode on
+              </span>
+            </span>
+          ) : (
+            "What\u2019s happening on campus?"
+          )}
         </button>
 
         {/* Right: anonymous toggle */}
@@ -199,7 +208,7 @@ export function FeedComposer() {
       <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
         <DialogContent className="max-w-lg overflow-hidden rounded-2xl p-0">
           <div className="p-6">
-            <PostComposer />
+            <PostComposer isAnonymous={anonymous} />
           </div>
         </DialogContent>
       </Dialog>

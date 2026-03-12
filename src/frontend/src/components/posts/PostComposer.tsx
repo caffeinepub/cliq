@@ -11,7 +11,11 @@ import type { MediaAttachment } from "../../backend";
 import { useCreatePost, useGetCallerUserProfile } from "../../hooks/useQueries";
 import { BoostPostModal } from "../boosts/BoostPostModal";
 
-export function PostComposer() {
+interface PostComposerProps {
+  isAnonymous?: boolean;
+}
+
+export function PostComposer({ isAnonymous = false }: PostComposerProps) {
   const [content, setContent] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
@@ -88,7 +92,11 @@ export function PostComposer() {
         }
       }
 
-      const result = await createPost.mutateAsync({ content, media });
+      const finalContent = isAnonymous ? `[anon] ${content}` : content;
+      const result = await createPost.mutateAsync({
+        content: finalContent,
+        media,
+      });
       toast.success("Post created successfully!");
       setContent("");
       clearMedia();
@@ -117,9 +125,23 @@ export function PostComposer() {
     <>
       <Card className="border-2 shadow-bold">
         <CardContent className="pt-6">
+          {/* Anonymous banner */}
+          {isAnonymous && (
+            <div
+              data-ocid="post_composer.anonymous_banner"
+              className="mb-4 flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5"
+            >
+              <span className="text-base">🥷</span>
+              <span className="text-xs font-bold text-primary">
+                Posting anonymously — your identity is hidden
+              </span>
+            </div>
+          )}
           <div className="flex gap-4">
             <Avatar className="h-12 w-12 border-2 border-border">
-              {avatarUrl ? (
+              {isAnonymous ? (
+                <AvatarFallback className="bg-muted text-lg">🥷</AvatarFallback>
+              ) : avatarUrl ? (
                 <AvatarImage src={avatarUrl} alt={profile?.displayName} />
               ) : (
                 <AvatarFallback className="font-bold text-base">
@@ -128,6 +150,11 @@ export function PostComposer() {
               )}
             </Avatar>
             <div className="flex-1 space-y-4">
+              {isAnonymous && (
+                <p className="text-sm text-muted-foreground italic">
+                  Anonymous
+                </p>
+              )}
               <Textarea
                 placeholder="What's happening on campus?"
                 value={content}

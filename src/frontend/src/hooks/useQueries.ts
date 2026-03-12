@@ -123,6 +123,34 @@ export function useCreatePost() {
   });
 }
 
+export function useRecliqPost() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      authorUsername,
+      originalContent,
+    }: {
+      authorUsername: string;
+      originalContent: string;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      const preview =
+        originalContent.length > 100
+          ? `${originalContent.slice(0, 100)}...`
+          : originalContent;
+      const content = `🔁 Recliqed @${authorUsername}: ${preview}`;
+      return await actor.createPost(content, null);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
+      queryClient.invalidateQueries({ queryKey: ["campusFeed"] });
+      queryClient.invalidateQueries({ queryKey: ["universalFeed"] });
+    },
+  });
+}
+
 export function useGetPost(postId?: string) {
   const { actor, isFetching: actorFetching } = useActor();
 

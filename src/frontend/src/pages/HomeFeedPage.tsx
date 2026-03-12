@@ -2,7 +2,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { FeedComposer } from "../components/posts/FeedComposer";
+import { MockPostCard } from "../components/posts/MockPostCard";
 import { PostCard } from "../components/posts/PostCard";
+import { mockPosts } from "../data/mockPosts";
 import {
   useGetCampusFeed,
   useGetFollowingFeed,
@@ -84,7 +86,14 @@ export function HomeFeedPage() {
             </TabsTrigger>
           </TabsList>
 
+          {/* FOLLOWING TAB */}
           <TabsContent value="following" className="space-y-4 mt-6">
+            {/* Always show mock posts first */}
+            {mockPosts.map((post, i) => (
+              <MockPostCard key={post.id} post={post} index={i + 1} />
+            ))}
+
+            {/* Then real posts */}
             {followingLoading ? (
               <div
                 className="flex justify-center py-12"
@@ -92,8 +101,8 @@ export function HomeFeedPage() {
               >
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
-            ) : followingFeed && followingFeed.length > 0 ? (
-              followingFeed.map((post, i) => (
+            ) : (
+              followingFeed?.map((post, i) => (
                 <div
                   key={post.id.toString()}
                   data-ocid={`home_feed.following.item.${i + 1}`}
@@ -101,27 +110,17 @@ export function HomeFeedPage() {
                   <PostCard post={post} />
                 </div>
               ))
-            ) : (
-              <div
-                data-ocid="home_feed.following.empty_state"
-                className="flex flex-col items-center justify-center py-16 text-center"
-              >
-                <div className="mb-8 overflow-hidden rounded-3xl border-2 border-border">
-                  <img
-                    src="/assets/generated/empty-feed.dim_1200x800.png"
-                    alt="No posts yet"
-                    className="max-w-md opacity-75"
-                  />
-                </div>
-                <h2 className="mb-3 text-2xl font-black">No posts yet</h2>
-                <p className="text-base font-semibold text-muted-foreground">
-                  Follow other users to see their posts here!
-                </p>
-              </div>
             )}
           </TabsContent>
 
+          {/* CAMPUS TAB */}
           <TabsContent value="campus" className="space-y-4 mt-6">
+            {/* Always show mock posts first */}
+            {mockPosts.map((post, i) => (
+              <MockPostCard key={post.id} post={post} index={i + 1} />
+            ))}
+
+            {/* Then real posts */}
             {campusLoading ? (
               <div
                 className="flex justify-center py-12"
@@ -129,8 +128,8 @@ export function HomeFeedPage() {
               >
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
-            ) : campusFeed && campusFeed.length > 0 ? (
-              campusFeed.map((post, i) => (
+            ) : (
+              campusFeed?.map((post, i) => (
                 <div
                   key={post.id.toString()}
                   data-ocid={`home_feed.campus.item.${i + 1}`}
@@ -138,27 +137,17 @@ export function HomeFeedPage() {
                   <PostCard post={post} />
                 </div>
               ))
-            ) : (
-              <div
-                data-ocid="home_feed.campus.empty_state"
-                className="flex flex-col items-center justify-center py-16 text-center"
-              >
-                <div className="mb-8 overflow-hidden rounded-3xl border-2 border-border">
-                  <img
-                    src="/assets/generated/empty-feed.dim_1200x800.png"
-                    alt="No posts yet"
-                    className="max-w-md opacity-75"
-                  />
-                </div>
-                <h2 className="mb-3 text-2xl font-black">No posts yet</h2>
-                <p className="text-base font-semibold text-muted-foreground">
-                  Be the first to share something with your campus community!
-                </p>
-              </div>
             )}
           </TabsContent>
 
+          {/* UNIVERSAL TAB */}
           <TabsContent value="universal" className="space-y-4 mt-6">
+            {/* Always show mock posts first */}
+            {mockPosts.map((post, i) => (
+              <MockPostCard key={post.id} post={post} index={i + 1} />
+            ))}
+
+            {/* Then real posts */}
             {universalLoading ? (
               <div
                 className="flex justify-center py-12"
@@ -166,8 +155,8 @@ export function HomeFeedPage() {
               >
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
-            ) : universalFeed && universalFeed.length > 0 ? (
-              universalFeed.map((post, i) => (
+            ) : (
+              universalFeed?.map((post, i) => (
                 <div
                   key={post.id.toString()}
                   data-ocid={`home_feed.universal.item.${i + 1}`}
@@ -175,23 +164,6 @@ export function HomeFeedPage() {
                   <PostCard post={post} />
                 </div>
               ))
-            ) : (
-              <div
-                data-ocid="home_feed.universal.empty_state"
-                className="flex flex-col items-center justify-center py-16 text-center"
-              >
-                <div className="mb-8 overflow-hidden rounded-3xl border-2 border-border">
-                  <img
-                    src="/assets/generated/empty-feed.dim_1200x800.png"
-                    alt="No posts yet"
-                    className="max-w-md opacity-75"
-                  />
-                </div>
-                <h2 className="mb-3 text-2xl font-black">No posts yet</h2>
-                <p className="text-base font-semibold text-muted-foreground">
-                  Be the first to share something across universities!
-                </p>
-              </div>
             )}
           </TabsContent>
         </Tabs>

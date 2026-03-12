@@ -2,13 +2,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "@tanstack/react-router";
-import { Bookmark, Heart, MessageCircle, Rocket, Share2 } from "lucide-react";
+import {
+  Bookmark,
+  Heart,
+  Loader2,
+  MessageCircle,
+  Rocket,
+  Share2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Post } from "../../backend";
 import {
   useGetUserProfile,
   useLikePost,
+  useRecliqPost,
   useUnlikePost,
 } from "../../hooks/useQueries";
 import {
@@ -17,6 +25,12 @@ import {
   incrementBoostView,
   isPostBoosted,
 } from "../../lib/boostUtils";
+import {
+  getRecliqCount,
+  hasRecliqed,
+  incrementRecliqCount,
+  markRecliqed,
+} from "../../lib/recliqUtils";
 import { BoostPostModal } from "../boosts/BoostPostModal";
 import { BoostReasonLabel } from "../boosts/BoostReasonLabel";
 import { BoostedPostBadge } from "../boosts/BoostedPostBadge";
@@ -27,16 +41,28 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const navigate = useNavigate();
+  const isAnonymous = post.content.startsWith("[anon] ");
+  const displayContent = isAnonymous ? post.content.slice(7) : post.content;
+
   const { data: authorProfile } = useGetUserProfile(post.author.toString());
   const likePost = useLikePost();
   const unlikePost = useUnlikePost();
+  const recliqPost = useRecliqPost();
   const [isLiked, setIsLiked] = useState(false);
   const [boostModalOpen, setBoostModalOpen] = useState(false);
+  const [isRecliqing, setIsRecliqing] = useState(false);
 
   const postIdStr = post.id.toString();
   const boosted = isPostBoosted(postIdStr);
   const boostLabel = boosted ? (getBoostLabel(postIdStr) ?? "Sponsored") : null;
   const boostReason = boosted ? getBoostReason(postIdStr) : null;
+
+  const [hasAlreadyRecliqed, setHasAlreadyRecliqed] = useState(() =>
+    hasRecliqed(postIdStr),
+  );
+  const [recliqCount, setRecliqCount] = useState(() =>
+    getRecliqCount(postIdStr),
+  );
 
   useEffect(() => {
     if (boosted) {
@@ -59,11 +85,43 @@ export function PostCard({ post }: PostCardProps) {
     }
   };
 
+  const handleRecliq = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (hasAlreadyRecliqed) {
+      toast.info("You've already Recliqed this post");
+      return;
+    }
+
+    if (isRecliqing) return;
+
+    setIsRecliqing(true);
+    try {
+      const authorUsername = isAnonymous
+        ? "anonymous"
+        : authorProfile?.username || "unknown";
+      const newPostId = await recliqPost.mutateAsync({
+        authorUsername,
+        originalContent: displayContent,
+      });
+
+      markRecliqed(postIdStr, newPostId.toString());
+      incrementRecliqCount(postIdStr);
+      setHasAlreadyRecliqed(true);
+      setRecliqCount((prev) => prev + 1);
+      toast.success("Recliqed! 🔁");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to Recliq");
+    } finally {
+      setIsRecliqing(false);
+    }
+  };
+
   const handleCardClick = () => {
     navigate({ to: "/post/$postId", params: { postId: postIdStr } });
   };
 
-  const avatarUrl = authorProfile?.avatar?.getDirectURL();
+  const avatarUrl = isAnonymous ? null : authorProfile?.avatar?.getDirectURL();
   const initials = authorProfile?.displayName
     ?.split(" ")
     .map((n) => n[0])
@@ -103,7 +161,9 @@ export function PostCard({ post }: PostCardProps) {
           {boosted && boostLabel && <BoostedPostBadge label={boostLabel} />}
           <div className="flex gap-4">
             <Avatar className="h-12 w-12 border-2 border-border">
-              {avatarUrl ? (
+              {isAnonymous ? (
+                <AvatarFallback className="bg-muted text-lg">🥷</AvatarFallback>
+              ) : avatarUrl ? (
                 <AvatarImage src={avatarUrl} alt={authorProfile?.displayName} />
               ) : (
                 <AvatarFallback className="font-bold text-base">
@@ -115,11 +175,21 @@ export function PostCard({ post }: PostCardProps) {
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-bold text-base">
-                    {authorProfile?.displayName || "Unknown"}
+                    {isAnonymous
+                      ? "Anonymous"
+                      : authorProfile?.displayName || "Unknown"}
                   </span>
                   <span className="text-sm font-medium text-muted-foreground">
-                    @{authorProfile?.username || "unknown"}
+                    @
+                    {isAnonymous
+                      ? "anonymous"
+                      : authorProfile?.username || "unknown"}
                   </span>
+                  {isAnonymous && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-bold text-muted-foreground">
+                      🥷 Anonymous
+                    </span>
+                  )}
                   <span className="text-sm text-muted-foreground">·</span>
                   <span className="text-sm font-medium text-muted-foreground">
                     {formatTimestamp(post.timestamp)}
@@ -130,7 +200,7 @@ export function PostCard({ post }: PostCardProps) {
                 )}
               </div>
               <p className="text-base font-medium leading-relaxed whitespace-pre-wrap">
-                {post.content}
+                {displayContent}
               </p>
 
               {mediaUrl && (
@@ -181,9 +251,25 @@ export function PostCard({ post }: PostCardProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-10 gap-2 px-3 rounded-full font-bold text-muted-foreground hover:text-secondary hover:bg-secondary/10"
+                  disabled={isRecliqing}
+                  data-ocid="post_card.recliq_button"
+                  className={`h-10 gap-2 px-3 rounded-full font-bold transition-colors ${
+                    hasAlreadyRecliqed
+                      ? "text-primary hover:text-primary hover:bg-primary/10"
+                      : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  }`}
+                  onClick={handleRecliq}
                 >
-                  <Share2 className="h-5 w-5" />
+                  {isRecliqing ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Share2
+                      className={`h-5 w-5 ${hasAlreadyRecliqed ? "fill-current" : ""}`}
+                    />
+                  )}
+                  {recliqCount > 0 && (
+                    <span className="text-sm">{recliqCount}</span>
+                  )}
                 </Button>
                 <Button
                   variant="ghost"
