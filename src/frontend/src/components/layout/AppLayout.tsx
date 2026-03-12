@@ -21,6 +21,7 @@ import {
   Menu,
   MessageCircle,
   Moon,
+  Rocket,
   Search,
   Settings,
   Shield,
@@ -68,6 +69,7 @@ export function AppLayout() {
     { path: "/communities", icon: Users, label: "Communities" },
     { path: "/rooms", icon: Skull, label: "Anonymous Rooms" },
     { path: "/roomie", icon: HomeIcon, label: "Roomie Matching" },
+    { path: "/boosts", icon: Rocket, label: "My Boosts" },
     { path: "/settings", icon: Settings, label: "Settings" },
   ];
 
@@ -86,6 +88,7 @@ export function AppLayout() {
     { path: "/rooms", icon: Skull, label: "Anonymous Rooms" },
     { path: "/roomie", icon: HomeIcon, label: "Roomie" },
     { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
+    { path: "/boosts", icon: Rocket, label: "My Boosts" },
     { path: "/profile", icon: User, label: "Profile" },
     ...(isAdmin ? [{ path: "/admin", icon: Shield, label: "Admin" }] : []),
   ];

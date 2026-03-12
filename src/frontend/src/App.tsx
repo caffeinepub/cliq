@@ -11,6 +11,7 @@ import { AuthGate } from "./components/auth/AuthGate";
 import { AppLayout } from "./components/layout/AppLayout";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import { BookmarksPage } from "./pages/BookmarksPage";
+import { BoostsPage } from "./pages/BoostsPage";
 import { CommunitiesPage } from "./pages/CommunitiesPage";
 import { CommunityDetailPage } from "./pages/CommunityDetailPage";
 import { ConversationPage } from "./pages/ConversationPage";
@@ -148,6 +149,12 @@ const adminRoute = createRoute({
   component: AdminPage,
 });
 
+const boostsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/boosts",
+  component: BoostsPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   exploreRoute,
@@ -167,6 +174,7 @@ const routeTree = rootRoute.addChildren([
   roomieRoute,
   settingsRoute,
   adminRoute,
+  boostsRoute,
 ]);
 
 const router = createRouter({ routeTree });

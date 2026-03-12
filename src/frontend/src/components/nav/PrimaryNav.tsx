@@ -7,10 +7,10 @@ import {
   Bookmark,
   Home,
   MessageCircle,
+  Rocket,
   Search,
   Shield,
   ShoppingBag,
-  Ticket,
   User,
 } from "lucide-react";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
@@ -33,7 +33,7 @@ export function PrimaryNav() {
     },
     { path: "/marketplace", icon: ShoppingBag, label: "Marketplace" },
     { path: "/messages", icon: MessageCircle, label: "Messages" },
-    { path: "/tickets", icon: Ticket, label: "Tickets" },
+    { path: "/boosts", icon: Rocket, label: "My Boosts" },
     { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
     { path: "/profile", icon: User, label: "Profile" },
   ];
@@ -60,11 +60,12 @@ export function PrimaryNav() {
               >
                 <Icon className="h-6 w-6" />
                 <span>{item.label}</span>
-                {item.badge !== undefined && item.badge > 0 && (
-                  <Badge variant="destructive" className="ml-auto font-bold">
-                    {item.badge}
-                  </Badge>
-                )}
+                {(item as any).badge !== undefined &&
+                  (item as any).badge > 0 && (
+                    <Badge variant="destructive" className="ml-auto font-bold">
+                      {(item as any).badge}
+                    </Badge>
+                  )}
               </Button>
             </Link>
           );
@@ -92,14 +93,15 @@ export function PrimaryNav() {
                   >
                     {item.label}
                   </span>
-                  {item.badge !== undefined && item.badge > 0 && (
-                    <Badge
-                      variant="destructive"
-                      className="absolute right-1/4 top-2 h-5 min-w-5 px-1.5 text-[10px] font-bold"
-                    >
-                      {item.badge}
-                    </Badge>
-                  )}
+                  {(item as any).badge !== undefined &&
+                    (item as any).badge > 0 && (
+                      <Badge
+                        variant="destructive"
+                        className="absolute right-1/4 top-2 h-5 min-w-5 px-1.5 text-[10px] font-bold"
+                      >
+                        {(item as any).badge}
+                      </Badge>
+                    )}
                 </div>
               </Button>
             </Link>
