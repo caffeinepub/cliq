@@ -1,14 +1,14 @@
-import { Button } from '@/components/ui/button';
-import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useQueryClient } from '@tanstack/react-query';
-import { LogOut, Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2, LogOut } from "lucide-react";
+import { useInternetIdentity } from "../../hooks/useInternetIdentity";
 
 export function AuthButton() {
   const { clear, loginStatus, identity } = useInternetIdentity();
   const queryClient = useQueryClient();
 
   const isAuthenticated = !!identity;
-  const disabled = loginStatus === 'logging-in';
+  const disabled = loginStatus === "logging-in";
 
   const handleLogout = async () => {
     await clear();

@@ -1,6 +1,6 @@
-import { ShieldAlert } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from '@tanstack/react-router';
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "@tanstack/react-router";
+import { ShieldAlert } from "lucide-react";
 
 export function AccessDeniedScreen() {
   const navigate = useNavigate();
@@ -15,11 +15,10 @@ export function AccessDeniedScreen() {
         </div>
         <h1 className="mb-3 text-3xl font-bold">Access Denied</h1>
         <p className="mb-6 text-muted-foreground">
-          You do not have permission to access the admin area. This section is restricted to administrators only.
+          You do not have permission to access the admin area. This section is
+          restricted to administrators only.
         </p>
-        <Button onClick={() => navigate({ to: '/' })}>
-          Return to Home
-        </Button>
+        <Button onClick={() => navigate({ to: "/" })}>Return to Home</Button>
       </div>
     </div>
   );

@@ -5,9 +5,14 @@ type SupabaseClient = any;
 
 let supabaseClientInstance: SupabaseClient | null = null;
 let initializationAttempted = false;
+let initializationSucceeded = false;
 
 export function getSupabaseClient(): SupabaseClient | null {
   return supabaseClientInstance;
+}
+
+export function isSupabaseReady(): boolean {
+  return initializationSucceeded && supabaseClientInstance !== null;
 }
 
 // Helper to initialize Supabase if the package is available
@@ -27,13 +32,19 @@ export async function initializeSupabase(): Promise<SupabaseClient | null> {
 
   try {
     // Use eval to bypass TypeScript checking for optional dependency
-    const importSupabase = new Function('return import("@supabase/supabase-js")');
+    const importSupabase = new Function(
+      'return import("@supabase/supabase-js")',
+    );
     const supabaseModule = await importSupabase();
     const { createClient } = supabaseModule;
     supabaseClientInstance = createClient(supabaseUrl, supabaseAnonKey);
+    initializationSucceeded = true;
     return supabaseClientInstance;
-  } catch (error) {
-    console.warn('Supabase package not available. Install @supabase/supabase-js to enable Supabase integration.');
+  } catch (_error) {
+    console.warn(
+      "Supabase package not available. Install @supabase/supabase-js to enable Supabase integration.",
+    );
+    initializationSucceeded = false;
     return null;
   }
 }

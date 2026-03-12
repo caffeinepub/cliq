@@ -1,43 +1,60 @@
-import { useState, useRef } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Image, Video, Loader2, X } from 'lucide-react';
-import { useGetCallerUserProfile, useCreatePost } from '../../hooks/useQueries';
-import { toast } from 'sonner';
-import { ExternalBlob } from '../../backend';
-import type { MediaAttachment } from '../../backend';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Image, Loader2, Video, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { ExternalBlob } from "../../backend";
+import type { MediaAttachment } from "../../backend";
+import { useCreatePost, useGetCallerUserProfile } from "../../hooks/useQueries";
 
 export function PostComposer() {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
-  const [mediaType, setMediaType] = useState<'image' | 'video' | null>(null);
+  const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const { data: profile } = useGetCallerUserProfile();
   const createPost = useCreatePost();
 
-  const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const isImage = file.type.startsWith('image/');
-    const isVideo = file.type.startsWith('video/');
-
-    if (!isImage && !isVideo) {
-      toast.error('Please select an image or video file');
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
       return;
     }
 
     if (file.size > 50 * 1024 * 1024) {
-      toast.error('File size must be less than 50MB');
+      toast.error("File size must be less than 50MB");
       return;
     }
 
     setMediaFile(file);
-    setMediaType(isImage ? 'image' : 'video');
+    setMediaType("image");
+    setMediaPreview(URL.createObjectURL(file));
+  };
+
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("video/")) {
+      toast.error("Please select a video file");
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("File size must be less than 50MB");
+      return;
+    }
+
+    setMediaFile(file);
+    setMediaType("video");
     setMediaPreview(URL.createObjectURL(file));
   };
 
@@ -46,14 +63,17 @@ export function PostComposer() {
     setMediaPreview(null);
     setMediaType(null);
     setUploadProgress(0);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    if (imageInputRef.current) {
+      imageInputRef.current.value = "";
+    }
+    if (videoInputRef.current) {
+      videoInputRef.current.value = "";
     }
   };
 
   const handlePost = async () => {
     if (!content.trim() && !mediaFile) {
-      toast.error('Post cannot be empty');
+      toast.error("Post cannot be empty");
       return;
     }
 
@@ -63,115 +83,150 @@ export function PostComposer() {
       if (mediaFile) {
         const arrayBuffer = await mediaFile.arrayBuffer();
         const uint8Array = new Uint8Array(arrayBuffer);
-        const blob = ExternalBlob.fromBytes(uint8Array).withUploadProgress((percentage) => {
-          setUploadProgress(percentage);
-        });
+        const blob = ExternalBlob.fromBytes(uint8Array).withUploadProgress(
+          (percentage) => {
+            setUploadProgress(percentage);
+          },
+        );
 
-        if (mediaType === 'image') {
-          media = { __kind__: 'image', image: blob };
-        } else if (mediaType === 'video') {
-          media = { __kind__: 'video', video: blob };
+        if (mediaType === "image") {
+          media = { __kind__: "image", image: blob };
+        } else if (mediaType === "video") {
+          media = { __kind__: "video", video: blob };
         }
       }
 
       await createPost.mutateAsync({ content, media });
-      toast.success('Post created successfully!');
-      setContent('');
+      toast.success("Post created successfully!");
+      setContent("");
       clearMedia();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to create post');
+      toast.error(error.message || "Failed to create post");
     }
   };
 
   const avatarUrl = profile?.avatar?.getDirectURL();
   const initials = profile?.displayName
-    ?.split(' ')
+    ?.split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 
   const isPosting = createPost.isPending;
 
   return (
-    <Card>
+    <Card className="border-2 shadow-bold">
       <CardContent className="pt-6">
-        <div className="flex gap-3">
-          <Avatar className="h-10 w-10">
+        <div className="flex gap-4">
+          <Avatar className="h-12 w-12 border-2 border-border">
             {avatarUrl ? (
               <AvatarImage src={avatarUrl} alt={profile?.displayName} />
             ) : (
-              <AvatarFallback>{initials || 'U'}</AvatarFallback>
+              <AvatarFallback className="font-bold text-base">
+                {initials || "U"}
+              </AvatarFallback>
             )}
           </Avatar>
-          <div className="flex-1 space-y-3">
+          <div className="flex-1 space-y-4">
             <Textarea
               placeholder="What's happening on campus?"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="min-h-[100px] resize-none border-0 p-0 focus-visible:ring-0"
+              className="min-h-[120px] resize-none border-0 p-0 text-base font-medium focus-visible:ring-0"
               disabled={isPosting}
             />
-            
+
             {mediaPreview && (
-              <div className="relative rounded-lg overflow-hidden border">
+              <div className="relative rounded-2xl overflow-hidden border-2 border-border">
                 <Button
                   variant="destructive"
                   size="icon"
-                  className="absolute right-2 top-2 h-8 w-8 rounded-full"
+                  className="absolute right-3 top-3 h-10 w-10 rounded-full z-10 shadow-bold font-bold"
                   onClick={clearMedia}
                   disabled={isPosting}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-5 w-5" />
                 </Button>
-                {mediaType === 'image' ? (
-                  <img src={mediaPreview} alt="Preview" className="w-full max-h-96 object-cover" />
+                {mediaType === "image" ? (
+                  <img
+                    src={mediaPreview}
+                    alt="Preview"
+                    className="w-full max-h-96 object-cover"
+                  />
                 ) : (
-                  <video src={mediaPreview} controls className="w-full max-h-96" />
+                  <video
+                    src={mediaPreview}
+                    controls
+                    playsInline
+                    className="w-full max-h-96"
+                  >
+                    <track kind="captions" />
+                  </video>
                 )}
                 {uploadProgress > 0 && uploadProgress < 100 && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-muted">
-                    <div className="h-full bg-primary transition-all" style={{ width: `${uploadProgress}%` }} />
+                  <div className="absolute bottom-0 left-0 right-0 h-2 bg-muted">
+                    <div
+                      className="h-full bg-primary transition-all"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
                   </div>
                 )}
               </div>
             )}
 
-            <div className="flex items-center justify-between border-t pt-3">
-              <div className="flex gap-1">
+            <div className="flex items-center justify-between border-t-2 pt-4">
+              <div className="flex gap-2">
                 <input
-                  ref={fileInputRef}
+                  ref={imageInputRef}
                   type="file"
-                  accept="image/*,video/*"
-                  onChange={handleMediaSelect}
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                  disabled={isPosting}
+                />
+                <input
+                  ref={videoInputRef}
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoSelect}
                   className="hidden"
                   disabled={isPosting}
                 />
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => imageInputRef.current?.click()}
                   disabled={isPosting || !!mediaFile}
+                  title="Attach image"
+                  className="h-10 w-10 rounded-full p-0 hover:bg-accent/20 hover:text-accent"
                 >
-                  <Image className="h-4 w-4" />
+                  <Image className="h-5 w-5" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => videoInputRef.current?.click()}
                   disabled={isPosting || !!mediaFile}
+                  title="Attach video"
+                  className="h-10 w-10 rounded-full p-0 hover:bg-secondary/20 hover:text-secondary"
                 >
-                  <Video className="h-4 w-4" />
+                  <Video className="h-5 w-5" />
                 </Button>
               </div>
-              <Button onClick={handlePost} disabled={isPosting || (!content.trim() && !mediaFile)} size="sm" className="rounded-full">
+              <Button
+                onClick={handlePost}
+                disabled={isPosting || (!content.trim() && !mediaFile)}
+                size="lg"
+                className="rounded-full px-8 font-bold shadow-bold"
+              >
                 {isPosting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Posting...
                   </>
                 ) : (
-                  'Post'
+                  "Post"
                 )}
               </Button>
             </div>

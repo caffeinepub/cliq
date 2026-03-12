@@ -1,5 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 export function ReportsPanel() {
   return (
@@ -11,7 +17,8 @@ export function ReportsPanel() {
       <CardContent className="py-12 text-center">
         <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
         <p className="text-muted-foreground">
-          Reports functionality is not currently available in the backend. This feature can be added in a future update.
+          Reports functionality is not currently available in the backend. This
+          feature can be added in a future update.
         </p>
       </CardContent>
     </Card>

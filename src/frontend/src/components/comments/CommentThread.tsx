@@ -1,13 +1,17 @@
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { MessageCircle, Trash2, Loader2 } from 'lucide-react';
-import { useGetUserProfile, useAddComment, useDeleteComment } from '../../hooks/useQueries';
-import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { toast } from 'sonner';
-import type { Comment } from '../../backend';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Loader2, MessageCircle, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import type { Comment } from "../../backend";
+import { useInternetIdentity } from "../../hooks/useInternetIdentity";
+import {
+  useAddComment,
+  useDeleteComment,
+  useGetUserProfile,
+} from "../../hooks/useQueries";
 
 interface CommentThreadProps {
   postId: string;
@@ -23,21 +27,29 @@ interface CommentItemProps {
   onCancelReply: () => void;
 }
 
-function CommentItem({ comment, postId, replies, onReply, replyingTo, onCancelReply }: CommentItemProps) {
+function CommentItem({
+  comment,
+  postId,
+  replies,
+  onReply,
+  replyingTo,
+  onCancelReply,
+}: CommentItemProps) {
   const { data: commentAuthor } = useGetUserProfile(comment.author.toString());
   const { identity } = useInternetIdentity();
   const addComment = useAddComment();
   const deleteComment = useDeleteComment();
-  const [replyContent, setReplyContent] = useState('');
+  const [replyContent, setReplyContent] = useState("");
 
-  const isAuthor = identity?.getPrincipal().toString() === comment.author.toString();
+  const isAuthor =
+    identity?.getPrincipal().toString() === comment.author.toString();
   const isReplying = replyingTo === comment.id;
 
   const commentAvatarUrl = commentAuthor?.avatar?.getDirectURL();
   const commentInitials = commentAuthor?.displayName
-    ?.split(' ')
+    ?.split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 
@@ -49,7 +61,7 @@ function CommentItem({ comment, postId, replies, onReply, replyingTo, onCancelRe
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
+    if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m`;
     if (hours < 24) return `${hours}h`;
     if (days < 7) return `${days}d`;
@@ -58,7 +70,7 @@ function CommentItem({ comment, postId, replies, onReply, replyingTo, onCancelRe
 
   const handleReply = async () => {
     if (!replyContent.trim()) {
-      toast.error('Reply cannot be empty');
+      toast.error("Reply cannot be empty");
       return;
     }
 
@@ -68,24 +80,31 @@ function CommentItem({ comment, postId, replies, onReply, replyingTo, onCancelRe
         content: replyContent,
         parentComment: comment.id,
       });
-      setReplyContent('');
+      setReplyContent("");
       onCancelReply();
-      toast.success('Reply added!');
+      toast.success("Reply added!");
     } catch (error: any) {
-      toast.error(error.message || 'Failed to add reply');
+      toast.error(error.message || "Failed to add reply");
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this comment and all its replies?')) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this comment and all its replies?",
+      )
+    ) {
       return;
     }
 
     try {
-      await deleteComment.mutateAsync({ commentId: comment.id, postId: BigInt(postId) });
-      toast.success('Comment deleted!');
+      await deleteComment.mutateAsync({
+        commentId: comment.id,
+        postId: BigInt(postId),
+      });
+      toast.success("Comment deleted!");
     } catch (error: any) {
-      toast.error(error.message || 'Failed to delete comment');
+      toast.error(error.message || "Failed to delete comment");
     }
   };
 
@@ -96,23 +115,30 @@ function CommentItem({ comment, postId, replies, onReply, replyingTo, onCancelRe
           <div className="flex gap-3">
             <Avatar className="h-8 w-8 flex-shrink-0">
               {commentAvatarUrl ? (
-                <AvatarImage src={commentAvatarUrl} alt={commentAuthor?.displayName} />
+                <AvatarImage
+                  src={commentAvatarUrl}
+                  alt={commentAuthor?.displayName}
+                />
               ) : (
-                <AvatarFallback>{commentInitials || 'U'}</AvatarFallback>
+                <AvatarFallback>{commentInitials || "U"}</AvatarFallback>
               )}
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <span className="font-semibold text-sm">{commentAuthor?.displayName || 'Unknown'}</span>
+                <span className="font-semibold text-sm">
+                  {commentAuthor?.displayName || "Unknown"}
+                </span>
                 <span className="text-xs text-muted-foreground">
-                  @{commentAuthor?.username || 'unknown'}
+                  @{commentAuthor?.username || "unknown"}
                 </span>
                 <span className="text-xs text-muted-foreground">·</span>
                 <span className="text-xs text-muted-foreground">
                   {formatTimestamp(comment.timestamp)}
                 </span>
               </div>
-              <p className="text-sm whitespace-pre-wrap break-words">{comment.content}</p>
+              <p className="text-sm whitespace-pre-wrap break-words">
+                {comment.content}
+              </p>
               <div className="flex items-center gap-2 mt-2">
                 <Button
                   variant="ghost"
@@ -162,7 +188,7 @@ function CommentItem({ comment, postId, replies, onReply, replyingTo, onCancelRe
                       Replying...
                     </>
                   ) : (
-                    'Reply'
+                    "Reply"
                   )}
                 </Button>
               </div>
@@ -194,7 +220,7 @@ export function CommentThread({ postId, comments }: CommentThreadProps) {
   const [replyingTo, setReplyingTo] = useState<bigint | null>(null);
 
   const topLevelComments = comments.filter((c) => !c.parentComment);
-  
+
   const getReplies = (commentId: bigint): Comment[] => {
     return comments.filter((c) => c.parentComment === commentId);
   };

@@ -1,20 +1,22 @@
-import { useGetNotifications } from '../hooks/useNotifications';
-import { Bell, Loader2, Heart, MessageCircle, UserPlus } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { useGetUserProfile } from '../hooks/useQueries';
-import { useNavigate } from '@tanstack/react-router';
-import type { Notification } from '../backend';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "@tanstack/react-router";
+import { Bell, Heart, Loader2, MessageCircle, UserPlus } from "lucide-react";
+import type { Notification } from "../backend";
+import { useGetNotifications } from "../hooks/useNotifications";
+import { useGetUserProfile } from "../hooks/useQueries";
 
 function NotificationItem({ notification }: { notification: Notification }) {
   const navigate = useNavigate();
-  const { data: relatedUser } = useGetUserProfile(notification.relatedUser?.toString());
-  
+  const { data: relatedUser } = useGetUserProfile(
+    notification.relatedUser?.toString(),
+  );
+
   const avatarUrl = relatedUser?.avatar?.getDirectURL();
   const initials = relatedUser?.displayName
-    ?.split(' ')
+    ?.split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 
@@ -26,7 +28,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
+    if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     if (days < 7) return `${days}d ago`;
@@ -35,13 +37,13 @@ function NotificationItem({ notification }: { notification: Notification }) {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'like':
+      case "like":
         return <Heart className="h-5 w-5 text-chart-1" />;
-      case 'comment':
+      case "comment":
         return <MessageCircle className="h-5 w-5 text-chart-2" />;
-      case 'follow':
+      case "follow":
         return <UserPlus className="h-5 w-5 text-chart-3" />;
-      case 'message':
+      case "message":
         return <MessageCircle className="h-5 w-5 text-chart-4" />;
       default:
         return <Bell className="h-5 w-5" />;
@@ -49,32 +51,42 @@ function NotificationItem({ notification }: { notification: Notification }) {
   };
 
   const getNotificationText = () => {
-    const userName = relatedUser?.displayName || 'Someone';
+    const userName = relatedUser?.displayName || "Someone";
     switch (notification.notificationType) {
-      case 'like':
+      case "like":
         return `${userName} liked your post`;
-      case 'comment':
+      case "comment":
         return `${userName} commented on your post`;
-      case 'follow':
+      case "follow":
         return `${userName} started following you`;
-      case 'message':
+      case "message":
         return `${userName} sent you a message`;
       default:
-        return 'New notification';
+        return "New notification";
     }
   };
 
   const handleNotificationClick = () => {
-    if (notification.notificationType === 'message' && notification.relatedId) {
-      navigate({ to: '/messages/$conversationId', params: { conversationId: notification.relatedId.toString() } });
-    } else if ((notification.notificationType === 'like' || notification.notificationType === 'comment') && notification.relatedId) {
-      navigate({ to: '/post/$postId', params: { postId: notification.relatedId.toString() } });
+    if (notification.notificationType === "message" && notification.relatedId) {
+      navigate({
+        to: "/messages/$conversationId",
+        params: { conversationId: notification.relatedId.toString() },
+      });
+    } else if (
+      (notification.notificationType === "like" ||
+        notification.notificationType === "comment") &&
+      notification.relatedId
+    ) {
+      navigate({
+        to: "/post/$postId",
+        params: { postId: notification.relatedId.toString() },
+      });
     }
   };
 
   return (
     <Card
-      className={`cursor-pointer hover:bg-accent/5 transition-colors ${!notification.read ? 'border-primary/50' : ''}`}
+      className={`cursor-pointer hover:bg-accent/5 transition-colors ${!notification.read ? "border-primary/50" : ""}`}
       onClick={handleNotificationClick}
     >
       <CardContent className="p-4">
@@ -86,7 +98,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
             {avatarUrl ? (
               <AvatarImage src={avatarUrl} alt={relatedUser?.displayName} />
             ) : (
-              <AvatarFallback>{initials || 'U'}</AvatarFallback>
+              <AvatarFallback>{initials || "U"}</AvatarFallback>
             )}
           </Avatar>
           <div className="flex-1">
@@ -120,7 +132,10 @@ export function NotificationsPage() {
       ) : notifications && notifications.length > 0 ? (
         <div className="space-y-2">
           {notifications.map((notification) => (
-            <NotificationItem key={notification.id.toString()} notification={notification} />
+            <NotificationItem
+              key={notification.id.toString()}
+              notification={notification}
+            />
           ))}
         </div>
       ) : (

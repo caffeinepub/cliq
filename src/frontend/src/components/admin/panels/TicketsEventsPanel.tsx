@@ -1,10 +1,16 @@
-import { useState } from 'react';
-import { useListTicketEvents } from '../../../hooks/useAdminQueries';
-import { useGetUserProfile } from '../../../hooks/useQueries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Loader2, Ticket, ChevronLeft, ChevronRight } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChevronLeft, ChevronRight, Loader2, Ticket } from "lucide-react";
+import { useState } from "react";
+import { useListTicketEvents } from "../../../hooks/useAdminQueries";
+import { useGetUserProfile } from "../../../hooks/useQueries";
 
 function EventItem({ event }: { event: any }) {
   const { data: creatorProfile } = useGetUserProfile(event.creator.toString());
@@ -14,10 +20,11 @@ function EventItem({ event }: { event: any }) {
       <div className="mb-2">
         <p className="font-semibold">{event.title}</p>
         <p className="text-sm text-muted-foreground">
-          Creator: {creatorProfile?.displayName || 'Unknown'}
+          Creator: {creatorProfile?.displayName || "Unknown"}
         </p>
         <p className="text-sm text-muted-foreground">
-          Event Date: {new Date(Number(event.eventDate) / 1000000).toLocaleString()}
+          Event Date:{" "}
+          {new Date(Number(event.eventDate) / 1000000).toLocaleString()}
         </p>
       </div>
       <p className="mb-2">{event.description}</p>
@@ -32,7 +39,11 @@ function EventItem({ event }: { event: any }) {
 export function TicketsEventsPanel() {
   const [page, setPage] = useState(0);
   const limit = 20;
-  const { data: events, isLoading, isError } = useListTicketEvents(limit, page * limit);
+  const {
+    data: events,
+    isLoading,
+    isError,
+  } = useListTicketEvents(limit, page * limit);
 
   if (isLoading) {
     return (

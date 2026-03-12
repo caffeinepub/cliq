@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Camera, Loader2 } from 'lucide-react';
-import { ExternalBlob } from '../../backend';
-import { toast } from 'sonner';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Camera, Loader2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { ExternalBlob } from "../../backend";
 
 interface AvatarUploaderProps {
   value?: ExternalBlob;
@@ -13,7 +13,7 @@ interface AvatarUploaderProps {
 export function AvatarUploader({ value, onChange }: AvatarUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(
-    value ? value.getDirectURL() : undefined
+    value ? value.getDirectURL() : undefined,
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -21,13 +21,13 @@ export function AvatarUploader({ value, onChange }: AvatarUploaderProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be less than 5MB');
+      toast.error("Image must be less than 5MB");
       return;
     }
 
@@ -37,13 +37,13 @@ export function AvatarUploader({ value, onChange }: AvatarUploaderProps) {
       const arrayBuffer = await file.arrayBuffer();
       const uint8Array = new Uint8Array(arrayBuffer);
       const blob = ExternalBlob.fromBytes(uint8Array);
-      
+
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
       onChange(blob);
-      toast.success('Avatar uploaded successfully');
+      toast.success("Avatar uploaded successfully");
     } catch (error) {
-      toast.error('Failed to upload avatar');
+      toast.error("Failed to upload avatar");
       console.error(error);
     } finally {
       setUploading(false);
@@ -83,7 +83,7 @@ export function AvatarUploader({ value, onChange }: AvatarUploaderProps) {
         ) : (
           <>
             <Camera className="mr-2 h-4 w-4" />
-            {value ? 'Change Avatar' : 'Upload Avatar'}
+            {value ? "Change Avatar" : "Upload Avatar"}
           </>
         )}
       </Button>

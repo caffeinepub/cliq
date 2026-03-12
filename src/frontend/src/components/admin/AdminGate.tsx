@@ -1,6 +1,6 @@
-import { useAdminAuth } from '../../hooks/useAdminAuth';
-import { AccessDeniedScreen } from './AccessDeniedScreen';
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from "lucide-react";
+import { useAdminAuth } from "../../hooks/useAdminAuth";
+import { AccessDeniedScreen } from "./AccessDeniedScreen";
 
 interface AdminGateProps {
   children: React.ReactNode;

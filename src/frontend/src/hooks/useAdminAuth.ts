@@ -1,17 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
-import { useActor } from './useActor';
+import { useQuery } from "@tanstack/react-query";
+import { useActor } from "./useActor";
 
 export function useAdminAuth() {
   const { actor, isFetching: actorFetching } = useActor();
 
   const query = useQuery<boolean>({
-    queryKey: ['isAdmin'],
+    queryKey: ["isAdmin"],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       try {
         return await actor.isCallerAdmin();
       } catch (error: any) {
-        if (error.message?.includes('Unauthorized')) {
+        if (error.message?.includes("Unauthorized")) {
           return false;
         }
         throw error;

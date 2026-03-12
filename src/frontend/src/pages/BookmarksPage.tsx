@@ -1,4 +1,4 @@
-import { Bookmark } from 'lucide-react';
+import { Bookmark } from "lucide-react";
 
 export function BookmarksPage() {
   return (

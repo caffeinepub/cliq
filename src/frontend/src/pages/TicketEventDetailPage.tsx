@@ -1,28 +1,39 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from '@tanstack/react-router';
-import { useGetTicketEvent, useGetEventTickets, useIssueTicket } from '../hooks/useQueries';
-import { Loader2, ArrowLeft, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, Loader2, Plus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import {
+  useGetEventTickets,
+  useGetTicketEvent,
+  useIssueTicket,
+} from "../hooks/useQueries";
 
 export function TicketEventDetailPage() {
-  const { eventId } = useParams({ from: '/tickets/$eventId' });
   const navigate = useNavigate();
+  const eventId = "";
   const { data: event, isLoading: eventLoading } = useGetTicketEvent(eventId);
-  const { data: tickets, isLoading: ticketsLoading } = useGetEventTickets(eventId);
+  const { data: tickets, isLoading: ticketsLoading } =
+    useGetEventTickets(eventId);
   const issueTicket = useIssueTicket();
 
   const [isIssueOpen, setIsIssueOpen] = useState(false);
-  const [attendeePrincipal, setAttendeePrincipal] = useState('');
-  const [ticketCode, setTicketCode] = useState('');
+  const [attendeePrincipal, setAttendeePrincipal] = useState("");
+  const [ticketCode, setTicketCode] = useState("");
 
   const handleIssueTicket = async () => {
     if (!attendeePrincipal.trim() || !ticketCode.trim()) {
-      toast.error('Please fill in all fields');
+      toast.error("Please fill in all fields");
       return;
     }
 
@@ -32,12 +43,12 @@ export function TicketEventDetailPage() {
         attendee: attendeePrincipal,
         code: ticketCode,
       });
-      toast.success('Ticket issued successfully!');
-      setAttendeePrincipal('');
-      setTicketCode('');
+      toast.success("Ticket issued successfully!");
+      setAttendeePrincipal("");
+      setTicketCode("");
       setIsIssueOpen(false);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to issue ticket');
+      toast.error(error.message || "Failed to issue ticket");
     }
   };
 
@@ -66,13 +77,17 @@ export function TicketEventDetailPage() {
 
   const formatDate = (timestamp: bigint) => {
     const date = new Date(Number(timestamp / BigInt(1000000)));
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
   };
 
   return (
     <div className="space-y-4 p-4">
       <div className="border-b pb-4 flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate({ to: '/tickets' })}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate({ to: "/" })}
+        >
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-2xl font-bold">Event Details</h1>
@@ -85,17 +100,27 @@ export function TicketEventDetailPage() {
         <CardContent className="space-y-4">
           <div>
             <h3 className="font-semibold mb-2">Description</h3>
-            <p className="text-muted-foreground whitespace-pre-wrap">{event.description}</p>
+            <p className="text-muted-foreground whitespace-pre-wrap">
+              {event.description}
+            </p>
           </div>
           <div className="border-t pt-4">
             <div className="grid gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">University:</span>
-                <span className="text-sm font-semibold">{event.university}</span>
+                <span className="text-sm text-muted-foreground">
+                  University:
+                </span>
+                <span className="text-sm font-semibold">
+                  {event.university}
+                </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Event Date:</span>
-                <span className="text-sm font-semibold">{formatDate(event.eventDate)}</span>
+                <span className="text-sm text-muted-foreground">
+                  Event Date:
+                </span>
+                <span className="text-sm font-semibold">
+                  {formatDate(event.eventDate)}
+                </span>
               </div>
             </div>
           </div>
@@ -150,7 +175,7 @@ export function TicketEventDetailPage() {
                     Issuing...
                   </>
                 ) : (
-                  'Issue Ticket'
+                  "Issue Ticket"
                 )}
               </Button>
             </div>
@@ -174,8 +199,10 @@ export function TicketEventDetailPage() {
                       Attendee: {ticket.attendee.toString().slice(0, 10)}...
                     </div>
                   </div>
-                  <div className={`text-sm font-semibold ${ticket.checkedIn ? 'text-chart-1' : 'text-primary'}`}>
-                    {ticket.checkedIn ? 'Checked In' : 'Valid'}
+                  <div
+                    className={`text-sm font-semibold ${ticket.checkedIn ? "text-chart-1" : "text-primary"}`}
+                  >
+                    {ticket.checkedIn ? "Checked In" : "Valid"}
                   </div>
                 </div>
                 {ticket.checkedInAt && (
@@ -188,7 +215,9 @@ export function TicketEventDetailPage() {
           ))}
         </div>
       ) : (
-        <p className="text-center text-muted-foreground py-8">No tickets issued yet</p>
+        <p className="text-center text-muted-foreground py-8">
+          No tickets issued yet
+        </p>
       )}
     </div>
   );

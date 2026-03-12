@@ -1,15 +1,3 @@
-import { useState } from 'react';
-import { useListAdmins, useGrantAdminRole, useRevokeAdminRole } from '../../../hooks/useAdminQueries';
-import { useGetUserProfile } from '../../../hooks/useQueries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Loader2, Shield, UserPlus, UserMinus } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { toast } from 'sonner';
-import { isSuperAdmin } from '../../../lib/superAdmin';
-import { useInternetIdentity } from '../../../hooks/useInternetIdentity';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,9 +8,34 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Loader2, Shield, UserMinus, UserPlus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import {
+  useGrantAdminRole,
+  useListAdmins,
+  useRevokeAdminRole,
+} from "../../../hooks/useAdminQueries";
+import { useInternetIdentity } from "../../../hooks/useInternetIdentity";
+import { useGetUserProfile } from "../../../hooks/useQueries";
+import { isSuperAdmin } from "../../../lib/superAdmin";
 
-function AdminItem({ principalId, onRevoke }: { principalId: string; onRevoke: () => void }) {
+function AdminItem({
+  principalId,
+  onRevoke,
+}: { principalId: string; onRevoke: () => void }) {
   const { data: profile } = useGetUserProfile(principalId);
   const { identity } = useInternetIdentity();
   const currentUserPrincipal = identity?.getPrincipal().toString();
@@ -31,7 +44,9 @@ function AdminItem({ principalId, onRevoke }: { principalId: string; onRevoke: (
   return (
     <div className="flex items-center justify-between rounded-lg border p-4">
       <div>
-        <p className="font-semibold">{profile?.displayName || 'Unknown User'}</p>
+        <p className="font-semibold">
+          {profile?.displayName || "Unknown User"}
+        </p>
         <p className="text-sm text-muted-foreground">{principalId}</p>
       </div>
       {isCurrentUserSuperAdmin && (
@@ -63,26 +78,26 @@ export function AdminsPanel() {
   const { data: admins, isLoading, isError } = useListAdmins();
   const grantAdmin = useGrantAdminRole();
   const revokeAdmin = useRevokeAdminRole();
-  const [newAdminPrincipal, setNewAdminPrincipal] = useState('');
+  const [newAdminPrincipal, setNewAdminPrincipal] = useState("");
   const { identity } = useInternetIdentity();
   const currentUserPrincipal = identity?.getPrincipal().toString();
   const isCurrentUserSuperAdmin = isSuperAdmin(currentUserPrincipal);
 
   const handleGrantAdmin = async () => {
     if (!newAdminPrincipal.trim()) {
-      toast.error('Please enter a valid principal ID');
+      toast.error("Please enter a valid principal ID");
       return;
     }
 
     try {
       await grantAdmin.mutateAsync(newAdminPrincipal.trim());
-      toast.success('Admin role granted successfully');
-      setNewAdminPrincipal('');
+      toast.success("Admin role granted successfully");
+      setNewAdminPrincipal("");
     } catch (error: any) {
-      if (error.message?.includes('Unauthorized')) {
-        toast.error('Only super admins can grant admin privileges');
+      if (error.message?.includes("Unauthorized")) {
+        toast.error("Only super admins can grant admin privileges");
       } else {
-        toast.error(error.message || 'Failed to grant admin role');
+        toast.error(error.message || "Failed to grant admin role");
       }
     }
   };
@@ -90,12 +105,12 @@ export function AdminsPanel() {
   const handleRevokeAdmin = async (principalId: string) => {
     try {
       await revokeAdmin.mutateAsync(principalId);
-      toast.success('Admin role revoked successfully');
+      toast.success("Admin role revoked successfully");
     } catch (error: any) {
-      if (error.message?.includes('Unauthorized')) {
-        toast.error('Only super admins can revoke admin privileges');
+      if (error.message?.includes("Unauthorized")) {
+        toast.error("Only super admins can revoke admin privileges");
       } else {
-        toast.error(error.message || 'Failed to revoke admin role');
+        toast.error(error.message || "Failed to revoke admin role");
       }
     }
   };
@@ -124,8 +139,8 @@ export function AdminsPanel() {
         <CardTitle>Admin Management</CardTitle>
         <CardDescription>
           {isCurrentUserSuperAdmin
-            ? 'Manage admin privileges for users'
-            : 'View current admins (super admin required to modify)'}
+            ? "Manage admin privileges for users"
+            : "View current admins (super admin required to modify)"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -142,7 +157,10 @@ export function AdminsPanel() {
                 onChange={(e) => setNewAdminPrincipal(e.target.value)}
                 disabled={grantAdmin.isPending}
               />
-              <Button onClick={handleGrantAdmin} disabled={grantAdmin.isPending}>
+              <Button
+                onClick={handleGrantAdmin}
+                disabled={grantAdmin.isPending}
+              >
                 {grantAdmin.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (

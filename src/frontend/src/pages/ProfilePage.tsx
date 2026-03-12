@@ -1,7 +1,7 @@
-import { useGetCallerUserProfile } from '../hooks/useQueries';
-import { ProfileHeader } from '../components/profile/ProfileHeader';
-import { Loader2 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2 } from "lucide-react";
+import { ProfileHeader } from "../components/profile/ProfileHeader";
+import { useGetCallerUserProfile } from "../hooks/useQueries";
 
 export function ProfilePage() {
   const { data: profile, isLoading } = useGetCallerUserProfile();
@@ -39,13 +39,22 @@ export function ProfilePage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="posts" className="py-6 text-center text-muted-foreground">
+        <TabsContent
+          value="posts"
+          className="py-6 text-center text-muted-foreground"
+        >
           No posts yet
         </TabsContent>
-        <TabsContent value="replies" className="py-6 text-center text-muted-foreground">
+        <TabsContent
+          value="replies"
+          className="py-6 text-center text-muted-foreground"
+        >
           No replies yet
         </TabsContent>
-        <TabsContent value="media" className="py-6 text-center text-muted-foreground">
+        <TabsContent
+          value="media"
+          className="py-6 text-center text-muted-foreground"
+        >
           No media yet
         </TabsContent>
       </Tabs>

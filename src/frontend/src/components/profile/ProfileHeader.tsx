@@ -1,7 +1,7 @@
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { MapPin, Calendar } from 'lucide-react';
-import type { UserProfile } from '../../backend';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, MapPin } from "lucide-react";
+import type { UserProfile } from "../../backend";
 
 interface ProfileHeaderProps {
   profile: UserProfile;
@@ -11,9 +11,9 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ profile, isOwnProfile }: ProfileHeaderProps) {
   const avatarUrl = profile.avatar?.getDirectURL();
   const initials = profile.displayName
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 
@@ -42,16 +42,24 @@ export function ProfileHeader({ profile, isOwnProfile }: ProfileHeaderProps) {
         </div>
         <div className="flex items-center gap-1">
           <Calendar className="h-4 w-4" />
-          <span>Joined {new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+          <span>
+            Joined{" "}
+            {new Date().toLocaleDateString("en-US", {
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
         </div>
       </div>
 
       <div className="flex gap-4 text-sm">
-        <button className="hover:underline">
-          <span className="font-semibold">0</span> <span className="text-muted-foreground">Following</span>
+        <button type="button" className="hover:underline">
+          <span className="font-semibold">0</span>{" "}
+          <span className="text-muted-foreground">Following</span>
         </button>
-        <button className="hover:underline">
-          <span className="font-semibold">0</span> <span className="text-muted-foreground">Followers</span>
+        <button type="button" className="hover:underline">
+          <span className="font-semibold">0</span>{" "}
+          <span className="text-muted-foreground">Followers</span>
         </button>
       </div>
 

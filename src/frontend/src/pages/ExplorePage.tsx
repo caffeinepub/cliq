@@ -1,20 +1,29 @@
-import { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Search, Loader2 } from 'lucide-react';
-import { UNIVERSITIES } from '../constants/universities';
-import { useSearchUsers } from '../hooks/useQueries';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, Search } from "lucide-react";
+import { useState } from "react";
+import { UNIVERSITIES } from "../constants/universities";
+import { useSearchUsers } from "../hooks/useQueries";
 
 export function ExplorePage() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [universityFilter, setUniversityFilter] = useState<string | null>(null);
-  const [debouncedTerm, setDebouncedTerm] = useState('');
+  const [debouncedTerm, setDebouncedTerm] = useState("");
 
-  const { data: users, isLoading } = useSearchUsers(debouncedTerm, universityFilter);
+  const { data: users, isLoading } = useSearchUsers(
+    debouncedTerm,
+    universityFilter,
+  );
 
   const handleSearch = () => {
     setDebouncedTerm(searchTerm);
@@ -24,7 +33,9 @@ export function ExplorePage() {
     <div className="space-y-4 p-4">
       <div className="border-b pb-4">
         <h1 className="text-2xl font-bold">Explore</h1>
-        <p className="text-sm text-muted-foreground">Discover students and posts</p>
+        <p className="text-sm text-muted-foreground">
+          Discover students and posts
+        </p>
       </div>
 
       <div className="space-y-3">
@@ -35,14 +46,17 @@ export function ExplorePage() {
               placeholder="Search users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               className="pl-9"
             />
           </div>
           <Button onClick={handleSearch}>Search</Button>
         </div>
 
-        <Select value={universityFilter || 'all'} onValueChange={(v) => setUniversityFilter(v === 'all' ? null : v)}>
+        <Select
+          value={universityFilter || "all"}
+          onValueChange={(v) => setUniversityFilter(v === "all" ? null : v)}
+        >
           <SelectTrigger>
             <SelectValue placeholder="All universities" />
           </SelectTrigger>
@@ -76,14 +90,17 @@ export function ExplorePage() {
             users.map((user) => {
               const avatarUrl = user.avatar?.getDirectURL();
               const initials = user.displayName
-                .split(' ')
+                .split(" ")
                 .map((n) => n[0])
-                .join('')
+                .join("")
                 .toUpperCase()
                 .slice(0, 2);
 
               return (
-                <Card key={user.username} className="hover:bg-accent/5 transition-colors">
+                <Card
+                  key={user.username}
+                  className="hover:bg-accent/5 transition-colors"
+                >
                   <CardContent className="flex items-center gap-3 pt-6">
                     <Avatar className="h-12 w-12">
                       {avatarUrl ? (
@@ -94,8 +111,12 @@ export function ExplorePage() {
                     </Avatar>
                     <div className="flex-1">
                       <p className="font-semibold">{user.displayName}</p>
-                      <p className="text-sm text-muted-foreground">@{user.username}</p>
-                      <p className="text-xs text-muted-foreground">{user.university}</p>
+                      <p className="text-sm text-muted-foreground">
+                        @{user.username}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {user.university}
+                      </p>
                     </div>
                     <Button variant="outline" size="sm">
                       Follow

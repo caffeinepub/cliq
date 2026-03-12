@@ -1,15 +1,32 @@
-import { useState } from 'react';
-import { useGetMyTickets, useCreateTicketEvent, useVerifyTicket, useCheckInTicket } from '../hooks/useQueries';
-import { Loader2, Ticket as TicketIcon, Plus, QrCode, ShoppingBag } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { toast } from 'sonner';
-import { useNavigate } from '@tanstack/react-router';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "@tanstack/react-router";
+import {
+  Loader2,
+  Plus,
+  QrCode,
+  ShoppingBag,
+  Ticket as TicketIcon,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import {
+  useCheckInTicket,
+  useCreateTicketEvent,
+  useGetMyTickets,
+  useVerifyTicket,
+} from "../hooks/useQueries";
 
 export function TicketsPage() {
   const { data: myTickets, isLoading } = useGetMyTickets();
@@ -19,45 +36,48 @@ export function TicketsPage() {
   const navigate = useNavigate();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [eventDate, setEventDate] = useState('');
-  const [ticketPrice, setTicketPrice] = useState('');
-  const [availableTickets, setAvailableTickets] = useState('');
-  const [verifierCode, setVerifierCode] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [ticketPrice, setTicketPrice] = useState("");
+  const [availableTickets, setAvailableTickets] = useState("");
+  const [verifierCode, setVerifierCode] = useState("");
 
   const handleCreateEvent = async () => {
     if (!title.trim() || !description.trim() || !eventDate) {
-      toast.error('Please fill in all required fields');
+      toast.error("Please fill in all required fields");
       return;
     }
 
     try {
-      const dateTimestamp = BigInt(new Date(eventDate).getTime()) * BigInt(1000000);
-      const eventId = await createEvent.mutateAsync({
+      const dateTimestamp =
+        BigInt(new Date(eventDate).getTime()) * BigInt(1000000);
+      await createEvent.mutateAsync({
         title,
         description,
         eventDate: dateTimestamp,
         verifiers: [],
-        ticketPrice: ticketPrice ? parseInt(ticketPrice) : 0,
-        availableTickets: availableTickets ? parseInt(availableTickets) : 0,
+        ticketPrice: ticketPrice ? Number.parseInt(ticketPrice) : 0,
+        availableTickets: availableTickets
+          ? Number.parseInt(availableTickets)
+          : 0,
       });
-      toast.success('Event created successfully!');
-      setTitle('');
-      setDescription('');
-      setEventDate('');
-      setTicketPrice('');
-      setAvailableTickets('');
+      toast.success("Event created successfully!");
+      setTitle("");
+      setDescription("");
+      setEventDate("");
+      setTicketPrice("");
+      setAvailableTickets("");
       setIsCreateOpen(false);
-      navigate({ to: '/tickets/$eventId', params: { eventId: eventId.toString() } });
+      navigate({ to: "/" });
     } catch (error: any) {
-      toast.error(error.message || 'Failed to create event');
+      toast.error(error.message || "Failed to create event");
     }
   };
 
   const handleVerifyTicket = async () => {
     if (!verifierCode.trim()) {
-      toast.error('Please enter a ticket code');
+      toast.error("Please enter a ticket code");
       return;
     }
 
@@ -65,23 +85,23 @@ export function TicketsPage() {
       const isValid = await verifyTicket.mutateAsync(verifierCode);
       if (isValid) {
         await checkInTicket.mutateAsync(verifierCode);
-        toast.success('Ticket verified and checked in!');
-        setVerifierCode('');
+        toast.success("Ticket verified and checked in!");
+        setVerifierCode("");
       } else {
-        toast.error('Invalid or already used ticket');
+        toast.error("Invalid or already used ticket");
       }
     } catch (error: any) {
-      if (error.message?.includes('already checked in')) {
-        toast.error('Ticket already checked in');
+      if (error.message?.includes("already checked in")) {
+        toast.error("Ticket already checked in");
       } else {
-        toast.error(error.message || 'Failed to verify ticket');
+        toast.error(error.message || "Failed to verify ticket");
       }
     }
   };
 
   const formatDate = (timestamp: bigint) => {
     const date = new Date(Number(timestamp / BigInt(1000000)));
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
   };
 
   return (
@@ -89,7 +109,10 @@ export function TicketsPage() {
       <div className="border-b pb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Tickets</h1>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate({ to: '/marketplace/tickets' })}>
+          <Button
+            variant="outline"
+            onClick={() => navigate({ to: "/marketplace" })}
+          >
             <ShoppingBag className="mr-2 h-4 w-4" />
             Browse Events
           </Button>
@@ -166,7 +189,7 @@ export function TicketsPage() {
                       Creating...
                     </>
                   ) : (
-                    'Create Event'
+                    "Create Event"
                   )}
                 </Button>
               </div>
@@ -190,26 +213,40 @@ export function TicketsPage() {
             myTickets.map((ticket) => (
               <Card key={ticket.code}>
                 <CardHeader>
-                  <CardTitle className="text-lg">Ticket Code: {ticket.code}</CardTitle>
+                  <CardTitle className="text-lg">
+                    Ticket Code: {ticket.code}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Status:</span>
-                      <span className={`text-sm font-semibold ${ticket.checkedIn ? 'text-chart-1' : 'text-primary'}`}>
-                        {ticket.checkedIn ? 'Checked In' : 'Valid'}
+                      <span className="text-sm text-muted-foreground">
+                        Status:
+                      </span>
+                      <span
+                        className={`text-sm font-semibold ${ticket.checkedIn ? "text-chart-1" : "text-primary"}`}
+                      >
+                        {ticket.checkedIn ? "Checked In" : "Valid"}
                       </span>
                     </div>
                     {ticket.pricePaid > 0 && (
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Price Paid:</span>
-                        <span className="text-sm">₦{Number(ticket.pricePaid).toLocaleString()}</span>
+                        <span className="text-sm text-muted-foreground">
+                          Price Paid:
+                        </span>
+                        <span className="text-sm">
+                          ₦{Number(ticket.pricePaid).toLocaleString()}
+                        </span>
                       </div>
                     )}
                     {ticket.checkedInAt && (
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Checked in at:</span>
-                        <span className="text-sm">{formatDate(ticket.checkedInAt)}</span>
+                        <span className="text-sm text-muted-foreground">
+                          Checked in at:
+                        </span>
+                        <span className="text-sm">
+                          {formatDate(ticket.checkedInAt)}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -220,8 +257,10 @@ export function TicketsPage() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <TicketIcon className="mb-4 h-16 w-16 text-muted-foreground" />
               <h2 className="mb-2 text-xl font-semibold">No tickets yet</h2>
-              <p className="text-muted-foreground mb-4">Browse the marketplace to get tickets for events</p>
-              <Button onClick={() => navigate({ to: '/marketplace/tickets' })}>
+              <p className="text-muted-foreground mb-4">
+                Browse the marketplace to get tickets for events
+              </p>
+              <Button onClick={() => navigate({ to: "/marketplace" })}>
                 <ShoppingBag className="mr-2 h-4 w-4" />
                 Browse Events
               </Button>

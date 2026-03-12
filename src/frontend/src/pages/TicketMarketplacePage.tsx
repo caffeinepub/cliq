@@ -1,13 +1,18 @@
-import { useState } from 'react';
-import { useBrowseTicketEvents } from '../hooks/useQueries';
-import { Loader2, Calendar, MapPin, Ticket as TicketIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useNavigate } from '@tanstack/react-router';
-import { UNIVERSITIES } from '../constants/universities';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useNavigate } from "@tanstack/react-router";
+import { Calendar, Loader2, MapPin, Ticket as TicketIcon } from "lucide-react";
+import { useState } from "react";
+import { UNIVERSITIES } from "../constants/universities";
+import { useBrowseTicketEvents } from "../hooks/useQueries";
 
 export function TicketMarketplacePage() {
   const [universityFilter, setUniversityFilter] = useState<string | null>(null);
@@ -16,14 +21,14 @@ export function TicketMarketplacePage() {
 
   const formatDate = (timestamp: bigint) => {
     const date = new Date(Number(timestamp / BigInt(1000000)));
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
   };
 
   return (
     <div className="space-y-4 p-4">
       <div className="border-b pb-4">
-        <h1 className="text-2xl font-bold">Ticket Marketplace</h1>
-        <p className="text-muted-foreground mt-1">Browse and purchase tickets for campus events</p>
+        <h1 className="text-2xl font-bold">Events</h1>
+        <p className="text-muted-foreground mt-1">Browse campus events</p>
       </div>
 
       <Card>
@@ -32,8 +37,10 @@ export function TicketMarketplacePage() {
             <div>
               <Label htmlFor="university-filter">Filter by University</Label>
               <Select
-                value={universityFilter || 'all'}
-                onValueChange={(value) => setUniversityFilter(value === 'all' ? null : value)}
+                value={universityFilter || "all"}
+                onValueChange={(value) =>
+                  setUniversityFilter(value === "all" ? null : value)
+                }
               >
                 <SelectTrigger id="university-filter">
                   <SelectValue placeholder="All Universities" />
@@ -62,13 +69,15 @@ export function TicketMarketplacePage() {
             <Card
               key={event.id.toString()}
               className="hover:bg-accent/5 transition-colors cursor-pointer"
-              onClick={() => navigate({ to: '/marketplace/tickets/$eventId', params: { eventId: event.id.toString() } })}
+              onClick={() => navigate({ to: "/marketplace" })}
             >
               <CardHeader>
                 <CardTitle className="text-lg">{event.title}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {event.description}
+                </p>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <MapPin className="h-4 w-4 text-muted-foreground" />
@@ -80,7 +89,9 @@ export function TicketMarketplacePage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <TicketIcon className="h-4 w-4 text-muted-foreground" />
-                    <span>{Number(event.availableTickets)} tickets available</span>
+                    <span>
+                      {Number(event.availableTickets)} tickets available
+                    </span>
                   </div>
                   {event.ticketPrice > 0 && (
                     <div className="text-sm font-semibold">
@@ -101,8 +112,8 @@ export function TicketMarketplacePage() {
           <h2 className="mb-2 text-xl font-semibold">No events available</h2>
           <p className="text-muted-foreground">
             {universityFilter
-              ? 'No events found for the selected university'
-              : 'Check back later for upcoming events'}
+              ? "No events found for the selected university"
+              : "Check back later for upcoming events"}
           </p>
         </div>
       )}

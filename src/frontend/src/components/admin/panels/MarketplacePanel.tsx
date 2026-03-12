@@ -1,12 +1,3 @@
-import { useState } from 'react';
-import { useListMarketplaceListings, useMarkListingAsSold, useDeleteListing } from '../../../hooks/useAdminQueries';
-import { useGetUserProfile } from '../../../hooks/useQueries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Loader2, ShoppingBag, Trash2, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +8,33 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  ShoppingBag,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import {
+  useDeleteListing,
+  useListMarketplaceListings,
+  useMarkListingAsSold,
+} from "../../../hooks/useAdminQueries";
+import { useGetUserProfile } from "../../../hooks/useQueries";
 
 function ListingItem({ listing }: { listing: any }) {
   const { data: sellerProfile } = useGetUserProfile(listing.seller.toString());
@@ -27,18 +44,18 @@ function ListingItem({ listing }: { listing: any }) {
   const handleMarkSold = async () => {
     try {
       await markAsSold.mutateAsync(listing.id);
-      toast.success('Listing marked as sold');
+      toast.success("Listing marked as sold");
     } catch (error: any) {
-      toast.error(error.message || 'Failed to mark listing as sold');
+      toast.error(error.message || "Failed to mark listing as sold");
     }
   };
 
   const handleDelete = async () => {
     try {
       await deleteListing.mutateAsync(listing.id);
-      toast.success('Listing deleted successfully');
+      toast.success("Listing deleted successfully");
     } catch (error: any) {
-      toast.error(error.message || 'Failed to delete listing');
+      toast.error(error.message || "Failed to delete listing");
     }
   };
 
@@ -51,7 +68,7 @@ function ListingItem({ listing }: { listing: any }) {
             {listing.sold && <Badge variant="secondary">Sold</Badge>}
           </div>
           <p className="text-sm text-muted-foreground">
-            Seller: {sellerProfile?.displayName || 'Unknown'}
+            Seller: {sellerProfile?.displayName || "Unknown"}
           </p>
           <p className="text-sm text-muted-foreground">
             {new Date(Number(listing.timestamp) / 1000000).toLocaleString()}
@@ -74,7 +91,11 @@ function ListingItem({ listing }: { listing: any }) {
           )}
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="sm" disabled={deleteListing.isPending}>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={deleteListing.isPending}
+              >
                 {deleteListing.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -86,12 +107,15 @@ function ListingItem({ listing }: { listing: any }) {
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete Listing</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete this listing? This action cannot be undone.
+                  Are you sure you want to delete this listing? This action
+                  cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                <AlertDialogAction onClick={handleDelete}>
+                  Delete
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -106,7 +130,9 @@ function ListingItem({ listing }: { listing: any }) {
         />
       )}
       <div className="flex gap-4 text-sm text-muted-foreground">
-        <span className="font-semibold text-foreground">₦{Number(listing.price).toLocaleString()}</span>
+        <span className="font-semibold text-foreground">
+          ₦{Number(listing.price).toLocaleString()}
+        </span>
         <span>{listing.university}</span>
       </div>
     </div>
@@ -116,7 +142,11 @@ function ListingItem({ listing }: { listing: any }) {
 export function MarketplacePanel() {
   const [page, setPage] = useState(0);
   const limit = 20;
-  const { data: listings, isLoading, isError } = useListMarketplaceListings(limit, page * limit);
+  const {
+    data: listings,
+    isLoading,
+    isError,
+  } = useListMarketplaceListings(limit, page * limit);
 
   if (isLoading) {
     return (
@@ -130,7 +160,9 @@ export function MarketplacePanel() {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-destructive">Failed to load marketplace listings</p>
+          <p className="text-destructive">
+            Failed to load marketplace listings
+          </p>
         </CardContent>
       </Card>
     );
@@ -151,7 +183,9 @@ export function MarketplacePanel() {
     <Card>
       <CardHeader>
         <CardTitle>Marketplace Management</CardTitle>
-        <CardDescription>View and moderate marketplace listings</CardDescription>
+        <CardDescription>
+          View and moderate marketplace listings
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[600px]">

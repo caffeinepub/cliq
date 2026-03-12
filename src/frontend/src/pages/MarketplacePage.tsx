@@ -1,27 +1,37 @@
-import { useState, useRef } from 'react';
-import { useSearchListings, useCreateListing, useGetCallerUserProfile } from '../hooks/useQueries';
-import { Loader2, Plus, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { toast } from 'sonner';
-import { ExternalBlob } from '../backend';
-import { useNavigate } from '@tanstack/react-router';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "@tanstack/react-router";
+import { Loader2, Plus, Search } from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { ExternalBlob } from "../backend";
+import {
+  useCreateListing,
+  useGetCallerUserProfile,
+  useSearchListings,
+} from "../hooks/useQueries";
 
 export function MarketplacePage() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { data: listings, isLoading } = useSearchListings(searchTerm);
   const createListing = useCreateListing();
   const { data: profile } = useGetCallerUserProfile();
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,13 +40,13 @@ export function MarketplacePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      toast.error('Image size must be less than 10MB');
+      toast.error("Image size must be less than 10MB");
       return;
     }
 
@@ -46,13 +56,13 @@ export function MarketplacePage() {
 
   const handleCreateListing = async () => {
     if (!title.trim() || !description.trim() || !price) {
-      toast.error('Please fill in all required fields');
+      toast.error("Please fill in all required fields");
       return;
     }
 
-    const priceNum = parseFloat(price);
-    if (isNaN(priceNum) || priceNum < 0) {
-      toast.error('Please enter a valid price');
+    const priceNum = Number.parseFloat(price);
+    if (Number.isNaN(priceNum) || priceNum < 0) {
+      toast.error("Please enter a valid price");
       return;
     }
 
@@ -65,16 +75,21 @@ export function MarketplacePage() {
         media = ExternalBlob.fromBytes(uint8Array);
       }
 
-      await createListing.mutateAsync({ title, description, price: priceNum, media });
-      toast.success('Listing created successfully!');
-      setTitle('');
-      setDescription('');
-      setPrice('');
+      await createListing.mutateAsync({
+        title,
+        description,
+        price: priceNum,
+        media,
+      });
+      toast.success("Listing created successfully!");
+      setTitle("");
+      setDescription("");
+      setPrice("");
       setImageFile(null);
       setImagePreview(null);
       setIsCreateOpen(false);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to create listing');
+      toast.error(error.message || "Failed to create listing");
     }
   };
 
@@ -139,7 +154,11 @@ export function MarketplacePage() {
                 />
                 {imagePreview ? (
                   <div className="mt-2">
-                    <img src={imagePreview} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
                     <Button
                       variant="outline"
                       size="sm"
@@ -173,7 +192,7 @@ export function MarketplacePage() {
                     Creating...
                   </>
                 ) : (
-                  'Create Listing'
+                  "Create Listing"
                 )}
               </Button>
             </div>
@@ -203,21 +222,36 @@ export function MarketplacePage() {
               <Card
                 key={listing.id.toString()}
                 className="cursor-pointer hover:bg-accent/5 transition-colors"
-                onClick={() => navigate({ to: '/marketplace/$listingId', params: { listingId: listing.id.toString() } })}
+                onClick={() =>
+                  navigate({
+                    to: "/marketplace/$listingId",
+                    params: { listingId: listing.id.toString() },
+                  })
+                }
               >
                 {imageUrl && (
                   <div className="aspect-video w-full overflow-hidden rounded-t-lg">
-                    <img src={imageUrl} alt={listing.title} className="w-full h-full object-cover" />
+                    <img
+                      src={imageUrl}
+                      alt={listing.title}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 )}
                 <CardHeader>
                   <CardTitle className="text-lg">{listing.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{listing.description}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {listing.description}
+                  </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-primary">₦{Number(listing.price).toLocaleString()}</span>
-                    <span className="text-xs text-muted-foreground">{listing.university}</span>
+                    <span className="text-xl font-bold text-primary">
+                      ₦{Number(listing.price).toLocaleString()}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {listing.university}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -228,7 +262,9 @@ export function MarketplacePage() {
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <h2 className="mb-2 text-xl font-semibold">No listings found</h2>
           <p className="text-muted-foreground mb-4">
-            {searchTerm ? 'Try a different search term' : 'Be the first to list an item!'}
+            {searchTerm
+              ? "Try a different search term"
+              : "Be the first to list an item!"}
           </p>
         </div>
       )}

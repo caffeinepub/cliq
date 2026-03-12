@@ -1,11 +1,3 @@
-import { useState } from 'react';
-import { useListPosts, useDeletePost } from '../../../hooks/useAdminQueries';
-import { useGetUserProfile } from '../../../hooks/useQueries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Loader2, FileText, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { toast } from 'sonner';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +8,27 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  Loader2,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useDeletePost, useListPosts } from "../../../hooks/useAdminQueries";
+import { useGetUserProfile } from "../../../hooks/useQueries";
 
 function PostItem({ post }: { post: any }) {
   const { data: authorProfile } = useGetUserProfile(post.author.toString());
@@ -25,9 +37,9 @@ function PostItem({ post }: { post: any }) {
   const handleDelete = async () => {
     try {
       await deletePost.mutateAsync(post.id);
-      toast.success('Post deleted successfully');
+      toast.success("Post deleted successfully");
     } catch (error: any) {
-      toast.error(error.message || 'Failed to delete post');
+      toast.error(error.message || "Failed to delete post");
     }
   };
 
@@ -35,7 +47,9 @@ function PostItem({ post }: { post: any }) {
     <div className="rounded-lg border p-4">
       <div className="mb-2 flex items-start justify-between">
         <div>
-          <p className="font-semibold">{authorProfile?.displayName || 'Unknown User'}</p>
+          <p className="font-semibold">
+            {authorProfile?.displayName || "Unknown User"}
+          </p>
           <p className="text-sm text-muted-foreground">
             {new Date(Number(post.timestamp) / 1000000).toLocaleString()}
           </p>
@@ -54,12 +68,15 @@ function PostItem({ post }: { post: any }) {
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Post</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete this post? This action cannot be undone.
+                Are you sure you want to delete this post? This action cannot be
+                undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+              <AlertDialogAction onClick={handleDelete}>
+                Delete
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -67,19 +84,21 @@ function PostItem({ post }: { post: any }) {
       <p className="mb-2">{post.content}</p>
       {post.media && (
         <div className="mt-2">
-          {post.media.__kind__ === 'image' && (
+          {post.media.__kind__ === "image" && (
             <img
               src={post.media.image.getDirectURL()}
               alt="Post media"
               className="max-h-64 rounded-lg object-cover"
             />
           )}
-          {post.media.__kind__ === 'video' && (
+          {post.media.__kind__ === "video" && (
             <video
               src={post.media.video.getDirectURL()}
               controls
               className="max-h-64 rounded-lg"
-            />
+            >
+              <track kind="captions" />
+            </video>
           )}
         </div>
       )}

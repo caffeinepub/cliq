@@ -1,12 +1,16 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from '@tanstack/react-router';
-import type { Post } from '../../backend';
-import { useLikePost, useUnlikePost, useGetUserProfile } from '../../hooks/useQueries';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "@tanstack/react-router";
+import { Bookmark, Heart, MessageCircle, Share2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import type { Post } from "../../backend";
+import {
+  useGetUserProfile,
+  useLikePost,
+  useUnlikePost,
+} from "../../hooks/useQueries";
 
 interface PostCardProps {
   post: Post;
@@ -30,19 +34,19 @@ export function PostCard({ post }: PostCardProps) {
         setIsLiked(true);
       }
     } catch (error: any) {
-      toast.error(error.message || 'Failed to update like');
+      toast.error(error.message || "Failed to update like");
     }
   };
 
   const handleCardClick = () => {
-    navigate({ to: '/post/$postId', params: { postId: post.id.toString() } });
+    navigate({ to: "/post/$postId", params: { postId: post.id.toString() } });
   };
 
   const avatarUrl = authorProfile?.avatar?.getDirectURL();
   const initials = authorProfile?.displayName
-    ?.split(' ')
+    ?.split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 
@@ -54,68 +58,105 @@ export function PostCard({ post }: PostCardProps) {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
+    if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m`;
     if (hours < 24) return `${hours}h`;
     if (days < 7) return `${days}d`;
     return date.toLocaleDateString();
   };
 
-  const mediaUrl = post.media?.__kind__ === 'image' 
-    ? post.media.image.getDirectURL() 
-    : post.media?.__kind__ === 'video' 
-    ? post.media.video.getDirectURL() 
-    : null;
+  const mediaUrl =
+    post.media?.__kind__ === "image"
+      ? post.media.image.getDirectURL()
+      : post.media?.__kind__ === "video"
+        ? post.media.video.getDirectURL()
+        : null;
 
   return (
-    <Card className="hover:bg-accent/5 transition-colors cursor-pointer" onClick={handleCardClick}>
+    <Card
+      className="hover:shadow-bold transition-all cursor-pointer border-2"
+      onClick={handleCardClick}
+    >
       <CardContent className="pt-6">
-        <div className="flex gap-3">
-          <Avatar className="h-10 w-10">
+        <div className="flex gap-4">
+          <Avatar className="h-12 w-12 border-2 border-border">
             {avatarUrl ? (
               <AvatarImage src={avatarUrl} alt={authorProfile?.displayName} />
             ) : (
-              <AvatarFallback>{initials || 'U'}</AvatarFallback>
+              <AvatarFallback className="font-bold text-base">
+                {initials || "U"}
+              </AvatarFallback>
             )}
           </Avatar>
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold">{authorProfile?.displayName || 'Unknown'}</span>
-              <span className="text-sm text-muted-foreground">@{authorProfile?.username || 'unknown'}</span>
+          <div className="flex-1 space-y-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-base">
+                {authorProfile?.displayName || "Unknown"}
+              </span>
+              <span className="text-sm font-medium text-muted-foreground">
+                @{authorProfile?.username || "unknown"}
+              </span>
               <span className="text-sm text-muted-foreground">·</span>
-              <span className="text-sm text-muted-foreground">{formatTimestamp(post.timestamp)}</span>
+              <span className="text-sm font-medium text-muted-foreground">
+                {formatTimestamp(post.timestamp)}
+              </span>
             </div>
-            <p className="text-sm whitespace-pre-wrap">{post.content}</p>
-            
+            <p className="text-base font-medium leading-relaxed whitespace-pre-wrap">
+              {post.content}
+            </p>
+
             {mediaUrl && (
-              <div className="rounded-lg overflow-hidden border mt-3">
-                {post.media?.__kind__ === 'image' ? (
-                  <img src={mediaUrl} alt="Post media" className="w-full max-h-96 object-cover" />
-                ) : post.media?.__kind__ === 'video' ? (
-                  <video src={mediaUrl} controls className="w-full max-h-96" />
+              <div className="rounded-2xl overflow-hidden border-2 border-border mt-3">
+                {post.media?.__kind__ === "image" ? (
+                  <img
+                    src={mediaUrl}
+                    alt="Post media"
+                    className="w-full max-h-96 object-cover"
+                  />
+                ) : post.media?.__kind__ === "video" ? (
+                  <video
+                    src={mediaUrl}
+                    controls
+                    playsInline
+                    className="w-full max-h-96"
+                  >
+                    <track kind="captions" />
+                  </video>
                 ) : null}
               </div>
             )}
 
-            <div className="flex items-center gap-6 pt-2">
+            <div className="flex items-center gap-4 pt-2">
               <Button
                 variant="ghost"
                 size="sm"
-                className={`h-8 gap-2 px-2 ${isLiked ? 'text-chart-1' : 'text-muted-foreground hover:text-chart-1'}`}
+                className={`h-10 gap-2 px-3 rounded-full font-bold ${isLiked ? "text-destructive hover:text-destructive" : "text-muted-foreground hover:text-destructive hover:bg-destructive/10"}`}
                 onClick={handleLike}
               >
-                <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-                <span className="text-xs">{Number(post.likes)}</span>
+                <Heart className={`h-5 w-5 ${isLiked ? "fill-current" : ""}`} />
+                <span className="text-sm">{Number(post.likes)}</span>
               </Button>
-              <Button variant="ghost" size="sm" className="h-8 gap-2 px-2 text-muted-foreground hover:text-chart-2">
-                <MessageCircle className="h-4 w-4" />
-                <span className="text-xs">0</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 gap-2 px-3 rounded-full font-bold text-muted-foreground hover:text-accent hover:bg-accent/10"
+              >
+                <MessageCircle className="h-5 w-5" />
+                <span className="text-sm">0</span>
               </Button>
-              <Button variant="ghost" size="sm" className="h-8 gap-2 px-2 text-muted-foreground hover:text-chart-3">
-                <Share2 className="h-4 w-4" />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 gap-2 px-3 rounded-full font-bold text-muted-foreground hover:text-secondary hover:bg-secondary/10"
+              >
+                <Share2 className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-chart-4">
-                <Bookmark className="h-4 w-4" />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 px-3 rounded-full font-bold text-muted-foreground hover:text-primary hover:bg-primary/10"
+              >
+                <Bookmark className="h-5 w-5" />
               </Button>
             </div>
           </div>

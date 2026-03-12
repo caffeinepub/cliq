@@ -1,8 +1,14 @@
-import { useGetAllUserProfiles } from '../../../hooks/useAdminQueries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Users } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Loader2, Users } from "lucide-react";
+import { useGetAllUserProfiles } from "../../../hooks/useAdminQueries";
 
 export function UsersPanel() {
   const { data: profiles, isLoading, isError } = useGetAllUserProfiles();
@@ -45,18 +51,30 @@ export function UsersPanel() {
       <CardContent>
         <ScrollArea className="h-[600px]">
           <div className="space-y-4">
-            {profiles.map((profile, index) => (
-              <div key={index} className="flex items-center gap-4 rounded-lg border p-4">
+            {profiles.map((profile) => (
+              <div
+                key={profile.username}
+                className="flex items-center gap-4 rounded-lg border p-4"
+              >
                 <Avatar className="h-12 w-12">
                   {profile.avatar && (
-                    <AvatarImage src={profile.avatar.getDirectURL()} alt={profile.displayName} />
+                    <AvatarImage
+                      src={profile.avatar.getDirectURL()}
+                      alt={profile.displayName}
+                    />
                   )}
-                  <AvatarFallback>{profile.displayName.charAt(0).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback>
+                    {profile.displayName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <p className="font-semibold">{profile.displayName}</p>
-                  <p className="text-sm text-muted-foreground">@{profile.username}</p>
-                  <p className="text-sm text-muted-foreground">{profile.university}</p>
+                  <p className="text-sm text-muted-foreground">
+                    @{profile.username}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {profile.university}
+                  </p>
                   {profile.bio && <p className="mt-1 text-sm">{profile.bio}</p>}
                 </div>
               </div>

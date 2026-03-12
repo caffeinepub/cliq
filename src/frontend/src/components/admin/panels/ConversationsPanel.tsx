@@ -1,19 +1,41 @@
-import { useState } from 'react';
-import { useListConversations, useGetMessagesAdmin } from '../../../hooks/useAdminQueries';
-import { useGetUserProfile } from '../../../hooks/useQueries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Loader2, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import type { Message } from '../../../backend';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  MessageCircle,
+} from "lucide-react";
+import { useState } from "react";
+import type { Message } from "../../../backend";
+import {
+  useGetMessagesAdmin,
+  useListConversations,
+} from "../../../hooks/useAdminQueries";
+import { useGetUserProfile } from "../../../hooks/useQueries";
 
 function MessageItem({ message }: { message: Message }) {
   const { data: senderProfile } = useGetUserProfile(message.sender.toString());
-  
+
   return (
     <div className="rounded-lg border p-3">
-      <p className="text-sm font-semibold">{senderProfile?.displayName || 'Unknown'}</p>
+      <p className="text-sm font-semibold">
+        {senderProfile?.displayName || "Unknown"}
+      </p>
       <p className="text-sm text-muted-foreground">
         {new Date(Number(message.timestamp) / 1000000).toLocaleString()}
       </p>
@@ -28,7 +50,9 @@ function ConversationItem({ conversation }: { conversation: any }) {
   const { data: profile1 } = useGetUserProfile(participant1);
   const { data: profile2 } = useGetUserProfile(participant2);
   const [open, setOpen] = useState(false);
-  const { data: messages, isLoading } = useGetMessagesAdmin(open ? conversation.id.toString() : undefined);
+  const { data: messages, isLoading } = useGetMessagesAdmin(
+    open ? conversation.id.toString() : undefined,
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -36,10 +60,14 @@ function ConversationItem({ conversation }: { conversation: any }) {
         <div className="cursor-pointer rounded-lg border p-4 hover:bg-accent">
           <div className="mb-2">
             <p className="font-semibold">
-              {profile1?.displayName || 'Unknown'} ↔ {profile2?.displayName || 'Unknown'}
+              {profile1?.displayName || "Unknown"} ↔{" "}
+              {profile2?.displayName || "Unknown"}
             </p>
             <p className="text-sm text-muted-foreground">
-              Last message: {new Date(Number(conversation.lastMessageTime) / 1000000).toLocaleString()}
+              Last message:{" "}
+              {new Date(
+                Number(conversation.lastMessageTime) / 1000000,
+              ).toLocaleString()}
             </p>
           </div>
         </div>
@@ -69,7 +97,11 @@ function ConversationItem({ conversation }: { conversation: any }) {
 export function ConversationsPanel() {
   const [page, setPage] = useState(0);
   const limit = 20;
-  const { data: conversations, isLoading, isError } = useListConversations(limit, page * limit);
+  const {
+    data: conversations,
+    isLoading,
+    isError,
+  } = useListConversations(limit, page * limit);
 
   if (isLoading) {
     return (
@@ -104,13 +136,18 @@ export function ConversationsPanel() {
     <Card>
       <CardHeader>
         <CardTitle>Conversations Management</CardTitle>
-        <CardDescription>View platform conversations and messages</CardDescription>
+        <CardDescription>
+          View platform conversations and messages
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[600px]">
           <div className="space-y-4">
             {conversations.map((conversation) => (
-              <ConversationItem key={conversation.id.toString()} conversation={conversation} />
+              <ConversationItem
+                key={conversation.id.toString()}
+                conversation={conversation}
+              />
             ))}
           </div>
         </ScrollArea>

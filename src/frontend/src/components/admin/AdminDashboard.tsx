@@ -1,14 +1,13 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { UsersPanel } from './panels/UsersPanel';
-import { PostsPanel } from './panels/PostsPanel';
-import { MarketplacePanel } from './panels/MarketplacePanel';
-import { TicketsEventsPanel } from './panels/TicketsEventsPanel';
-import { ConversationsPanel } from './panels/ConversationsPanel';
-import { NotificationsPanel } from './panels/NotificationsPanel';
-import { ReportsPanel } from './panels/ReportsPanel';
-import { AdminsPanel } from './panels/AdminsPanel';
-import { SupabasePanel } from './panels/SupabasePanel';
-import { Shield } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Shield } from "lucide-react";
+import { AdminsPanel } from "./panels/AdminsPanel";
+import { ConversationsPanel } from "./panels/ConversationsPanel";
+import { MarketplacePanel } from "./panels/MarketplacePanel";
+import { NotificationsPanel } from "./panels/NotificationsPanel";
+import { PostsPanel } from "./panels/PostsPanel";
+import { ReportsPanel } from "./panels/ReportsPanel";
+import { SupabasePanel } from "./panels/SupabasePanel";
+import { UsersPanel } from "./panels/UsersPanel";
 
 export function AdminDashboard() {
   return (
@@ -20,7 +19,9 @@ export function AdminDashboard() {
           </div>
           <div>
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage CLIQ platform content and users</p>
+            <p className="text-muted-foreground">
+              Manage CLIQ platform content and users
+            </p>
           </div>
         </div>
 
@@ -29,7 +30,6 @@ export function AdminDashboard() {
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="posts">Posts</TabsTrigger>
             <TabsTrigger value="marketplace">Marketplace</TabsTrigger>
-            <TabsTrigger value="tickets">Tickets/Events</TabsTrigger>
             <TabsTrigger value="conversations">Conversations</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
@@ -47,10 +47,6 @@ export function AdminDashboard() {
 
           <TabsContent value="marketplace">
             <MarketplacePanel />
-          </TabsContent>
-
-          <TabsContent value="tickets">
-            <TicketsEventsPanel />
           </TabsContent>
 
           <TabsContent value="conversations">
