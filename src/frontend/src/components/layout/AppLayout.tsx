@@ -105,8 +105,8 @@ export function AppLayout() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex md:w-72 md:flex-col md:border-r-2 md:bg-card">
-        <div className="flex items-center gap-3 border-b-2 p-6">
+      <aside className="hidden md:flex md:w-72 md:flex-col md:border-r md:bg-card">
+        <div className="flex items-center gap-3 border-b p-6">
           <img
             src="/assets/uploads/IMG-20260226-WA0003-1.jpg"
             alt="CLIQ"
@@ -128,7 +128,6 @@ export function AppLayout() {
                     variant={isActive ? "default" : "ghost"}
                     className={cn(
                       "w-full justify-start gap-3 text-sm font-semibold rounded-xl h-11",
-                      isActive && "shadow-bold",
                     )}
                     data-ocid={`nav.${item.label.toLowerCase().replace(/\s+/g, "_")}.link`}
                   >
@@ -149,16 +148,18 @@ export function AppLayout() {
             })}
           </nav>
         </div>
-        <div className="border-t-2 p-4 space-y-2">
+        <div className="border-t p-4 space-y-2">
           {user && (
             <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-muted mb-2">
-              <Avatar className="h-9 w-9 border-2 border-primary">
-                <AvatarFallback className="font-bold bg-primary text-primary-foreground text-sm">
+              <Avatar className="h-9 w-9 border border-primary">
+                <AvatarFallback className="font-semibold bg-primary text-primary-foreground text-sm">
                   {initials}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0">
-                <p className="font-bold text-sm truncate">{user.displayName}</p>
+                <p className="font-semibold text-sm truncate">
+                  {user.displayName}
+                </p>
                 <p className="text-xs text-muted-foreground truncate">
                   @{user.username}
                 </p>
@@ -196,17 +197,17 @@ export function AppLayout() {
             className="absolute inset-0 bg-black/50 cursor-default"
             onClick={() => setDrawerOpen(false)}
           />
-          <div className="absolute left-0 top-0 bottom-0 w-72 bg-card border-r-2 flex flex-col">
+          <div className="absolute left-0 top-0 bottom-0 w-72 bg-card border-r flex flex-col">
             {/* Drawer Header */}
-            <div className="flex items-center justify-between p-4 border-b-2">
+            <div className="flex items-center justify-between p-4 border-b">
               <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12 border-2 border-primary">
-                  <AvatarFallback className="font-bold bg-primary text-primary-foreground">
+                <Avatar className="h-12 w-12 border border-primary">
+                  <AvatarFallback className="font-semibold bg-primary text-primary-foreground">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-bold text-sm">
+                  <p className="font-semibold text-sm">
                     {user?.displayName ?? "Guest"}
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -227,7 +228,7 @@ export function AppLayout() {
             {/* University badge */}
             {user?.university && (
               <div className="px-4 py-2 bg-primary/10">
-                <span className="text-xs font-bold text-primary">
+                <span className="text-xs font-semibold text-primary">
                   🏛️ {user.university}
                 </span>
               </div>
@@ -321,7 +322,7 @@ export function AppLayout() {
       {/* Main Content */}
       <main className="flex-1 pb-20 md:pb-0 min-h-0">
         {/* Mobile Top Bar */}
-        <div className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-card border-b-2 md:hidden">
+        <div className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-card border-b md:hidden">
           <Button
             variant="ghost"
             size="icon"
@@ -364,7 +365,7 @@ export function AppLayout() {
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t-2 bg-card md:hidden shadow-bold">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-card md:hidden shadow-sm">
         {bottomNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentPath === item.path;

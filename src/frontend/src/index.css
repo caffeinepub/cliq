@@ -25,8 +25,9 @@
     --accent-foreground: 0.2 0.02 35;
     --destructive: 0.55 0.24 20;
     --destructive-foreground: 1 0 0;
-    --border: 0.92 0.015 35;
-    --input: 0.92 0.015 35;
+    /* #E5E5E5 ≈ OKLCH(0.9 0 0) */
+    --border: 0.9 0 0;
+    --input: 0.9 0 0;
     --ring: 0.672 0.183 35.8;
     --chart-1: 0.672 0.183 35.8;
     --chart-2: 0.7 0.18 200;
@@ -39,7 +40,7 @@
     --sidebar-primary-foreground: 1 0 0;
     --sidebar-accent: 0.96 0.01 35;
     --sidebar-accent-foreground: 0.2 0.02 35;
-    --sidebar-border: 0.92 0.015 35;
+    --sidebar-border: 0.9 0 0;
     --sidebar-ring: 0.672 0.183 35.8;
   }
 
@@ -86,6 +87,8 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    line-height: 1.6;
+    font-weight: 400;
   }
 
   h1,
@@ -94,7 +97,8 @@
   h4,
   h5,
   h6 {
-    @apply font-bold tracking-tight;
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   *:focus-visible {

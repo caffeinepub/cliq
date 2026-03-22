@@ -9,7 +9,6 @@ import {
   MessageCircle,
   Rocket,
   Send,
-  Share2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -157,44 +156,44 @@ export function PostCard({ post }: PostCardProps) {
   return (
     <>
       <Card
-        className="hover:shadow-bold transition-all cursor-pointer border-2"
+        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
         onClick={handleCardClick}
       >
-        <CardContent className="pt-6">
+        <CardContent className="p-5">
           {boosted && boostLabel && <BoostedPostBadge label={boostLabel} />}
           <div className="flex gap-4">
-            <Avatar className="h-12 w-12 border-2 border-border">
+            <Avatar className="h-11 w-11 border border-border">
               {isAnonymous ? (
                 <AvatarFallback className="bg-muted text-lg">🥷</AvatarFallback>
               ) : avatarUrl ? (
                 <AvatarImage src={avatarUrl} alt={authorProfile?.displayName} />
               ) : (
-                <AvatarFallback className="font-bold text-base">
+                <AvatarFallback className="font-semibold text-sm">
                   {initials || "U"}
                 </AvatarFallback>
               )}
             </Avatar>
-            <div className="flex-1 space-y-3">
+            <div className="flex-1 space-y-2">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-base">
+                  <span className="font-semibold text-sm">
                     {isAnonymous
                       ? "Anonymous"
                       : authorProfile?.displayName || "Unknown"}
                   </span>
-                  <span className="text-sm font-medium text-muted-foreground">
+                  <span className="text-sm text-[#6C757D] font-normal">
                     @
                     {isAnonymous
                       ? "anonymous"
                       : authorProfile?.username || "unknown"}
                   </span>
                   {isAnonymous && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-bold text-muted-foreground">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
                       🥷 Anonymous
                     </span>
                   )}
                   <span className="text-sm text-muted-foreground">·</span>
-                  <span className="text-sm font-medium text-muted-foreground">
+                  <span className="text-xs text-muted-foreground">
                     {formatTimestamp(post.timestamp)}
                   </span>
                 </div>
@@ -202,12 +201,12 @@ export function PostCard({ post }: PostCardProps) {
                   <BoostReasonLabel reason={boostReason} />
                 )}
               </div>
-              <p className="text-base font-medium leading-relaxed whitespace-pre-wrap">
+              <p className="text-sm font-normal leading-relaxed whitespace-pre-wrap">
                 {displayContent}
               </p>
 
               {mediaUrl && (
-                <div className="rounded-2xl overflow-hidden border-2 border-border mt-3">
+                <div className="rounded-xl overflow-hidden border border-border mt-2">
                   {post.media?.__kind__ === "image" ? (
                     <img
                       src={mediaUrl}
@@ -227,64 +226,60 @@ export function PostCard({ post }: PostCardProps) {
                 </div>
               )}
 
-              <div className="flex items-center gap-4 pt-2">
+              <div className="flex items-center gap-1 pt-1">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`h-10 gap-2 px-3 rounded-full font-bold ${
+                  className={`h-9 gap-1.5 px-2.5 rounded-full text-xs ${
                     isLiked
                       ? "text-destructive hover:text-destructive"
-                      : "text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      : "text-[#ADB5BD] hover:text-destructive hover:bg-destructive/10"
                   }`}
                   onClick={handleLike}
                 >
                   <Heart
-                    className={`h-5 w-5 ${isLiked ? "fill-current" : ""}`}
+                    className={`h-[18px] w-[18px] ${isLiked ? "fill-current" : ""}`}
                   />
-                  <span className="text-sm">{Number(post.likes)}</span>
+                  <span>{Number(post.likes)}</span>
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-10 gap-2 px-3 rounded-full font-bold text-muted-foreground hover:text-accent hover:bg-accent/10"
+                  className="h-9 gap-1.5 px-2.5 rounded-full text-xs text-[#ADB5BD] hover:text-foreground hover:bg-accent/10"
                 >
-                  <MessageCircle className="h-5 w-5" />
-                  <span className="text-sm">0</span>
+                  <MessageCircle className="h-[18px] w-[18px]" />
+                  <span>0</span>
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   disabled={isRecliqing}
                   data-ocid="post_card.recliq_button"
-                  className={`h-10 gap-2 px-3 rounded-full font-bold transition-colors ${
+                  className={`h-9 gap-1.5 px-2.5 rounded-full text-xs transition-colors ${
                     hasAlreadyRecliqed
                       ? "text-primary hover:text-primary hover:bg-primary/10"
-                      : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                      : "text-[#ADB5BD] hover:text-primary hover:bg-primary/10"
                   }`}
                   onClick={handleRecliq}
                 >
                   {isRecliqing ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Loader2 className="h-[18px] w-[18px] animate-spin" />
                   ) : (
-                    <Share2
-                      className={`h-5 w-5 ${hasAlreadyRecliqed ? "fill-current" : ""}`}
-                    />
+                    <span className="text-base leading-none font-black">∞</span>
                   )}
-                  {recliqCount > 0 && (
-                    <span className="text-sm">{recliqCount}</span>
-                  )}
+                  {recliqCount > 0 && <span>{recliqCount}</span>}
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-10 px-3 rounded-full font-bold text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  className="h-9 px-2.5 rounded-full text-[#ADB5BD] hover:text-primary hover:bg-primary/10"
                 >
-                  <Bookmark className="h-5 w-5" />
+                  <Bookmark className="h-[18px] w-[18px]" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-10 px-3 rounded-full font-bold text-muted-foreground hover:text-[#2C8A7A] hover:bg-[#2C8A7A]/10"
+                  className="h-9 px-2.5 rounded-full text-[#ADB5BD] hover:text-[#2C8A7A] hover:bg-[#2C8A7A]/10"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShareModalOpen(true);
@@ -292,12 +287,12 @@ export function PostCard({ post }: PostCardProps) {
                   title="Share post"
                   data-ocid="post_card.share_button"
                 >
-                  <Send className="h-5 w-5" />
+                  <Send className="h-[18px] w-[18px]" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-10 w-10 rounded-full font-bold text-muted-foreground hover:text-primary hover:bg-primary/10 ml-auto"
+                  className="h-9 w-9 rounded-full text-[#ADB5BD] hover:text-primary hover:bg-primary/10 ml-auto"
                   onClick={(e) => {
                     e.stopPropagation();
                     setBoostModalOpen(true);
@@ -305,7 +300,7 @@ export function PostCard({ post }: PostCardProps) {
                   title="Boost post"
                   data-ocid="post_card.boost_button"
                 >
-                  <Rocket className="h-5 w-5" />
+                  <Rocket className="h-[18px] w-[18px]" />
                 </Button>
               </div>
             </div>

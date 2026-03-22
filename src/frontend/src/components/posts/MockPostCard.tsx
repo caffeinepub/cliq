@@ -40,15 +40,15 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
   return (
     <>
       <Card
-        className="hover:shadow-bold transition-all cursor-pointer border-2 rounded-xl"
+        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
         data-ocid={`post.item.${index}`}
       >
-        <CardContent className="pt-6">
+        <CardContent className="p-5">
           {/* Boost badge */}
           {post.isBoosted && post.boostLabel && (
             <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-border">
-              <Rocket className="h-3.5 w-3.5 text-primary" />
-              <span className="text-xs font-bold text-primary uppercase tracking-wide">
+              <Rocket className="h-[18px] w-[18px] text-primary" />
+              <span className="text-xs font-semibold text-primary uppercase tracking-wide">
                 {post.boostLabel}
               </span>
               {post.boostReason && (
@@ -61,12 +61,12 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
 
           <div className="flex gap-4">
             {/* Avatar */}
-            <Avatar className="h-12 w-12 border-2 border-border flex-shrink-0">
+            <Avatar className="h-11 w-11 border border-border flex-shrink-0">
               {post.isAnonymous ? (
                 <AvatarFallback className="bg-muted text-lg">🥷</AvatarFallback>
               ) : (
                 <AvatarFallback
-                  className="font-bold text-base"
+                  className="font-semibold text-sm"
                   style={{ backgroundColor: stringToColor(post.username) }}
                 >
                   <span className="text-white">{initials}</span>
@@ -74,39 +74,39 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
               )}
             </Avatar>
 
-            <div className="flex-1 min-w-0 space-y-3">
+            <div className="flex-1 min-w-0 space-y-2">
               {/* Author row */}
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-bold text-base">
+                <span className="font-semibold text-sm">
                   {post.isAnonymous ? "Anonymous" : post.displayName}
                 </span>
                 {!post.isAnonymous && (
-                  <span className="text-sm font-medium text-muted-foreground">
+                  <span className="text-sm text-[#6C757D] font-normal">
                     @{post.username}
                   </span>
                 )}
                 {post.isAnonymous && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-bold text-muted-foreground">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
                     🥷 Anonymous
                   </span>
                 )}
                 <span className="text-sm text-muted-foreground">·</span>
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   {post.timestamp}
                 </span>
-                <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                   🏛️ {post.university.split(" ").slice(0, 2).join(" ")}
                 </span>
               </div>
 
               {/* Content */}
-              <p className="text-base font-medium leading-relaxed whitespace-pre-wrap">
+              <p className="text-sm font-normal leading-relaxed whitespace-pre-wrap text-foreground">
                 {post.content}
               </p>
 
               {/* Media */}
               {post.mediaUrl && (
-                <div className="rounded-2xl overflow-hidden border-2 border-border mt-3">
+                <div className="rounded-xl overflow-hidden border border-border mt-2">
                   {post.mediaType === "image" ? (
                     <img
                       src={post.mediaUrl}
@@ -127,32 +127,32 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
               )}
 
               {/* Action row */}
-              <div className="flex items-center gap-1 pt-2">
+              <div className="flex items-center gap-1 pt-1">
                 <Button
                   variant="ghost"
                   size="sm"
                   data-ocid="post.like.button"
-                  className={`h-10 gap-2 px-3 rounded-full font-bold ${
+                  className={`h-9 gap-1.5 px-2.5 rounded-full text-xs ${
                     isLiked
                       ? "text-destructive hover:text-destructive"
-                      : "text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      : "text-[#ADB5BD] hover:text-destructive hover:bg-destructive/10"
                   }`}
                   onClick={handleLike}
                 >
                   <Heart
-                    className={`h-5 w-5 ${isLiked ? "fill-current" : ""}`}
+                    className={`h-[18px] w-[18px] ${isLiked ? "fill-current" : ""}`}
                   />
-                  <span className="text-sm">{likeCount}</span>
+                  <span>{likeCount}</span>
                 </Button>
 
                 <Button
                   variant="ghost"
                   size="sm"
                   data-ocid="post.comment.button"
-                  className="h-10 gap-2 px-3 rounded-full font-bold text-muted-foreground hover:text-accent-foreground hover:bg-accent/10"
+                  className="h-9 gap-1.5 px-2.5 rounded-full text-xs text-[#ADB5BD] hover:text-foreground hover:bg-accent/10"
                 >
-                  <MessageCircle className="h-5 w-5" />
-                  <span className="text-sm">{post.comments}</span>
+                  <MessageCircle className="h-[18px] w-[18px]" />
+                  <span>{post.comments}</span>
                 </Button>
 
                 {/* Recliq — infinity symbol */}
@@ -160,27 +160,25 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                   variant="ghost"
                   size="sm"
                   data-ocid="post.recliq.button"
-                  className="h-10 gap-2 px-3 rounded-full font-bold text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  className="h-9 gap-1.5 px-2.5 rounded-full text-xs text-[#ADB5BD] hover:text-primary hover:bg-primary/10"
                 >
-                  <span className="text-lg leading-none font-black">∞</span>
-                  {post.shares > 0 && (
-                    <span className="text-sm">{post.shares}</span>
-                  )}
+                  <span className="text-base leading-none font-black">∞</span>
+                  {post.shares > 0 && <span>{post.shares}</span>}
                 </Button>
 
                 <Button
                   variant="ghost"
                   size="sm"
                   data-ocid="post.bookmark.button"
-                  className={`h-10 px-3 rounded-full font-bold ${
+                  className={`h-9 px-2.5 rounded-full ${
                     isBookmarked
                       ? "text-primary hover:text-primary"
-                      : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                      : "text-[#ADB5BD] hover:text-primary hover:bg-primary/10"
                   }`}
                   onClick={handleBookmark}
                 >
                   <Bookmark
-                    className={`h-5 w-5 ${isBookmarked ? "fill-current" : ""}`}
+                    className={`h-[18px] w-[18px] ${isBookmarked ? "fill-current" : ""}`}
                   />
                 </Button>
 
@@ -188,14 +186,14 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                   variant="ghost"
                   size="sm"
                   data-ocid="post.share.button"
-                  className="h-10 px-3 rounded-full font-bold text-muted-foreground hover:text-[#2C8A7A] hover:bg-[#2C8A7A]/10"
+                  className="h-9 px-2.5 rounded-full text-[#ADB5BD] hover:text-[#2C8A7A] hover:bg-[#2C8A7A]/10"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShareModalOpen(true);
                   }}
                   title="Share post"
                 >
-                  <Send className="h-5 w-5" />
+                  <Send className="h-[18px] w-[18px]" />
                 </Button>
               </div>
             </div>
