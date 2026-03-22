@@ -9,7 +9,6 @@ import {
 import { ThemeProvider } from "next-themes";
 import { AuthGate } from "./components/auth/AuthGate";
 import { AppLayout } from "./components/layout/AppLayout";
-import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import { BookmarksPage } from "./pages/BookmarksPage";
 import { BoostsPage } from "./pages/BoostsPage";
 import { CommunitiesPage } from "./pages/CommunitiesPage";
@@ -29,16 +28,31 @@ import { RoomsPage } from "./pages/RoomsPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { UserProfilePage } from "./pages/UserProfilePage";
 import { AdminPage } from "./pages/admin/AdminPage";
+import { SignInPage } from "./pages/auth/SignInPage";
+import { SignUpPage } from "./pages/auth/SignUpPage";
 
 function RootComponent() {
-  const { identity } = useInternetIdentity();
-  const isAuthenticated = !!identity;
-
-  return <AuthGate>{isAuthenticated ? <AppLayout /> : null}</AuthGate>;
+  return (
+    <AuthGate>
+      <AppLayout />
+    </AuthGate>
+  );
 }
 
 const rootRoute = createRootRoute({
   component: RootComponent,
+});
+
+const signInRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/signin",
+  component: SignInPage,
+});
+
+const signUpRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/signup",
+  component: SignUpPage,
 });
 
 const indexRoute = createRoute({
@@ -125,6 +139,13 @@ const roomsRoute = createRoute({
   component: RoomsPage,
 });
 
+// /anonymous-rooms alias
+const anonymousRoomsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/anonymous-rooms",
+  component: RoomsPage,
+});
+
 const roomDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/rooms/$roomId",
@@ -156,6 +177,8 @@ const boostsRoute = createRoute({
 });
 
 const routeTree = rootRoute.addChildren([
+  signInRoute,
+  signUpRoute,
   indexRoute,
   exploreRoute,
   notificationsRoute,
@@ -170,6 +193,7 @@ const routeTree = rootRoute.addChildren([
   communitiesRoute,
   communityDetailRoute,
   roomsRoute,
+  anonymousRoomsRoute,
   roomDetailRoute,
   roomieRoute,
   settingsRoute,

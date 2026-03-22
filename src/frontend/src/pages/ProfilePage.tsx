@@ -1,10 +1,20 @@
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { PostComposer } from "../components/posts/PostComposer";
 import { ProfileHeader } from "../components/profile/ProfileHeader";
+import { FloatingActionButton } from "../components/shared/FloatingActionButton";
 import { useGetCallerUserProfile } from "../hooks/useQueries";
 
 export function ProfilePage() {
   const { data: profile, isLoading } = useGetCallerUserProfile();
+  const [composerOpen, setComposerOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -58,6 +68,17 @@ export function ProfilePage() {
           No media yet
         </TabsContent>
       </Tabs>
+
+      <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
+        <DialogContent className="max-w-lg" data-ocid="profile.composer.dialog">
+          <DialogHeader>
+            <DialogTitle>Create Post</DialogTitle>
+          </DialogHeader>
+          <PostComposer />
+        </DialogContent>
+      </Dialog>
+
+      <FloatingActionButton onClick={() => setComposerOpen(true)} />
     </div>
   );
 }

@@ -1,42 +1,38 @@
-# CLIQ — Boosted Posts Feature
+# CLIQ – FAB, Share Modal & Anonymous Rooms Redesign
 
 ## Current State
-- PostCard displays posts with like, comment, share, bookmark actions
-- PostComposer handles post creation with text/media
-- FeedComposer is the minimal two-button composer in the home feed
-- App.tsx has routes for all major pages; no /boosts route yet
-- No boost functionality exists in any component
-- Paystack is planned but not yet integrated
+- HomeFeedPage has an inline FeedComposer that hides on scroll up
+- PostCard has a Share2 icon used for Recliq (no share modal exists)
+- RoomDetailPage has a basic layout mixing confessions and chat without visual distinction
+- No global FAB exists; post creation only accessible from home feed
 
 ## Requested Changes (Diff)
 
 ### Add
-- `BoostPostModal` component: triggered from PostCard action; shows ₦500/24h pricing, Paystack inline payment, confirms boost activation
-- `BoostedPostBadge` component: non-intrusive 🚀 badge with 'Sponsored' or 'Promoted' label shown at top of boosted PostCard
-- `BoostReasonLabel` component: small contextual label below author row in viewer feed (e.g. 'Popular near you', '5 people you follow liked this')
-- `BoostsPage` (`/boosts`): poster's analytics dashboard showing active boosts, views count, message clicks, cost per result, boost history
-- Paystack inline payment integration using `pk_test_demo` key (replaceable)
-- Boost option button in PostComposer (in post creation flow, after writing content — "Boost this post" toggle/checkbox with ₦500 label)
-- Route `/boosts` added to App.tsx
-- Boost action button added to PostCard action row (🚀 icon, opens BoostPostModal)
-- Nav link to Boosts dashboard in side drawer / PrimaryNav
+- `FloatingActionButton` component: 56px circle, teal (#2C8A7A), + icon, fixed bottom-right (above bottom nav). Hides when scrolling down, shows when scrolling up. Exported as reusable component.
+- FAB to: HomeFeedPage, ProfilePage, ExplorePage, CommunitiesPage, MarketplacePage. Each page wires FAB to appropriate modal (post composer for social pages, listing creator for marketplace).
+- `ShareModal` component: triggered when user clicks the share (📤) button on PostCard. Shows: (1) Mutual followers section (avatar, display name, @username, Share button — mock 5 mutuals); (2) Other options: Copy link (clipboard), Gmail, WhatsApp, Twitter, More. Share to mutual sends to DMs (toast confirmation). Copy link copies `window.location.origin/post/:id` to clipboard.
+- Separate share icon (📤 / Send icon) on PostCard action row, distinct from the Recliq infinity button.
+- Confession postcards redesign in RoomDetailPage: large visually distinct cards above live chat, showing anonymous identity, content, reply count, reaction count, View Thread button that opens a threaded modal.
+- ➕ button in top LEFT of room header for creating confessions (opens confession compose modal, not bottom bar).
+- Top 5 Active Rooms section already exists in RoomsPage — keep and ensure it shows online counts.
+- Confession thread modal: nested replies view.
 
 ### Modify
-- `PostCard`: add boost badge display (if post is boosted), boost reason label (if in viewer feed), and boost action button in action row
-- `PostComposer`: add optional boost toggle at bottom with ₦500/24h label that triggers Paystack after posting
-- `App.tsx`: add `/boosts` route
-- `PrimaryNav` / `AppLayout` side drawer: add Boosts analytics nav item
+- HomeFeedPage: remove `<FeedComposer />` inline component entirely. Keep tabs sticky.
+- PostCard: rename Share2/recliq button to use infinity symbol (∞) text or Infinity icon. Add new dedicated share button (Send icon) that opens ShareModal.
+- RoomDetailPage: split layout clearly — confessions as postcard section at top, live chat below divider. Move ➕ confession button to header area (top left). Remove ➕ from bottom input bar. Confessions show reaction count (👍 count), reply count, View Thread button.
+- RoomsPage: ensure Top 5 Active Rooms shows online user counts clearly.
 
 ### Remove
-- Nothing removed
+- FeedComposer inline section from HomeFeedPage header area.
+- ➕ confession button from bottom input bar in RoomDetailPage.
 
 ## Implementation Plan
-1. Create `src/frontend/src/lib/boostUtils.ts` — mock boost state management using localStorage (active boosts, view counts, reasons list)
-2. Create `src/frontend/src/components/boosts/BoostPostModal.tsx` — payment modal with Paystack inline script loading
-3. Create `src/frontend/src/components/boosts/BoostedPostBadge.tsx` — badge component
-4. Create `src/frontend/src/components/boosts/BoostReasonLabel.tsx` — viewer context label
-5. Create `src/frontend/src/pages/BoostsPage.tsx` — analytics dashboard
-6. Update `PostCard.tsx` — add badge, reason, boost button
-7. Update `PostComposer.tsx` — add boost toggle option
-8. Update `App.tsx` — add /boosts route
-9. Update `PrimaryNav.tsx` / `AppLayout.tsx` side drawer — add Boosts nav item
+1. Create `src/frontend/src/components/shared/FloatingActionButton.tsx` — scroll-aware FAB component accepting `onClick` prop and optional `icon`.
+2. Create `src/frontend/src/components/posts/ShareModal.tsx` — share modal with mock mutuals and external share options.
+3. Update `HomeFeedPage.tsx`: remove FeedComposer, add FAB that opens PostComposer dialog.
+4. Update `ProfilePage.tsx`, `ExplorePage.tsx`, `CommunitiesPage.tsx`: add FAB opening PostComposer dialog.
+5. Update `MarketplacePage.tsx`: add FAB opening listing creator dialog (already exists as isCreateOpen).
+6. Update `PostCard.tsx`: add share button (Send icon) opening ShareModal; keep recliq button as-is with infinity symbol.
+7. Update `RoomDetailPage.tsx`: redesign confession postcard cards, move ➕ to header, add View Thread modal, add reaction counts.

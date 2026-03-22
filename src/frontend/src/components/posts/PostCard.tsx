@@ -8,6 +8,7 @@ import {
   Loader2,
   MessageCircle,
   Rocket,
+  Send,
   Share2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -34,6 +35,7 @@ import {
 import { BoostPostModal } from "../boosts/BoostPostModal";
 import { BoostReasonLabel } from "../boosts/BoostReasonLabel";
 import { BoostedPostBadge } from "../boosts/BoostedPostBadge";
+import { ShareModal } from "./ShareModal";
 
 interface PostCardProps {
   post: Post;
@@ -50,6 +52,7 @@ export function PostCard({ post }: PostCardProps) {
   const recliqPost = useRecliqPost();
   const [isLiked, setIsLiked] = useState(false);
   const [boostModalOpen, setBoostModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const [isRecliqing, setIsRecliqing] = useState(false);
 
   const postIdStr = post.id.toString();
@@ -281,6 +284,19 @@ export function PostCard({ post }: PostCardProps) {
                 <Button
                   variant="ghost"
                   size="sm"
+                  className="h-10 px-3 rounded-full font-bold text-muted-foreground hover:text-[#2C8A7A] hover:bg-[#2C8A7A]/10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShareModalOpen(true);
+                  }}
+                  title="Share post"
+                  data-ocid="post_card.share_button"
+                >
+                  <Send className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="h-10 w-10 rounded-full font-bold text-muted-foreground hover:text-primary hover:bg-primary/10 ml-auto"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -301,6 +317,11 @@ export function PostCard({ post }: PostCardProps) {
         postId={postIdStr}
         open={boostModalOpen}
         onOpenChange={setBoostModalOpen}
+      />
+      <ShareModal
+        postId={postIdStr}
+        open={shareModalOpen}
+        onOpenChange={setShareModalOpen}
       />
     </>
   );

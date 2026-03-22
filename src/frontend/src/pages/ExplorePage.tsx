@@ -1,6 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -12,6 +18,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Search } from "lucide-react";
 import { useState } from "react";
+import { PostComposer } from "../components/posts/PostComposer";
+import { FloatingActionButton } from "../components/shared/FloatingActionButton";
 import { UNIVERSITIES } from "../constants/universities";
 import { useSearchUsers } from "../hooks/useQueries";
 
@@ -19,6 +27,7 @@ export function ExplorePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [universityFilter, setUniversityFilter] = useState<string | null>(null);
   const [debouncedTerm, setDebouncedTerm] = useState("");
+  const [composerOpen, setComposerOpen] = useState(false);
 
   const { data: users, isLoading } = useSearchUsers(
     debouncedTerm,
@@ -142,6 +151,17 @@ export function ExplorePage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
+        <DialogContent className="max-w-lg" data-ocid="explore.composer.dialog">
+          <DialogHeader>
+            <DialogTitle>Create Post</DialogTitle>
+          </DialogHeader>
+          <PostComposer />
+        </DialogContent>
+      </Dialog>
+
+      <FloatingActionButton onClick={() => setComposerOpen(true)} />
     </div>
   );
 }

@@ -11,10 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "@tanstack/react-router";
-import { Loader2, Plus, Search } from "lucide-react";
+import { Loader2, Plus, Search, ShoppingBag } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { ExternalBlob } from "../backend";
+import { FloatingActionButton } from "../components/shared/FloatingActionButton";
 import {
   useCreateListing,
   useGetCallerUserProfile,
@@ -102,12 +103,12 @@ export function MarketplacePage() {
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button data-ocid="marketplace.open_modal_button">
               <Plus className="mr-2 h-4 w-4" />
               New Listing
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md" data-ocid="marketplace.dialog">
             <DialogHeader>
               <DialogTitle>Create Listing</DialogTitle>
             </DialogHeader>
@@ -119,6 +120,7 @@ export function MarketplacePage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g., Calculus Textbook"
+                  data-ocid="marketplace.title.input"
                 />
               </div>
               <div>
@@ -129,6 +131,7 @@ export function MarketplacePage() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe your item..."
                   className="min-h-[100px]"
+                  data-ocid="marketplace.description.textarea"
                 />
               </div>
               <div>
@@ -141,6 +144,7 @@ export function MarketplacePage() {
                   placeholder="0.00"
                   min="0"
                   step="0.01"
+                  data-ocid="marketplace.price.input"
                 />
               </div>
               <div>
@@ -176,6 +180,7 @@ export function MarketplacePage() {
                     variant="outline"
                     className="w-full mt-2"
                     onClick={() => fileInputRef.current?.click()}
+                    data-ocid="marketplace.upload_button"
                   >
                     Select Image
                   </Button>
@@ -185,6 +190,7 @@ export function MarketplacePage() {
                 className="w-full"
                 onClick={handleCreateListing}
                 disabled={createListing.isPending}
+                data-ocid="marketplace.submit_button"
               >
                 {createListing.isPending ? (
                   <>
@@ -207,16 +213,20 @@ export function MarketplacePage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
+          data-ocid="marketplace.search_input"
         />
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
+        <div
+          className="flex justify-center py-12"
+          data-ocid="marketplace.loading_state"
+        >
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : listings && listings.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2">
-          {listings.map((listing) => {
+          {listings.map((listing, i) => {
             const imageUrl = listing.media?.getDirectURL();
             return (
               <Card
@@ -228,6 +238,7 @@ export function MarketplacePage() {
                     params: { listingId: listing.id.toString() },
                   })
                 }
+                data-ocid={`marketplace.item.${i + 1}`}
               >
                 {imageUrl && (
                   <div className="aspect-video w-full overflow-hidden rounded-t-lg">
@@ -259,7 +270,11 @@ export function MarketplacePage() {
           })}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div
+          className="flex flex-col items-center justify-center py-12 text-center"
+          data-ocid="marketplace.empty_state"
+        >
+          <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-30" />
           <h2 className="mb-2 text-xl font-semibold">No listings found</h2>
           <p className="text-muted-foreground mb-4">
             {searchTerm
@@ -268,6 +283,12 @@ export function MarketplacePage() {
           </p>
         </div>
       )}
+
+      {/* FAB opens the create listing dialog */}
+      <FloatingActionButton
+        onClick={() => setIsCreateOpen(true)}
+        icon={<Plus className="h-7 w-7 stroke-[2.5]" />}
+      />
     </div>
   );
 }

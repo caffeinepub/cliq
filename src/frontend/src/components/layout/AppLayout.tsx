@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -16,7 +16,6 @@ import {
   ChevronRight,
   Diamond,
   Home,
-  Home as HomeIcon,
   LogOut,
   Menu,
   MessageCircle,
@@ -34,21 +33,31 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-import { useAdminAuth } from "../../hooks/useAdminAuth";
-import { useInternetIdentity } from "../../hooks/useInternetIdentity";
+import { clearMockUser, getMockUser } from "../../hooks/useMockAuth";
 import { useGetUnreadNotificationCount } from "../../hooks/useNotifications";
-import { useGetCallerUserProfile } from "../../hooks/useQueries";
 
 export function AppLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouterState();
   const currentPath = router.location.pathname;
-  const { clear } = useInternetIdentity();
-  const { data: profile } = useGetCallerUserProfile();
-  const { data: unreadCount } = useGetUnreadNotificationCount();
-  const { isAdmin } = useAdminAuth();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
+  const { data: unreadCount } = useGetUnreadNotificationCount();
+
+  const user = getMockUser();
+  const initials =
+    user?.displayName
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) ?? "U";
+
+  const handleLogout = () => {
+    clearMockUser();
+    navigate({ to: "/signin" });
+    window.location.reload();
+  };
 
   const bottomNavItems = [
     { path: "/", icon: Home, label: "Home" },
@@ -68,7 +77,7 @@ export function AppLayout() {
     { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
     { path: "/communities", icon: Users, label: "Communities" },
     { path: "/rooms", icon: Skull, label: "Anonymous Rooms" },
-    { path: "/roomie", icon: HomeIcon, label: "Roomie Matching" },
+    { path: "/roomie", icon: Home, label: "Roomie Matching" },
     { path: "/boosts", icon: Rocket, label: "My Boosts" },
     { path: "/settings", icon: Settings, label: "Settings" },
   ];
@@ -86,20 +95,12 @@ export function AppLayout() {
     { path: "/messages", icon: MessageCircle, label: "Messages" },
     { path: "/communities", icon: Users, label: "Communities" },
     { path: "/rooms", icon: Skull, label: "Anonymous Rooms" },
-    { path: "/roomie", icon: HomeIcon, label: "Roomie" },
+    { path: "/roomie", icon: Home, label: "Roomie" },
     { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
     { path: "/boosts", icon: Rocket, label: "My Boosts" },
     { path: "/profile", icon: User, label: "Profile" },
-    ...(isAdmin ? [{ path: "/admin", icon: Shield, label: "Admin" }] : []),
+    { path: "/admin", icon: Shield, label: "Admin" },
   ];
-
-  const avatarUrl = profile?.avatar?.getDirectURL();
-  const initials = profile?.displayName
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -110,6 +111,9 @@ export function AppLayout() {
             src="/assets/uploads/IMG-20260226-WA0003-1.jpg"
             alt="CLIQ"
             className="h-10 w-10"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
           />
           <span className="text-2xl font-black tracking-tight">CLIQ</span>
         </div>
@@ -126,6 +130,7 @@ export function AppLayout() {
                       "w-full justify-start gap-3 text-sm font-semibold rounded-xl h-11",
                       isActive && "shadow-bold",
                     )}
+                    data-ocid={`nav.${item.label.toLowerCase().replace(/\s+/g, "_")}.link`}
                   >
                     <Icon className="h-5 w-5" />
                     <span>{item.label}</span>
@@ -145,6 +150,21 @@ export function AppLayout() {
           </nav>
         </div>
         <div className="border-t-2 p-4 space-y-2">
+          {user && (
+            <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-muted mb-2">
+              <Avatar className="h-9 w-9 border-2 border-primary">
+                <AvatarFallback className="font-bold bg-primary text-primary-foreground text-sm">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0">
+                <p className="font-bold text-sm truncate">{user.displayName}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  @{user.username}
+                </p>
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-2 p-2">
             <Switch
               checked={theme === "dark"}
@@ -158,7 +178,7 @@ export function AppLayout() {
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-sm font-semibold rounded-xl h-11 text-destructive hover:text-destructive"
-            onClick={() => clear()}
+            onClick={handleLogout}
             data-ocid="nav.logout_button"
           >
             <LogOut className="h-5 w-5" />
@@ -181,18 +201,16 @@ export function AppLayout() {
             <div className="flex items-center justify-between p-4 border-b-2">
               <div className="flex items-center gap-3">
                 <Avatar className="h-12 w-12 border-2 border-primary">
-                  {avatarUrl ? (
-                    <AvatarImage src={avatarUrl} alt={profile?.displayName} />
-                  ) : (
-                    <AvatarFallback className="font-bold bg-primary text-primary-foreground">
-                      {initials || "U"}
-                    </AvatarFallback>
-                  )}
+                  <AvatarFallback className="font-bold bg-primary text-primary-foreground">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-bold text-sm">{profile?.displayName}</p>
+                  <p className="font-bold text-sm">
+                    {user?.displayName ?? "Guest"}
+                  </p>
                   <p className="text-xs text-muted-foreground">
-                    @{profile?.username}
+                    @{user?.username ?? "guest"}
                   </p>
                 </div>
               </div>
@@ -207,10 +225,10 @@ export function AppLayout() {
             </div>
 
             {/* University badge */}
-            {profile?.university && (
+            {user?.university && (
               <div className="px-4 py-2 bg-primary/10">
                 <span className="text-xs font-bold text-primary">
-                  🏛️ {profile.university}
+                  🏛️ {user.university}
                 </span>
               </div>
             )}
@@ -241,19 +259,17 @@ export function AppLayout() {
                     </Link>
                   );
                 })}
-                {isAdmin && (
-                  <Link to="/admin" onClick={() => setDrawerOpen(false)}>
-                    <Button
-                      variant={currentPath === "/admin" ? "default" : "ghost"}
-                      className="w-full justify-between gap-3 text-sm font-semibold rounded-xl h-11"
-                    >
-                      <span className="flex items-center gap-3">
-                        <Shield className="h-5 w-5" /> Admin
-                      </span>
-                      <ChevronRight className="h-4 w-4 opacity-50" />
-                    </Button>
-                  </Link>
-                )}
+                <Link to="/admin" onClick={() => setDrawerOpen(false)}>
+                  <Button
+                    variant={currentPath === "/admin" ? "default" : "ghost"}
+                    className="w-full justify-between gap-3 text-sm font-semibold rounded-xl h-11"
+                  >
+                    <span className="flex items-center gap-3">
+                      <Shield className="h-5 w-5" /> Admin
+                    </span>
+                    <ChevronRight className="h-4 w-4 opacity-50" />
+                  </Button>
+                </Link>
               </nav>
 
               <Separator className="my-3" />
@@ -266,7 +282,6 @@ export function AppLayout() {
                     setDrawerOpen(false);
                     navigate({ to: "/settings" });
                   }}
-                  data-ocid="drawer.settings.link"
                 >
                   <Diamond className="h-5 w-5 text-primary" />
                   Upgrade Premium
@@ -290,7 +305,7 @@ export function AppLayout() {
                   className="w-full justify-start gap-3 text-sm font-semibold rounded-xl h-11 text-destructive hover:text-destructive"
                   onClick={() => {
                     setDrawerOpen(false);
-                    clear();
+                    handleLogout();
                   }}
                   data-ocid="drawer.logout_button"
                 >
@@ -320,6 +335,9 @@ export function AppLayout() {
               src="/assets/uploads/IMG-20260226-WA0003-1.jpg"
               alt="CLIQ"
               className="h-7 w-7"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
             />
             <span className="text-xl font-black tracking-tight">CLIQ</span>
           </div>

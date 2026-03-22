@@ -16,6 +16,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { Globe, Lock, Plus, Search, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { PostComposer } from "../components/posts/PostComposer";
+import { FloatingActionButton } from "../components/shared/FloatingActionButton";
 
 interface Community {
   id: string;
@@ -97,6 +99,7 @@ export function CommunitiesPage() {
   const [communities, setCommunities] = useState<Community[]>(MOCK_COMMUNITIES);
   const [search, setSearch] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
+  const [composerOpen, setComposerOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newPrivate, setNewPrivate] = useState(false);
@@ -315,6 +318,21 @@ export function CommunitiesPage() {
           )}
         </div>
       )}
+
+      {/* Post Composer Dialog */}
+      <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
+        <DialogContent
+          className="max-w-lg"
+          data-ocid="communities.composer.dialog"
+        >
+          <DialogHeader>
+            <DialogTitle>Create Post</DialogTitle>
+          </DialogHeader>
+          <PostComposer />
+        </DialogContent>
+      </Dialog>
+
+      <FloatingActionButton onClick={() => setComposerOpen(true)} />
     </div>
   );
 }

@@ -1,9 +1,16 @@
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { FeedComposer } from "../components/posts/FeedComposer";
+import { useState } from "react";
 import { MockPostCard } from "../components/posts/MockPostCard";
 import { PostCard } from "../components/posts/PostCard";
+import { PostComposer } from "../components/posts/PostComposer";
+import { FloatingActionButton } from "../components/shared/FloatingActionButton";
 import { mockPosts } from "../data/mockPosts";
 import {
   useGetCampusFeed,
@@ -15,8 +22,7 @@ export function HomeFeedPage() {
   const [activeTab, setActiveTab] = useState<
     "following" | "campus" | "universal"
   >("campus");
-  const [composerVisible, setComposerVisible] = useState(true);
-  const lastScrollY = useRef(0);
+  const [composerOpen, setComposerOpen] = useState(false);
 
   const { data: followingFeed, isLoading: followingLoading } =
     useGetFollowingFeed();
@@ -24,36 +30,10 @@ export function HomeFeedPage() {
   const { data: universalFeed, isLoading: universalLoading } =
     useGetUniversalFeed();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      if (currentY > lastScrollY.current + 5) {
-        setComposerVisible(false);
-      } else if (currentY < lastScrollY.current - 5) {
-        setComposerVisible(true);
-      }
-      lastScrollY.current = currentY;
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <div data-ocid="home_feed.page" className="relative">
-      {/* Sticky composer — hides on scroll up */}
-      <div
-        className={[
-          "sticky top-0 z-20 bg-background transition-all duration-300",
-          composerVisible
-            ? "translate-y-0 opacity-100"
-            : "-translate-y-full opacity-0 pointer-events-none h-0 overflow-hidden",
-        ].join(" ")}
-      >
-        <FeedComposer />
-      </div>
-
-      {/* Tabs — always visible, sticks to top when composer hides */}
-      <div className="sticky top-0 z-10 bg-background border-b-2 border-border px-4 pt-2 pb-0">
+    <div data-ocid="home_feed.page" className="relative pb-4">
+      {/* Tabs — sticky at top */}
+      <div className="sticky top-0 z-20 bg-background border-b-2 border-border px-4 pt-2 pb-0">
         <Tabs
           data-ocid="home_feed.tabs"
           value={activeTab}
@@ -88,12 +68,9 @@ export function HomeFeedPage() {
 
           {/* FOLLOWING TAB */}
           <TabsContent value="following" className="space-y-4 mt-6">
-            {/* Always show mock posts first */}
             {mockPosts.map((post, i) => (
               <MockPostCard key={post.id} post={post} index={i + 1} />
             ))}
-
-            {/* Then real posts */}
             {followingLoading ? (
               <div
                 className="flex justify-center py-12"
@@ -115,12 +92,9 @@ export function HomeFeedPage() {
 
           {/* CAMPUS TAB */}
           <TabsContent value="campus" className="space-y-4 mt-6">
-            {/* Always show mock posts first */}
             {mockPosts.map((post, i) => (
               <MockPostCard key={post.id} post={post} index={i + 1} />
             ))}
-
-            {/* Then real posts */}
             {campusLoading ? (
               <div
                 className="flex justify-center py-12"
@@ -142,12 +116,9 @@ export function HomeFeedPage() {
 
           {/* UNIVERSAL TAB */}
           <TabsContent value="universal" className="space-y-4 mt-6">
-            {/* Always show mock posts first */}
             {mockPosts.map((post, i) => (
               <MockPostCard key={post.id} post={post} index={i + 1} />
             ))}
-
-            {/* Then real posts */}
             {universalLoading ? (
               <div
                 className="flex justify-center py-12"
@@ -168,6 +139,22 @@ export function HomeFeedPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Post Composer Dialog */}
+      <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
+        <DialogContent
+          className="max-w-lg"
+          data-ocid="home_feed.composer.dialog"
+        >
+          <DialogHeader>
+            <DialogTitle>Create Post</DialogTitle>
+          </DialogHeader>
+          <PostComposer />
+        </DialogContent>
+      </Dialog>
+
+      {/* FAB */}
+      <FloatingActionButton onClick={() => setComposerOpen(true)} />
     </div>
   );
 }
