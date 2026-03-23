@@ -23,6 +23,7 @@ import { NotificationsPage } from "./pages/NotificationsPage";
 import { PostDetailPage } from "./pages/PostDetailPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RoomDetailPage } from "./pages/RoomDetailPage";
+import { RoomieLandingPage } from "./pages/RoomieLandingPage";
 import { RoomiePage } from "./pages/RoomiePage";
 import { RoomsPage } from "./pages/RoomsPage";
 import { SettingsPage } from "./pages/SettingsPage";
@@ -152,9 +153,17 @@ const roomDetailRoute = createRoute({
   component: RoomDetailPage,
 });
 
+// /roomie → landing page
 const roomieRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/roomie",
+  component: RoomieLandingPage,
+});
+
+// /roomie-match → matching wizard
+const roomieMatchRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/roomie-match",
   component: RoomiePage,
 });
 
@@ -196,6 +205,7 @@ const routeTree = rootRoute.addChildren([
   anonymousRoomsRoute,
   roomDetailRoute,
   roomieRoute,
+  roomieMatchRoute,
   settingsRoute,
   adminRoute,
   boostsRoute,

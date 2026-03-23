@@ -68,7 +68,7 @@ export function HomeFeedPage() {
         </div>
 
         {/* CLIQS TAB — Following feed */}
-        <TabsContent value="following" className="space-y-4 mt-6 px-4">
+        <TabsContent value="following" className="mt-0 px-0">
           {mockPosts.map((post, i) => (
             <MockPostCard key={post.id} post={post} index={i + 1} />
           ))}
@@ -92,7 +92,7 @@ export function HomeFeedPage() {
         </TabsContent>
 
         {/* CAMPUS TAB */}
-        <TabsContent value="campus" className="space-y-4 mt-6 px-4">
+        <TabsContent value="campus" className="mt-0 px-0">
           {mockPosts.map((post, i) => (
             <MockPostCard key={post.id} post={post} index={i + 1} />
           ))}
@@ -116,8 +116,8 @@ export function HomeFeedPage() {
         </TabsContent>
 
         {/* EXPLORE TAB — algorithm-curated from all universities */}
-        <TabsContent value="universal" className="space-y-4 mt-6 px-4">
-          <p className="text-xs text-muted-foreground pb-1">
+        <TabsContent value="universal" className="mt-0 px-0">
+          <p className="text-xs text-muted-foreground pb-1 px-4 pt-2">
             Trending posts from all universities
           </p>
           {mockPosts.map((post, i) => (

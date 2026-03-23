@@ -156,7 +156,7 @@ export function PostCard({ post }: PostCardProps) {
   return (
     <>
       <Card
-        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border rounded-none shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
         onClick={handleCardClick}
       >
         <CardContent className="p-5">
@@ -206,7 +206,7 @@ export function PostCard({ post }: PostCardProps) {
               </p>
 
               {mediaUrl && (
-                <div className="rounded-xl overflow-hidden border border-border mt-2">
+                <div className="rounded-none overflow-hidden border border-border mt-2">
                   {post.media?.__kind__ === "image" ? (
                     <img
                       src={mediaUrl}

@@ -40,7 +40,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
   return (
     <>
       <Card
-        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border rounded-none shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
         data-ocid={`post.item.${index}`}
       >
         <CardContent className="p-5">
@@ -106,7 +106,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
 
               {/* Media */}
               {post.mediaUrl && (
-                <div className="rounded-xl overflow-hidden border border-border mt-2">
+                <div className="rounded-none overflow-hidden border border-border mt-2">
                   {post.mediaType === "image" ? (
                     <img
                       src={post.mediaUrl}
