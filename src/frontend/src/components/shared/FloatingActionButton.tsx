@@ -33,18 +33,18 @@ export function FloatingActionButton({
       onClick={onClick}
       data-ocid="fab.primary_button"
       aria-label="Create new post"
-      style={{ backgroundColor: "#2C8A7A" }}
+      style={{ backgroundColor: "#e8432d" }}
       className={[
-        "fixed z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg text-white",
+        "fixed z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg",
         "bottom-24 right-4 md:bottom-8 md:right-8",
         "transition-all duration-300 ease-in-out",
-        "hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#2C8A7A]/40",
+        "hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#e8432d]/40",
         visible
           ? "translate-y-0 opacity-100"
           : "translate-y-16 opacity-0 pointer-events-none",
       ].join(" ")}
     >
-      {icon ?? <Plus className="h-7 w-7 stroke-[2.5]" />}
+      {icon ?? <Plus className="h-7 w-7 stroke-[2.5] text-white" />}
     </button>
   );
 }

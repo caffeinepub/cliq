@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { Notification } from "../backend";
+import { WeeklyDigestSlides } from "../components/notifications/WeeklyDigestSlides";
 import { useGetNotifications } from "../hooks/useNotifications";
 import { useGetUserProfile } from "../hooks/useQueries";
 
@@ -100,7 +101,9 @@ function NotificationItem({ notification }: { notification: Notification }) {
 
   return (
     <Card
-      className={`cursor-pointer hover:bg-accent/5 transition-colors ${!notification.read ? "border-primary/50" : ""}`}
+      className={`cursor-pointer hover:bg-accent/5 transition-colors rounded-2xl ${
+        !notification.read ? "border-primary/50" : ""
+      }`}
       onClick={handleClick}
     >
       <CardContent className="p-4">
@@ -146,22 +149,10 @@ export function NotificationsPage() {
     Object.fromEntries(NOTIF_PREFS.map((p) => [p.key, p.default])),
   );
 
-  const MOCK_DIGEST = {
-    totalLikes: 147,
-    totalComments: 32,
-    newFollowers: 8,
-    profileViews: 213,
-    topPost: {
-      content:
-        "Exam tips from a 5.0 GPA student 🧵 — 1. Read past questions first — 70% of exams repeat...",
-      likes: 445,
-    },
-    trending: ["#UNILAG", "#NaijaStudent", "#CampusLife"],
-  };
-
   return (
     <div className="space-y-4 p-4">
-      <div className="flex items-center justify-between border-b pb-4">
+      {/* Page header */}
+      <div className="flex items-center justify-between border-b pb-4 rounded-none">
         <h1 className="text-2xl font-bold">Notifications</h1>
         <button
           type="button"
@@ -175,20 +166,25 @@ export function NotificationsPage() {
 
       {/* Weekly Digest card */}
       <Card
-        className="border border-[#E5E5E5] cursor-pointer hover:shadow-md transition"
+        className="border border-[#FF6B35]/30 cursor-pointer hover:shadow-md transition rounded-2xl bg-gradient-to-r from-[#FF6B35]/5 to-transparent"
         onClick={() => setDigestOpen(true)}
       >
         <CardContent className="p-4 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-xl shrink-0">
+          <div className="h-11 w-11 rounded-2xl bg-[#FF6B35] flex items-center justify-center text-xl shrink-0 shadow-sm">
             📊
           </div>
           <div className="flex-1">
-            <p className="font-semibold text-sm">Your Weekly Digest</p>
+            <p className="font-bold text-sm">Your Weekly Digest</p>
             <p className="text-xs text-muted-foreground">
-              See your top posts and stats this week
+              Top posts, new followers & your best content
             </p>
           </div>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-[#FF6B35] font-semibold">
+              5 slides
+            </span>
+            <ChevronRight className="h-4 w-4 text-[#FF6B35]" />
+          </div>
         </CardContent>
       </Card>
 
@@ -215,93 +211,11 @@ export function NotificationsPage() {
         </div>
       )}
 
-      {/* Weekly Digest Sheet */}
-      <Sheet open={digestOpen} onOpenChange={setDigestOpen}>
-        <SheetContent
-          side="bottom"
-          className="rounded-t-2xl max-h-[85vh] overflow-y-auto"
-        >
-          <SheetHeader className="mb-4">
-            <SheetTitle className="text-lg font-black">
-              📊 Your Weekly Digest
-            </SheetTitle>
-          </SheetHeader>
-
-          {/* Stat cards */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            {[
-              {
-                label: "Total Likes",
-                value: MOCK_DIGEST.totalLikes,
-                icon: "🔥",
-              },
-              {
-                label: "Total Comments",
-                value: MOCK_DIGEST.totalComments,
-                icon: "💬",
-              },
-              {
-                label: "New Followers",
-                value: MOCK_DIGEST.newFollowers,
-                icon: "👥",
-              },
-              {
-                label: "Profile Views",
-                value: MOCK_DIGEST.profileViews,
-                icon: "👁️",
-              },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="bg-[#F8F9FA] rounded-xl p-4 text-center border border-[#E5E5E5]"
-              >
-                <div className="text-2xl mb-1">{stat.icon}</div>
-                <div className="text-2xl font-black text-[#212529]">
-                  {stat.value}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Top Post */}
-          <div className="mb-6">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-              Your Top Post This Week
-            </p>
-            <div className="border border-[#E5E5E5] rounded-xl p-4">
-              <p className="text-sm leading-relaxed text-[#212529] line-clamp-3">
-                {MOCK_DIGEST.topPost.content}
-              </p>
-              <div className="flex items-center gap-1 mt-3">
-                <span className="text-lg">🔥</span>
-                <span className="text-sm font-bold text-[#FF6B35]">
-                  {MOCK_DIGEST.topPost.likes} likes
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Trending */}
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-              Trending on Campus This Week
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {MOCK_DIGEST.trending.map((tag) => (
-                <span
-                  key={tag}
-                  className="bg-primary/10 text-primary font-semibold text-sm px-3 py-1.5 rounded-full"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
+      {/* Weekly Digest Slides overlay */}
+      <WeeklyDigestSlides
+        open={digestOpen}
+        onClose={() => setDigestOpen(false)}
+      />
 
       {/* Notification Preferences Sheet */}
       <Sheet open={prefsOpen} onOpenChange={setPrefsOpen}>

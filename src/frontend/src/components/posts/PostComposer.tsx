@@ -17,6 +17,14 @@ interface PostComposerProps {
   isAnonymous?: boolean;
 }
 
+/** Extracts unique @username mentions from post content */
+function extractMentions(content: string): string[] {
+  const mentionRegex = /@([a-zA-Z0-9_]+)/g;
+  const found = content.match(mentionRegex) ?? [];
+  const unique = Array.from(new Set(found.map((m) => m.slice(1))));
+  return unique;
+}
+
 export function PostComposer({ isAnonymous = false }: PostComposerProps) {
   const [content, setContent] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -79,6 +87,9 @@ export function PostComposer({ isAnonymous = false }: PostComposerProps) {
       return;
     }
 
+    // Detect @mentions before posting
+    const mentions = extractMentions(content);
+
     try {
       let media: MediaAttachment | null = null;
 
@@ -105,6 +116,18 @@ export function PostComposer({ isAnonymous = false }: PostComposerProps) {
           ? "Posted to your campus!"
           : "Posted to your followers!",
       );
+
+      // Fire mention notifications after successful post
+      if (mentions.length > 0) {
+        setTimeout(() => {
+          for (const username of mentions) {
+            toast(`📣 @${username} was notified that you mentioned them`, {
+              duration: 3500,
+            });
+          }
+        }, 600);
+      }
+
       setContent("");
       clearMedia();
 
@@ -127,6 +150,9 @@ export function PostComposer({ isAnonymous = false }: PostComposerProps) {
     .slice(0, 2);
 
   const isPosting = createPost.isPending;
+
+  // Live mention count for indicator
+  const mentionCount = extractMentions(content).length;
 
   return (
     <>
@@ -163,13 +189,25 @@ export function PostComposer({ isAnonymous = false }: PostComposerProps) {
                 </p>
               )}
               <Textarea
-                placeholder="What's happening on campus?"
+                placeholder="What's happening on campus? Use @username to mention someone"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 className="min-h-[100px] resize-none border-0 p-0 text-sm font-normal focus-visible:ring-0"
                 disabled={isPosting}
                 data-ocid="post_composer.textarea"
               />
+
+              {/* Live mention indicator */}
+              {mentionCount > 0 && (
+                <div className="flex items-center gap-1.5 text-xs text-primary font-medium">
+                  <span>📣</span>
+                  <span>
+                    {mentionCount === 1
+                      ? "1 person will be notified"
+                      : `${mentionCount} people will be notified`}
+                  </span>
+                </div>
+              )}
 
               {mediaPreview && (
                 <div className="relative rounded-xl overflow-hidden border border-border">

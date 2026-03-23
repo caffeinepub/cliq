@@ -40,35 +40,37 @@ export function HomeFeedPage() {
         }
         className="w-full"
       >
-        {/* Sticky Tabs Header — underline style */}
+        {/* Sticky Tabs Header — rounded pill style */}
         <div className="sticky top-0 z-20 bg-background">
-          <TabsList className="flex gap-6 border-b border-border px-4 bg-transparent h-auto w-full justify-start rounded-none p-0">
-            <TabsTrigger
-              value="following"
-              className="pb-3 pt-3 text-sm font-semibold text-muted-foreground border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary rounded-none bg-transparent shadow-none hover:text-foreground transition-colors"
-              data-ocid="home_feed.following.tab"
-            >
-              CLIQS
-            </TabsTrigger>
-            <TabsTrigger
-              value="campus"
-              className="pb-3 pt-3 text-sm font-semibold text-muted-foreground border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary rounded-none bg-transparent shadow-none hover:text-foreground transition-colors"
-              data-ocid="home_feed.campus.tab"
-            >
-              CAMPUS
-            </TabsTrigger>
-            <TabsTrigger
-              value="universal"
-              className="pb-3 pt-3 text-sm font-semibold text-muted-foreground border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary rounded-none bg-transparent shadow-none hover:text-foreground transition-colors"
-              data-ocid="home_feed.universal.tab"
-            >
-              EXPLORE
-            </TabsTrigger>
-          </TabsList>
+          <div className="px-4 py-2 border-b border-border">
+            <TabsList className="flex gap-1 bg-[#F8F9FA] rounded-2xl p-1 h-auto w-full">
+              <TabsTrigger
+                value="following"
+                className="flex-1 py-2 text-sm font-semibold text-muted-foreground rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+                data-ocid="home_feed.following.tab"
+              >
+                CLIQS
+              </TabsTrigger>
+              <TabsTrigger
+                value="campus"
+                className="flex-1 py-2 text-sm font-semibold text-muted-foreground rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+                data-ocid="home_feed.campus.tab"
+              >
+                CAMPUS
+              </TabsTrigger>
+              <TabsTrigger
+                value="universal"
+                className="flex-1 py-2 text-sm font-semibold text-muted-foreground rounded-xl data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+                data-ocid="home_feed.universal.tab"
+              >
+                EXPLORE
+              </TabsTrigger>
+            </TabsList>
+          </div>
         </div>
 
         {/* CLIQS TAB — Following feed */}
-        <TabsContent value="following" className="mt-0 px-0">
+        <TabsContent value="following" className="mt-3 px-0">
           {mockPosts.map((post, i) => (
             <MockPostCard key={post.id} post={post} index={i + 1} />
           ))}
@@ -84,6 +86,7 @@ export function HomeFeedPage() {
               <div
                 key={post.id.toString()}
                 data-ocid={`home_feed.following.item.${i + 1}`}
+                className="mx-3 mb-3"
               >
                 <PostCard post={post} />
               </div>
@@ -92,7 +95,7 @@ export function HomeFeedPage() {
         </TabsContent>
 
         {/* CAMPUS TAB */}
-        <TabsContent value="campus" className="mt-0 px-0">
+        <TabsContent value="campus" className="mt-3 px-0">
           {mockPosts.map((post, i) => (
             <MockPostCard key={post.id} post={post} index={i + 1} />
           ))}
@@ -108,6 +111,7 @@ export function HomeFeedPage() {
               <div
                 key={post.id.toString()}
                 data-ocid={`home_feed.campus.item.${i + 1}`}
+                className="mx-3 mb-3"
               >
                 <PostCard post={post} />
               </div>
@@ -116,7 +120,7 @@ export function HomeFeedPage() {
         </TabsContent>
 
         {/* EXPLORE TAB — algorithm-curated from all universities */}
-        <TabsContent value="universal" className="mt-0 px-0">
+        <TabsContent value="universal" className="mt-3 px-0">
           <p className="text-xs text-muted-foreground pb-1 px-4 pt-2">
             Trending posts from all universities
           </p>
@@ -135,6 +139,7 @@ export function HomeFeedPage() {
               <div
                 key={post.id.toString()}
                 data-ocid={`home_feed.universal.item.${i + 1}`}
+                className="mx-3 mb-3"
               >
                 <PostCard post={post} />
               </div>
