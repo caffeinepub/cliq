@@ -120,6 +120,14 @@ const VIBE_OPTIONS = [
 ];
 const STEPS = 10;
 
+function getSubScores(matchPct: number, id: string) {
+  const seed = id.charCodeAt(0);
+  const budget = Math.min(99, Math.round(matchPct * 0.95 + (seed % 7)));
+  const lifestyle = Math.min(99, Math.round(matchPct * 0.9 + ((seed * 3) % 9)));
+  const sleep = Math.min(99, Math.round(matchPct * 0.85 + ((seed * 7) % 11)));
+  return { budget, lifestyle, sleep };
+}
+
 export function RoomiePage() {
   const [hasProfile, setHasProfile] = useState(false);
   const [wizardStep, setWizardStep] = useState(0);
@@ -158,7 +166,6 @@ export function RoomiePage() {
   };
 
   if (!hasProfile) {
-    // Landing / Wizard
     if (wizardStep === 0) {
       return (
         <div className="p-6 text-center space-y-8">
@@ -200,7 +207,6 @@ export function RoomiePage() {
 
     return (
       <div className="p-4">
-        {/* Progress */}
         <div className="flex items-center gap-3 mb-6">
           <Button
             variant="ghost"
@@ -264,7 +270,6 @@ export function RoomiePage() {
                 </RadioGroup>
               </div>
             )}
-
             {wizardStep === 2 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-black">Budget Range (₦/month)</h2>
@@ -300,7 +305,6 @@ export function RoomiePage() {
                 </div>
               </div>
             )}
-
             {wizardStep === 3 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-black">
@@ -315,7 +319,6 @@ export function RoomiePage() {
                 />
               </div>
             )}
-
             {wizardStep === 4 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-black">Gender & Preference</h2>
@@ -371,7 +374,6 @@ export function RoomiePage() {
                 </div>
               </div>
             )}
-
             {wizardStep === 5 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-black">Cleanliness Level</h2>
@@ -388,11 +390,9 @@ export function RoomiePage() {
                     data-ocid="roomie.cleanliness.toggle"
                   />
                   <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                    <span>1</span>
-                    <span>2</span>
-                    <span>3</span>
-                    <span>4</span>
-                    <span>5</span>
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <span key={n}>{n}</span>
+                    ))}
                   </div>
                 </div>
                 <p className="text-center text-2xl font-black text-primary">
@@ -404,7 +404,6 @@ export function RoomiePage() {
                 </p>
               </div>
             )}
-
             {wizardStep === 6 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-black">Sleep Schedule</h2>
@@ -434,7 +433,6 @@ export function RoomiePage() {
                 </RadioGroup>
               </div>
             )}
-
             {wizardStep === 7 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-black">Lifestyle</h2>
@@ -467,7 +465,6 @@ export function RoomiePage() {
                 </div>
               </div>
             )}
-
             {wizardStep === 8 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-black">Your Vibe (pick 3)</h2>
@@ -478,11 +475,7 @@ export function RoomiePage() {
                       <button
                         type="button"
                         key={v}
-                        className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${
-                          selected
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "border-border hover:border-primary/50"
-                        }`}
+                        className={`p-4 rounded-xl border-2 text-sm font-bold transition-all ${selected ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary/50"}`}
                         onClick={() => toggleVibe(v)}
                         data-ocid={"roomie.vibe.toggle"}
                       >
@@ -493,7 +486,6 @@ export function RoomiePage() {
                 </div>
               </div>
             )}
-
             {wizardStep === 9 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-black">Dealbreakers</h2>
@@ -508,7 +500,6 @@ export function RoomiePage() {
                 />
               </div>
             )}
-
             {wizardStep === 10 && (
               <div className="space-y-4">
                 <h2 className="text-xl font-black">About You</h2>
@@ -577,61 +568,85 @@ export function RoomiePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4">
-        {matches.map((match, i) => (
-          <Card
-            key={match.id}
-            className="border-2 hover:shadow-bold transition-all"
-            data-ocid={`roomie.item.${i + 1}`}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-start gap-4">
-                <div className="text-4xl shrink-0">{match.avatar}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="font-black text-base">{match.name}</p>
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-black text-primary">
-                        {match.matchPct}%
+        {matches.map((match, i) => {
+          const scores = getSubScores(match.matchPct, match.id);
+          return (
+            <Card
+              key={match.id}
+              className="border hover:shadow-md transition-all"
+              data-ocid={`roomie.item.${i + 1}`}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl shrink-0">{match.avatar}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-black text-base">{match.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {match.university}
+                        </p>
+                      </div>
+                      {/* Match % badge */}
+                      <div className="flex flex-col items-center shrink-0 bg-primary/10 rounded-xl p-2 min-w-[56px]">
+                        <span className="text-lg font-black text-primary">
+                          {match.matchPct}%
+                        </span>
+                        <span className="text-[10px] text-primary/70 font-medium uppercase tracking-wider">
+                          Match
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Vibe tags */}
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {match.vibe.map((v) => (
+                        <Badge key={v} variant="secondary" className="text-xs">
+                          {v}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    {/* Compatibility sub-badges */}
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 font-medium border border-green-100">
+                        💰 Budget {scores.budget}%
                       </span>
-                      <Heart className="h-3 w-3 text-primary fill-primary" />
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium border border-blue-100">
+                        🌿 Lifestyle {scores.lifestyle}%
+                      </span>
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-medium border border-purple-100">
+                        😴 Sleep {scores.sleep}%
+                      </span>
+                    </div>
+
+                    <div className="flex gap-2 mt-3">
+                      <Button
+                        size="sm"
+                        className="rounded-full gap-2 flex-1"
+                        onClick={() => handleMessageMatch(match.id)}
+                        data-ocid={`roomie.message.button.${i + 1}`}
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" /> Message
+                      </Button>
+                      <Button
+                        variant={match.favorited ? "default" : "outline"}
+                        size="sm"
+                        className="rounded-full"
+                        onClick={() => toggleFavorite(match.id)}
+                        data-ocid={`roomie.toggle.${i + 1}`}
+                      >
+                        <Star
+                          className={`h-3.5 w-3.5 ${match.favorited ? "fill-current" : ""}`}
+                        />
+                      </Button>
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {match.university}
-                  </p>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {match.vibe.map((v) => (
-                      <Badge key={v} variant="secondary" className="text-xs">
-                        {v}
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="flex gap-2 mt-3">
-                    <Button
-                      size="sm"
-                      className="rounded-full gap-2 flex-1"
-                      onClick={() => handleMessageMatch(match.id)}
-                      data-ocid={`roomie.message.button.${i + 1}`}
-                    >
-                      <MessageCircle className="h-3.5 w-3.5" /> Message
-                    </Button>
-                    <Button
-                      variant={match.favorited ? "default" : "outline"}
-                      size="sm"
-                      className="rounded-full"
-                      onClick={() => toggleFavorite(match.id)}
-                      data-ocid={`roomie.toggle.${i + 1}`}
-                    >
-                      <Star
-                        className={`h-3.5 w-3.5 ${match.favorited ? "fill-current" : ""}`}
-                      />
-                    </Button>
-                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       <AlertDialog open={safetyOpen} onOpenChange={setSafetyOpen}>

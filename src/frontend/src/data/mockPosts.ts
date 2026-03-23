@@ -3,6 +3,7 @@ export interface MockPost {
   displayName: string;
   username: string;
   university: string;
+  community?: string;
   content: string;
   timestamp: string;
   likes: number;
@@ -22,6 +23,7 @@ export const mockPosts: MockPost[] = [
     displayName: "Temi Adeyemi",
     username: "temi_ade",
     university: "University of Lagos",
+    community: "UNILAG Marketplace",
     content:
       "Selling my 400L Engineering textbooks — Strength of Materials, Fluid Mechanics & Thermodynamics. All in good condition. Price is negotiable, just DM me! Don't let these collect dust 😅📚 #UNILAG #Engineering",
     timestamp: "12m",
@@ -37,6 +39,7 @@ export const mockPosts: MockPost[] = [
     displayName: "Chidi Okafor",
     username: "chidi_ok",
     university: "University of Nigeria, Nsukka",
+    community: "UNN Tech Hub",
     content:
       "Anyone in 300L Computer Science at UNN forming a study group for Data Structures & Algorithms? We meet Saturdays at the ICT building. Drop your WhatsApp number below 👇 #UNN #CompSci #StudyGroup",
     timestamp: "45m",
@@ -62,12 +65,16 @@ export const mockPosts: MockPost[] = [
     displayName: "Bukola Fashola",
     username: "bukky_f",
     university: "Ahmadu Bello University",
+    community: "Campus Foodies",
     content:
       "The new canteen in Faculty of Sciences is actually underrated! Had jollof rice + chicken + plantain for ₦600. The portions are generous and the food is fresh. Way better than the main cafeteria that has been recycling the same soup since 2019 😭🍛 #ABU #CampusLife",
     timestamp: "2h",
     likes: 189,
     comments: 43,
     shares: 22,
+    mediaUrl:
+      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600",
+    mediaType: "image",
   },
   {
     id: "mock-5",
@@ -80,18 +87,25 @@ export const mockPosts: MockPost[] = [
     likes: 445,
     comments: 87,
     shares: 176,
+    mediaUrl:
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600",
+    mediaType: "image",
   },
   {
     id: "mock-6",
     displayName: "Zainab Hassan",
     username: "zainab_h",
     university: "Bayero University Kano",
+    community: "BUK Gadgets & Tech",
     content:
       "🔥 LAPTOP FOR SALE — HP EliteBook 840 G5\n• Intel Core i5 8th Gen\n• 8GB RAM, 256GB SSD\n• Battery lasts 5+ hours\n• No scratches, clean screen\n• ₦185,000 (negotiable)\n\nGraduating so I need to sell. Serious buyers only, come see it in person. DM me! #BUK #Marketplace",
     timestamp: "5h",
     likes: 58,
     comments: 19,
     shares: 8,
+    mediaUrl:
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600",
+    mediaType: "image",
   },
   {
     id: "mock-7",
@@ -116,6 +130,8 @@ export const mockPosts: MockPost[] = [
     likes: 312,
     comments: 67,
     shares: 45,
+    mediaUrl: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600",
+    mediaType: "image",
   },
   {
     id: "mock-9",

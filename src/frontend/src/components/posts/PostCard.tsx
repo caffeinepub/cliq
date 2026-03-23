@@ -1,15 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "@tanstack/react-router";
-import {
-  Bookmark,
-  Heart,
-  Loader2,
-  MessageCircle,
-  Rocket,
-  Send,
-} from "lucide-react";
+import { Flame, Loader2, MessageCircle, Rocket, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Post } from "../../backend";
@@ -67,9 +59,7 @@ export function PostCard({ post }: PostCardProps) {
   );
 
   useEffect(() => {
-    if (boosted) {
-      incrementBoostView(postIdStr);
-    }
+    if (boosted) incrementBoostView(postIdStr);
   }, [boosted, postIdStr]);
 
   const handleLike = async (e: React.MouseEvent) => {
@@ -89,14 +79,11 @@ export function PostCard({ post }: PostCardProps) {
 
   const handleRecliq = async (e: React.MouseEvent) => {
     e.stopPropagation();
-
     if (hasAlreadyRecliqed) {
       toast.info("You've already Recliqed this post");
       return;
     }
-
     if (isRecliqing) return;
-
     setIsRecliqing(true);
     try {
       const authorUsername = isAnonymous
@@ -106,12 +93,11 @@ export function PostCard({ post }: PostCardProps) {
         authorUsername,
         originalContent: displayContent,
       });
-
       markRecliqed(postIdStr, newPostId.toString());
       incrementRecliqCount(postIdStr);
       setHasAlreadyRecliqed(true);
       setRecliqCount((prev) => prev + 1);
-      toast.success("Recliqed! 🔁");
+      toast.success("Recliqed! ∞");
     } catch (error: any) {
       toast.error(error.message || "Failed to Recliq");
     } finally {
@@ -138,7 +124,6 @@ export function PostCard({ post }: PostCardProps) {
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
-
     if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes}m`;
     if (hours < 24) return `${hours}h`;
@@ -161,6 +146,14 @@ export function PostCard({ post }: PostCardProps) {
       >
         <CardContent className="p-5">
           {boosted && boostLabel && <BoostedPostBadge label={boostLabel} />}
+
+          {/* University tag */}
+          <div className="flex justify-end mb-2">
+            <span className="bg-[#FF6B35] text-white text-[11px] font-medium px-2 py-0.5 rounded-full">
+              🏛️ Campus
+            </span>
+          </div>
+
           <div className="flex gap-4">
             <Avatar className="h-11 w-11 border border-border">
               {isAnonymous ? (
@@ -226,82 +219,101 @@ export function PostCard({ post }: PostCardProps) {
                 </div>
               )}
 
-              <div className="flex items-center gap-1 pt-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`h-9 gap-1.5 px-2.5 rounded-full text-xs ${
-                    isLiked
-                      ? "text-destructive hover:text-destructive"
-                      : "text-[#ADB5BD] hover:text-destructive hover:bg-destructive/10"
-                  }`}
+              {/* Tumblr-style engagement bar */}
+              <div className="flex justify-between items-end pt-2 border-t border-[#F0F0F0]">
+                {/* Like */}
+                <button
+                  type="button"
                   onClick={handleLike}
+                  className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-accent/10 transition-colors"
                 >
-                  <Heart
-                    className={`h-[18px] w-[18px] ${isLiked ? "fill-current" : ""}`}
+                  <Flame
+                    className={`h-5 w-5 ${isLiked ? "text-[#FF6B35] fill-[#FF6B35]" : "text-[#ADB5BD]"}`}
                   />
-                  <span>{Number(post.likes)}</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-9 gap-1.5 px-2.5 rounded-full text-xs text-[#ADB5BD] hover:text-foreground hover:bg-accent/10"
+                  <span
+                    className={`text-base font-bold leading-tight ${isLiked ? "text-[#FF6B35]" : "text-[#212529]"}`}
+                  >
+                    {Number(post.likes)}
+                  </span>
+                  <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">
+                    Like
+                  </span>
+                </button>
+
+                {/* Comment */}
+                <button
+                  type="button"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-accent/10 transition-colors"
                 >
-                  <MessageCircle className="h-[18px] w-[18px]" />
-                  <span>0</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={isRecliqing}
-                  data-ocid="post_card.recliq_button"
-                  className={`h-9 gap-1.5 px-2.5 rounded-full text-xs transition-colors ${
-                    hasAlreadyRecliqed
-                      ? "text-primary hover:text-primary hover:bg-primary/10"
-                      : "text-[#ADB5BD] hover:text-primary hover:bg-primary/10"
-                  }`}
+                  <MessageCircle className="h-5 w-5 text-[#ADB5BD]" />
+                  <span className="text-base font-bold leading-tight text-[#212529]">
+                    0
+                  </span>
+                  <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">
+                    Comment
+                  </span>
+                </button>
+
+                {/* Recliq */}
+                <button
+                  type="button"
                   onClick={handleRecliq}
+                  disabled={isRecliqing}
+                  className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-primary/10 transition-colors"
                 >
                   {isRecliqing ? (
-                    <Loader2 className="h-[18px] w-[18px] animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin text-[#ADB5BD]" />
                   ) : (
-                    <span className="text-base leading-none font-black">∞</span>
+                    <span
+                      className={`text-xl font-black leading-none ${hasAlreadyRecliqed ? "text-[#FF6B35]" : "text-[#ADB5BD]"}`}
+                    >
+                      ∞
+                    </span>
                   )}
-                  {recliqCount > 0 && <span>{recliqCount}</span>}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-9 px-2.5 rounded-full text-[#ADB5BD] hover:text-primary hover:bg-primary/10"
-                >
-                  <Bookmark className="h-[18px] w-[18px]" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-9 px-2.5 rounded-full text-[#ADB5BD] hover:text-[#2C8A7A] hover:bg-[#2C8A7A]/10"
+                  <span
+                    className={`text-base font-bold leading-tight ${hasAlreadyRecliqed ? "text-[#FF6B35]" : "text-[#212529]"}`}
+                  >
+                    {recliqCount}
+                  </span>
+                  <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">
+                    Recliq
+                  </span>
+                </button>
+
+                {/* Share */}
+                <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShareModalOpen(true);
                   }}
-                  title="Share post"
-                  data-ocid="post_card.share_button"
+                  className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-[#2C8A7A]/10 transition-colors"
                 >
-                  <Send className="h-[18px] w-[18px]" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-9 w-9 rounded-full text-[#ADB5BD] hover:text-primary hover:bg-primary/10 ml-auto"
+                  <Share2 className="h-5 w-5 text-[#ADB5BD]" />
+                  <span className="text-base font-bold leading-tight text-[#212529]">
+                    —
+                  </span>
+                  <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">
+                    Share
+                  </span>
+                </button>
+
+                {/* Boost (smaller, at end) */}
+                <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     setBoostModalOpen(true);
                   }}
                   title="Boost post"
-                  data-ocid="post_card.boost_button"
+                  className="flex flex-col items-center gap-0.5 min-w-[44px] py-2 px-1 rounded-xl hover:bg-primary/10 transition-colors"
                 >
-                  <Rocket className="h-[18px] w-[18px]" />
-                </Button>
+                  <Rocket className="h-4 w-4 text-[#ADB5BD]" />
+                  <span className="text-[10px] uppercase tracking-widest text-[#ADB5BD] font-medium">
+                    Boost
+                  </span>
+                </button>
               </div>
             </div>
           </div>

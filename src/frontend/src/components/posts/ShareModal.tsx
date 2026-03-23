@@ -7,7 +7,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Mail, MoreHorizontal, Twitter } from "lucide-react";
+import { ChevronRight, Copy, MoreHorizontal, Twitter } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { SiGmail, SiWhatsapp } from "react-icons/si";
 import { toast } from "sonner";
 
@@ -35,6 +36,11 @@ export function ShareModal({ open, onOpenChange, postId }: ShareModalProps) {
 
   const handleSendToDMs = (name: string) => {
     toast.success(`Sent to ${name}'s DMs!`);
+  };
+
+  const handleSaveBookmark = () => {
+    toast.success("Saved to Bookmarks!");
+    onOpenChange(false);
   };
 
   const handleCopyLink = async () => {
@@ -85,6 +91,27 @@ export function ShareModal({ open, onOpenChange, postId }: ShareModalProps) {
         <DialogHeader>
           <DialogTitle>Share Post</DialogTitle>
         </DialogHeader>
+
+        {/* Save to Bookmarks — first option */}
+        <button
+          type="button"
+          onClick={handleSaveBookmark}
+          data-ocid="share.bookmark.button"
+          className="flex items-center gap-3 w-full p-3 rounded-xl border border-[#E5E5E5] hover:bg-accent/10 transition-colors text-left"
+        >
+          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            <Bookmark className="h-5 w-5 text-primary" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold">Save to Bookmarks</p>
+            <p className="text-xs text-muted-foreground">
+              View later in your profile
+            </p>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </button>
+
+        <Separator />
 
         {/* Mutuals section */}
         <div className="space-y-3">
@@ -152,46 +179,42 @@ export function ShareModal({ open, onOpenChange, postId }: ShareModalProps) {
               type="button"
               onClick={handleCopyLink}
               data-ocid="share.copy_link.button"
-              className="flex items-center gap-2.5 rounded-xl border-2 border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
+              className="flex items-center gap-2.5 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
             >
-              <Copy className="h-4 w-4 shrink-0" />
-              Copy link
+              <Copy className="h-4 w-4 shrink-0" /> Copy link
             </button>
             <button
               type="button"
               onClick={handleGmail}
               data-ocid="share.gmail.button"
-              className="flex items-center gap-2.5 rounded-xl border-2 border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
+              className="flex items-center gap-2.5 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
             >
-              <SiGmail className="h-4 w-4 shrink-0 text-red-500" />
-              Gmail
+              <SiGmail className="h-4 w-4 shrink-0 text-red-500" /> Gmail
             </button>
             <button
               type="button"
               onClick={handleWhatsApp}
               data-ocid="share.whatsapp.button"
-              className="flex items-center gap-2.5 rounded-xl border-2 border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
+              className="flex items-center gap-2.5 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
             >
-              <SiWhatsapp className="h-4 w-4 shrink-0 text-green-500" />
+              <SiWhatsapp className="h-4 w-4 shrink-0 text-green-500" />{" "}
               WhatsApp
             </button>
             <button
               type="button"
               onClick={handleTwitter}
               data-ocid="share.twitter.button"
-              className="flex items-center gap-2.5 rounded-xl border-2 border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
+              className="flex items-center gap-2.5 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
             >
-              <Twitter className="h-4 w-4 shrink-0" />
-              Twitter / X
+              <Twitter className="h-4 w-4 shrink-0" /> Twitter / X
             </button>
             <button
               type="button"
               onClick={handleMore}
               data-ocid="share.more.button"
-              className="col-span-2 flex items-center justify-center gap-2.5 rounded-xl border-2 border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
+              className="col-span-2 flex items-center justify-center gap-2.5 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold hover:bg-accent/10 transition-colors"
             >
-              <MoreHorizontal className="h-4 w-4 shrink-0" />
-              More
+              <MoreHorizontal className="h-4 w-4 shrink-0" /> More
             </button>
           </div>
         </div>

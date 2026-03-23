@@ -1,8 +1,8 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Bookmark, Heart, MessageCircle, Rocket, Send } from "lucide-react";
+import { Flame, Loader2, MessageCircle, Share2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import type { MockPost } from "../../data/mockPosts";
 import { ShareModal } from "./ShareModal";
 
@@ -13,9 +13,11 @@ interface MockPostCardProps {
 
 export function MockPostCard({ post, index }: MockPostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes);
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [hasRecliqed, setHasRecliqed] = useState(false);
+  const [recliqCount, setRecliqCount] = useState(post.shares);
+  const [isRecliqing, setIsRecliqing] = useState(false);
 
   const initials = post.isAnonymous
     ? "🥷"
@@ -32,9 +34,20 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
   };
 
-  const handleBookmark = (e: React.MouseEvent) => {
+  const handleRecliq = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsBookmarked((prev) => !prev);
+    if (hasRecliqed) {
+      toast.info("Already Recliqed this post");
+      return;
+    }
+    if (isRecliqing) return;
+    setIsRecliqing(true);
+    setTimeout(() => {
+      setHasRecliqed(true);
+      setRecliqCount((prev) => prev + 1);
+      setIsRecliqing(false);
+      toast.success("Recliqed! ∞");
+    }, 600);
   };
 
   return (
@@ -47,7 +60,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
           {/* Boost badge */}
           {post.isBoosted && post.boostLabel && (
             <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-border">
-              <Rocket className="h-[18px] w-[18px] text-primary" />
+              <span className="text-sm">🚀</span>
               <span className="text-xs font-semibold text-primary uppercase tracking-wide">
                 {post.boostLabel}
               </span>
@@ -58,6 +71,20 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
               )}
             </div>
           )}
+
+          {/* Community + University Tags */}
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              {post.community && (
+                <span className="bg-[#F0F0F0] text-[#212529] text-[11px] font-medium px-2 py-0.5 rounded-full">
+                  {post.community}
+                </span>
+              )}
+            </div>
+            <span className="bg-[#FF6B35] text-white text-[11px] font-medium px-2 py-0.5 rounded-full">
+              🏛️ {post.university.split(" ").slice(0, 2).join(" ")}
+            </span>
+          </div>
 
           <div className="flex gap-4">
             {/* Avatar */}
@@ -94,9 +121,6 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                 <span className="text-xs text-muted-foreground">
                   {post.timestamp}
                 </span>
-                <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                  🏛️ {post.university.split(" ").slice(0, 2).join(" ")}
-                </span>
               </div>
 
               {/* Content */}
@@ -126,75 +150,99 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                 </div>
               )}
 
-              {/* Action row */}
-              <div className="flex items-center gap-1 pt-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
+              {/* Tumblr-style engagement bar */}
+              <div className="flex justify-between items-end pt-2 border-t border-[#F0F0F0]">
+                {/* Like */}
+                <button
+                  type="button"
                   data-ocid="post.like.button"
-                  className={`h-9 gap-1.5 px-2.5 rounded-full text-xs ${
-                    isLiked
-                      ? "text-destructive hover:text-destructive"
-                      : "text-[#ADB5BD] hover:text-destructive hover:bg-destructive/10"
-                  }`}
                   onClick={handleLike}
+                  className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-accent/10 transition-colors"
                 >
-                  <Heart
-                    className={`h-[18px] w-[18px] ${isLiked ? "fill-current" : ""}`}
+                  <Flame
+                    className={`h-5 w-5 ${
+                      isLiked
+                        ? "text-[#FF6B35] fill-[#FF6B35]"
+                        : "text-[#ADB5BD]"
+                    }`}
                   />
-                  <span>{likeCount}</span>
-                </Button>
+                  <span
+                    className={`text-base font-bold leading-tight ${
+                      isLiked ? "text-[#FF6B35]" : "text-[#212529]"
+                    }`}
+                  >
+                    {likeCount}
+                  </span>
+                  <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">
+                    Like
+                  </span>
+                </button>
 
-                <Button
-                  variant="ghost"
-                  size="sm"
+                {/* Comment */}
+                <button
+                  type="button"
                   data-ocid="post.comment.button"
-                  className="h-9 gap-1.5 px-2.5 rounded-full text-xs text-[#ADB5BD] hover:text-foreground hover:bg-accent/10"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-accent/10 transition-colors"
                 >
-                  <MessageCircle className="h-[18px] w-[18px]" />
-                  <span>{post.comments}</span>
-                </Button>
+                  <MessageCircle className="h-5 w-5 text-[#ADB5BD]" />
+                  <span className="text-base font-bold leading-tight text-[#212529]">
+                    {post.comments}
+                  </span>
+                  <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">
+                    Comment
+                  </span>
+                </button>
 
-                {/* Recliq — infinity symbol */}
-                <Button
-                  variant="ghost"
-                  size="sm"
+                {/* Recliq (∞) */}
+                <button
+                  type="button"
                   data-ocid="post.recliq.button"
-                  className="h-9 gap-1.5 px-2.5 rounded-full text-xs text-[#ADB5BD] hover:text-primary hover:bg-primary/10"
+                  onClick={handleRecliq}
+                  disabled={isRecliqing}
+                  className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-primary/10 transition-colors"
                 >
-                  <span className="text-base leading-none font-black">∞</span>
-                  {post.shares > 0 && <span>{post.shares}</span>}
-                </Button>
+                  {isRecliqing ? (
+                    <Loader2 className="h-5 w-5 animate-spin text-[#ADB5BD]" />
+                  ) : (
+                    <span
+                      className={`text-xl font-black leading-none ${
+                        hasRecliqed ? "text-[#FF6B35]" : "text-[#ADB5BD]"
+                      }`}
+                    >
+                      ∞
+                    </span>
+                  )}
+                  <span
+                    className={`text-base font-bold leading-tight ${
+                      hasRecliqed ? "text-[#FF6B35]" : "text-[#212529]"
+                    }`}
+                  >
+                    {recliqCount}
+                  </span>
+                  <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">
+                    Recliq
+                  </span>
+                </button>
 
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  data-ocid="post.bookmark.button"
-                  className={`h-9 px-2.5 rounded-full ${
-                    isBookmarked
-                      ? "text-primary hover:text-primary"
-                      : "text-[#ADB5BD] hover:text-primary hover:bg-primary/10"
-                  }`}
-                  onClick={handleBookmark}
-                >
-                  <Bookmark
-                    className={`h-[18px] w-[18px] ${isBookmarked ? "fill-current" : ""}`}
-                  />
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  size="sm"
+                {/* Share */}
+                <button
+                  type="button"
                   data-ocid="post.share.button"
-                  className="h-9 px-2.5 rounded-full text-[#ADB5BD] hover:text-[#2C8A7A] hover:bg-[#2C8A7A]/10"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShareModalOpen(true);
                   }}
-                  title="Share post"
+                  className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-[#2C8A7A]/10 transition-colors"
                 >
-                  <Send className="h-[18px] w-[18px]" />
-                </Button>
+                  <Share2 className="h-5 w-5 text-[#ADB5BD]" />
+                  <span className="text-base font-bold leading-tight text-[#212529]">
+                    —
+                  </span>
+                  <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">
+                    Share
+                  </span>
+                </button>
               </div>
             </div>
           </div>
@@ -210,7 +258,6 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
   );
 }
 
-/** Deterministic color from a string (for avatar backgrounds) */
 function stringToColor(str: string): string {
   const palette = [
     "#FF6B35",

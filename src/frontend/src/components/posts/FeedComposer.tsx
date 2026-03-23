@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { MediaPreviewModal } from "./MediaPreviewModal";
 import { PostComposer } from "./PostComposer";
 
 interface DropdownItem {
@@ -23,6 +24,11 @@ export function FeedComposer() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [composerOpen, setComposerOpen] = useState(false);
   const [anonymous, setAnonymous] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [pendingMediaType, setPendingMediaType] = useState<
+    "image" | "video" | null
+  >(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +47,22 @@ export function FeedComposer() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownOpen]);
+
+  const handleFileSelect = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "image" | "video",
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPendingFile(file);
+    setPendingMediaType(type);
+    setPreviewOpen(true);
+  };
+
+  const handleMediaConfirm = (_file: File) => {
+    // File confirmed — open the full composer
+    setComposerOpen(true);
+  };
 
   const dropdownItems: DropdownItem[] = [
     {
@@ -102,7 +124,7 @@ export function FeedComposer() {
         accept="image/*"
         capture="environment"
         className="hidden"
-        onChange={() => setComposerOpen(true)}
+        onChange={(e) => handleFileSelect(e, "image")}
       />
       <input
         ref={videoInputRef}
@@ -110,14 +132,14 @@ export function FeedComposer() {
         accept="video/*"
         capture="environment"
         className="hidden"
-        onChange={() => setComposerOpen(true)}
+        onChange={(e) => handleFileSelect(e, "video")}
       />
       <input
         ref={galleryInputRef}
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={() => setComposerOpen(true)}
+        onChange={(e) => handleFileSelect(e, "image")}
       />
 
       <div className="flex items-center gap-3 border-b-2 border-border bg-background px-4 py-3">
@@ -135,7 +157,6 @@ export function FeedComposer() {
             <Plus className="h-5 w-5" strokeWidth={3} />
           </button>
 
-          {/* Animated dropdown */}
           <div
             data-ocid="feed_composer.add_dropdown_menu"
             role="menu"
@@ -203,6 +224,15 @@ export function FeedComposer() {
           <Eye className="h-5 w-5" />
         </button>
       </div>
+
+      {/* Media preview modal */}
+      <MediaPreviewModal
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        mediaFile={pendingFile}
+        mediaType={pendingMediaType}
+        onConfirm={handleMediaConfirm}
+      />
 
       {/* Full composer dialog */}
       <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
