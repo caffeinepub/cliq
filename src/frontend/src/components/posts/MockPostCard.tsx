@@ -90,21 +90,18 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
             </div>
           )}
 
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              {post.community && (
-                <span className="bg-[#F0F0F0] text-[#212529] text-[11px] font-medium px-2 py-0.5 rounded-full">
-                  {post.community}
-                </span>
-              )}
-            </div>
-            <span className="bg-[#FF6B35] text-white text-[11px] font-medium px-2 py-0.5 rounded-full">
-              🏛️ {uniAcronym}
-            </span>
+          {/* Top row — community tag top-right */}
+          <div className="flex items-center justify-end mb-2">
+            {post.community && (
+              <span className="bg-[#F0F0F0] dark:bg-muted text-[#212529] dark:text-foreground text-[11px] font-medium px-2 py-0.5 rounded-full">
+                {post.community}
+              </span>
+            )}
           </div>
 
-          <div className="flex gap-4">
-            <Avatar className="h-11 w-11 border border-border flex-shrink-0">
+          {/* Post body — avatar top-left aligned */}
+          <div className="flex gap-4 items-start">
+            <Avatar className="h-11 w-11 border border-border flex-shrink-0 mt-0.5">
               {post.isAnonymous ? (
                 <AvatarFallback className="bg-muted text-lg">🥷</AvatarFallback>
               ) : (
@@ -163,61 +160,71 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                 </div>
               )}
 
-              {/* Engagement bar — icons + counts only */}
-              <div className="flex justify-between items-center pt-2 border-t border-[#F0F0F0]">
-                <button
-                  type="button"
-                  data-ocid="post.like.button"
-                  onClick={handleLike}
-                  className="flex items-center gap-1.5 py-2 px-3 rounded-full hover:bg-accent/10 transition-colors"
-                >
-                  <Flame
-                    className={`h-5 w-5 ${
-                      isLiked
-                        ? "text-[#FF6B35] fill-[#FF6B35]"
-                        : "text-[#ADB5BD]"
-                    }`}
-                  />
-                  <span
-                    className={`text-sm font-bold ${isLiked ? "text-[#FF6B35]" : "text-[#6C757D]"}`}
+              {/* Engagement bar — Tumblr-bold style, left-aligned, share on far right */}
+              <div className="flex items-center pt-3 border-t border-[#F0F0F0] dark:border-border">
+                {/* Left cluster — Like, Comment, Recliq */}
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    data-ocid="post.like.button"
+                    onClick={handleLike}
+                    className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
                   >
-                    {likeCount}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  data-ocid="post.comment.button"
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1.5 py-2 px-3 rounded-full hover:bg-accent/10 transition-colors"
-                >
-                  <MessageCircle className="h-5 w-5 text-[#ADB5BD]" />
-                  <span className="text-sm font-bold text-[#6C757D]">
-                    {post.comments}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  data-ocid="post.recliq.button"
-                  onClick={handleRecliq}
-                  disabled={isRecliqing}
-                  className="flex items-center gap-1.5 py-2 px-3 rounded-full hover:bg-primary/10 transition-colors"
-                >
-                  {isRecliqing ? (
-                    <Loader2 className="h-5 w-5 animate-spin text-[#ADB5BD]" />
-                  ) : (
-                    <ReblogIcon
-                      className={`h-5 w-5 ${hasRecliqed ? "text-[#FF6B35]" : "text-[#ADB5BD]"}`}
+                    <Flame
+                      className={`h-6 w-6 ${
+                        isLiked
+                          ? "text-[#FF6B35] fill-[#FF6B35]"
+                          : "text-[#ADB5BD]"
+                      }`}
                     />
-                  )}
-                  <span
-                    className={`text-sm font-bold ${hasRecliqed ? "text-[#FF6B35]" : "text-[#6C757D]"}`}
-                  >
-                    {recliqCount}
-                  </span>
-                </button>
+                    <span
+                      className={`text-base font-black ${
+                        isLiked ? "text-[#FF6B35]" : "text-[#6C757D]"
+                      }`}
+                    >
+                      {likeCount}
+                    </span>
+                  </button>
 
+                  <button
+                    type="button"
+                    data-ocid="post.comment.button"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
+                  >
+                    <MessageCircle className="h-6 w-6 text-[#ADB5BD]" />
+                    <span className="text-base font-black text-[#6C757D]">
+                      {post.comments}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    data-ocid="post.recliq.button"
+                    onClick={handleRecliq}
+                    disabled={isRecliqing}
+                    className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
+                  >
+                    {isRecliqing ? (
+                      <Loader2 className="h-6 w-6 animate-spin text-[#ADB5BD]" />
+                    ) : (
+                      <ReblogIcon
+                        className={`h-6 w-6 ${
+                          hasRecliqed ? "text-[#FF6B35]" : "text-[#ADB5BD]"
+                        }`}
+                      />
+                    )}
+                    <span
+                      className={`text-base font-black ${
+                        hasRecliqed ? "text-[#FF6B35]" : "text-[#6C757D]"
+                      }`}
+                    >
+                      {recliqCount}
+                    </span>
+                  </button>
+                </div>
+
+                {/* Share button — pushed to far right */}
                 <button
                   type="button"
                   data-ocid="post.share.button"
@@ -225,12 +232,19 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                     e.stopPropagation();
                     setShareModalOpen(true);
                   }}
-                  className="flex items-center gap-1.5 py-2 px-3 rounded-full hover:bg-[#2C8A7A]/10 transition-colors"
+                  className="ml-auto flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
-                  <Share2 className="h-5 w-5 text-[#ADB5BD]" />
+                  <Share2 className="h-6 w-6 text-[#ADB5BD]" />
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* University tag — below the postcard */}
+          <div className="mt-3 pt-3 border-t border-[#F0F0F0] dark:border-border flex items-center gap-1.5">
+            <span className="bg-[#FF6B35] text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+              🏛️ {uniAcronym}
+            </span>
           </div>
         </CardContent>
       </Card>

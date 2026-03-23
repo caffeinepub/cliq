@@ -7,6 +7,8 @@ interface WeeklyDigestSlidesProps {
   onClose: () => void;
 }
 
+const BRAND = "#e8432d";
+
 function ReblogIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -53,7 +55,6 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
     {
       id: "most-viewed",
       label: "👁️ MOST VIEWED",
-      color: "#1D4E89",
       post: mostViewed,
       stat: `${mostViewed.likes + mostViewed.comments + mostViewed.shares} interactions`,
       statIcon: "👁️",
@@ -61,7 +62,6 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
     {
       id: "most-liked",
       label: "🔥 MOST LIKED",
-      color: "#FF6B35",
       post: mostLiked,
       stat: `${mostLiked.likes} likes`,
       statIcon: "🔥",
@@ -69,7 +69,6 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
     {
       id: "most-recliqed",
       label: "🔁 MOST RECLIQED",
-      color: "#2D6A4F",
       post: mostRecliqed,
       stat: `${mostRecliqed.shares} recliqs`,
       statIcon: "🔁",
@@ -77,7 +76,6 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
     {
       id: "followers",
       label: "👥 NEW FOLLOWERS",
-      color: "#7B2D8B",
       post: null,
       stat: `${newFollowers} new followers this week`,
       statIcon: "👥",
@@ -86,7 +84,6 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
     {
       id: "top-post",
       label: "🏆 TOP POST OF THE WEEK",
-      color: "#e8432d",
       post: topPost,
       stat: `${topPost.likes} 🔥 · ${topPost.comments} 💬 · ${topPost.shares} 🔁`,
       statIcon: "🏆",
@@ -123,7 +120,7 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
     <>
       {/* Full-screen overlay */}
       <div className="fixed inset-0 z-50 flex items-end justify-center">
-        {/* Backdrop button */}
+        {/* Backdrop */}
         <button
           type="button"
           aria-label="Close digest"
@@ -131,26 +128,30 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
           onClick={onClose}
         />
 
-        {/* Sheet panel */}
+        {/* Sheet panel — white in light mode, dark surface in dark mode */}
         <div
-          className="relative w-full max-w-lg mx-auto rounded-t-3xl bg-white overflow-hidden"
+          className="relative w-full max-w-lg mx-auto rounded-t-3xl bg-white dark:bg-zinc-900 overflow-hidden"
           style={{ maxHeight: "88vh" }}
         >
           {/* Handle bar */}
           <div className="flex justify-center pt-3 pb-1">
-            <div className="w-10 h-1 rounded-full bg-gray-300" />
+            <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-zinc-700" />
           </div>
 
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-3">
-            <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">
+            <p
+              className="text-sm font-black uppercase tracking-widest"
+              style={{ color: BRAND }}
+            >
               Weekly Digest
             </p>
             <button
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors text-lg font-bold"
+              className="h-8 w-8 rounded-full flex items-center justify-center text-white text-lg font-bold transition-opacity hover:opacity-80"
+              style={{ backgroundColor: BRAND }}
             >
               ×
             </button>
@@ -168,7 +169,7 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
                 style={{
                   width: i === currentSlide ? 20 : 6,
                   height: 6,
-                  backgroundColor: i === currentSlide ? slide.color : "#E5E5E5",
+                  backgroundColor: i === currentSlide ? BRAND : "#E5E5E5",
                 }}
               />
             ))}
@@ -183,13 +184,10 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
           >
             <div
               className="rounded-2xl overflow-hidden"
-              style={{ border: `2px solid ${slide.color}20` }}
+              style={{ border: `2px solid ${BRAND}30` }}
             >
-              {/* Slide header stripe */}
-              <div
-                className="px-5 py-4"
-                style={{ backgroundColor: slide.color }}
-              >
+              {/* Slide header stripe — always #e8432d */}
+              <div className="px-5 py-4" style={{ backgroundColor: BRAND }}>
                 <p className="text-white text-xs font-black uppercase tracking-widest opacity-80">
                   {slide.label}
                 </p>
@@ -200,29 +198,26 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
 
               {/* Slide body */}
               {slide.isFollowers ? (
-                <div className="bg-white p-6 text-center">
+                <div className="bg-white dark:bg-zinc-800 p-6 text-center">
                   <div className="text-6xl mb-4" style={{ lineHeight: 1 }}>
                     👥
                   </div>
-                  <p
-                    className="text-4xl font-black"
-                    style={{ color: slide.color }}
-                  >
+                  <p className="text-4xl font-black" style={{ color: BRAND }}>
                     +{newFollowers}
                   </p>
-                  <p className="text-base font-semibold text-gray-500 mt-2">
+                  <p className="text-base font-semibold text-gray-500 dark:text-gray-400 mt-2">
                     New followers this week
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                     Keep posting — your audience is growing 🚀
                   </p>
                 </div>
               ) : slide.post ? (
-                <div className="bg-white p-4">
+                <div className="bg-white dark:bg-zinc-800 p-4">
                   {slide.isTop && (
                     <div
                       className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold text-white mb-3"
-                      style={{ backgroundColor: slide.color }}
+                      style={{ backgroundColor: BRAND }}
                     >
                       🏆 Top Post
                     </div>
@@ -230,7 +225,7 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
                   <div className="flex items-center gap-2 mb-2">
                     <div
                       className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                      style={{ backgroundColor: slide.color }}
+                      style={{ backgroundColor: BRAND }}
                     >
                       {slide.post.isAnonymous
                         ? "🥷"
@@ -242,35 +237,35 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
                             .slice(0, 2)}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900 leading-none">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 leading-none">
                         {slide.post.isAnonymous
                           ? "Anonymous"
                           : slide.post.displayName}
                       </p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-400 dark:text-gray-500">
                         🏛️ {getUniversityAcronym(slide.post.university)}
                       </p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">
+                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-3">
                     {slide.post.content}
                   </p>
-                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
+                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100 dark:border-zinc-700">
                     <span className="flex items-center gap-1 text-xs text-gray-500">
                       🔥{" "}
-                      <span className="font-bold text-gray-700">
+                      <span className="font-bold text-gray-700 dark:text-gray-300">
                         {slide.post.likes}
                       </span>
                     </span>
                     <span className="flex items-center gap-1 text-xs text-gray-500">
                       💬{" "}
-                      <span className="font-bold text-gray-700">
+                      <span className="font-bold text-gray-700 dark:text-gray-300">
                         {slide.post.comments}
                       </span>
                     </span>
                     <span className="flex items-center gap-1 text-xs text-gray-500">
                       <ReblogIcon className="h-3 w-3" />
-                      <span className="font-bold text-gray-700">
+                      <span className="font-bold text-gray-700 dark:text-gray-300">
                         {slide.post.shares}
                       </span>
                     </span>
@@ -285,26 +280,26 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
                 type="button"
                 onClick={goPrev}
                 disabled={currentSlide === 0}
-                className="h-10 px-4 rounded-full text-sm font-bold transition-colors disabled:opacity-30"
+                className="h-10 px-4 rounded-full text-sm font-bold transition-all disabled:opacity-30"
                 style={{
                   backgroundColor:
-                    currentSlide === 0 ? "#F0F0F0" : `${slide.color}15`,
-                  color: currentSlide === 0 ? "#ADB5BD" : slide.color,
+                    currentSlide === 0 ? "#F0F0F0" : `${BRAND}18`,
+                  color: currentSlide === 0 ? "#ADB5BD" : BRAND,
                 }}
               >
                 ← Prev
               </button>
-              <span className="text-xs text-gray-400 font-medium">
+              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">
                 {currentSlide + 1} / {TOTAL}
               </span>
               <button
                 type="button"
                 onClick={goNext}
                 disabled={currentSlide === TOTAL - 1}
-                className="h-10 px-4 rounded-full text-sm font-bold transition-colors disabled:opacity-30"
+                className="h-10 px-4 rounded-full text-sm font-bold transition-all disabled:opacity-30 text-white"
                 style={{
                   backgroundColor:
-                    currentSlide === TOTAL - 1 ? "#F0F0F0" : slide.color,
+                    currentSlide === TOTAL - 1 ? "#E5E5E5" : BRAND,
                   color: currentSlide === TOTAL - 1 ? "#ADB5BD" : "white",
                 }}
               >
