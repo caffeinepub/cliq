@@ -72,7 +72,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
   return (
     <>
       <Card
-        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] ml-8 mr-2 mb-3"
+        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] mb-3"
         data-ocid={`post.item.${index}`}
       >
         <CardContent className="p-5">
@@ -160,13 +160,13 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                 </div>
               )}
 
-              {/* Engagement bar — all buttons left-aligned, evenly spaced */}
-              <div className="flex items-center justify-start gap-1 pt-3 border-t border-[#F0F0F0] dark:border-border">
+              {/* Engagement bar — all buttons left-aligned, compact for mobile */}
+              <div className="flex items-center justify-start gap-0 pt-3 border-t border-[#F0F0F0] dark:border-border">
                 <button
                   type="button"
                   data-ocid="post.like.button"
                   onClick={handleLike}
-                  className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
+                  className="flex items-center gap-1.5 py-2 px-2 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
                 >
                   <Flame
                     className={`h-6 w-6 ${
@@ -188,7 +188,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                   type="button"
                   data-ocid="post.comment.button"
                   onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
+                  className="flex items-center gap-1.5 py-2 px-2 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
                 >
                   <MessageCircle className="h-6 w-6 text-[#ADB5BD]" />
                   <span className="text-base font-black text-[#6C757D]">
@@ -201,7 +201,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                   data-ocid="post.recliq.button"
                   onClick={handleRecliq}
                   disabled={isRecliqing}
-                  className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
+                  className="flex items-center gap-1.5 py-2 px-2 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
                 >
                   {isRecliqing ? (
                     <Loader2 className="h-6 w-6 animate-spin text-[#ADB5BD]" />
@@ -228,7 +228,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                     e.stopPropagation();
                     setShareModalOpen(true);
                   }}
-                  className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="flex items-center gap-1.5 py-2 px-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
                   <Share2 className="h-6 w-6 text-[#ADB5BD]" />
                 </button>

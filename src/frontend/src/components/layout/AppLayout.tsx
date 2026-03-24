@@ -103,7 +103,7 @@ export function AppLayout() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col md:flex-row">
+    <div className="flex min-h-screen flex-col md:flex-row overflow-x-hidden">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex md:w-72 md:flex-col md:border-r md:bg-card">
         <div className="flex items-center gap-3 border-b p-6">
@@ -320,7 +320,7 @@ export function AppLayout() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 pb-20 md:pb-0 min-h-0">
+      <main className="flex-1 pb-20 md:pb-0 min-h-0 min-w-0">
         {/* Mobile Top Bar */}
         <div className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-card border-b md:hidden">
           <Button
