@@ -2,6 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { useMemo, useState } from "react";
 import { MOCK_USERS } from "../../data/mockUsers";
+import {
+  addFollowedUser,
+  removeFollowedUser,
+} from "../../lib/interactionStore";
 import { scoreFriendRecommendation } from "../../lib/recommendationEngine";
 
 interface PeopleYouMayKnowProps {
@@ -11,12 +15,18 @@ interface PeopleYouMayKnowProps {
 export function PeopleYouMayKnow({
   currentUserUniversity,
 }: PeopleYouMayKnowProps) {
-  const [followed, setFollowed] = useState<Set<string>>(new Set());
+  // Track followed IDs in local state so useMemo can react to changes
+  const [followedIds, setFollowedIds] = useState<string[]>([]);
 
   const recommendations = useMemo(() => {
     const scored = MOCK_USERS.map((u) => ({
       user: u,
-      score: scoreFriendRecommendation(u, currentUserUniversity, []),
+      score: scoreFriendRecommendation(
+        u,
+        currentUserUniversity,
+        [],
+        followedIds,
+      ),
     }));
     scored.sort((a, b) => b.score - a.score);
     const sameUni = scored
@@ -24,7 +34,18 @@ export function PeopleYouMayKnow({
       .slice(0, 5);
     if (sameUni.length >= 3) return sameUni.map((s) => s.user);
     return scored.slice(0, 5).map((s) => s.user);
-  }, [currentUserUniversity]);
+  }, [currentUserUniversity, followedIds]);
+
+  const handleFollow = (userId: string) => {
+    setFollowedIds((prev) => {
+      if (prev.includes(userId)) {
+        removeFollowedUser(userId);
+        return prev.filter((id) => id !== userId);
+      }
+      addFollowedUser(userId);
+      return [...prev, userId];
+    });
+  };
 
   return (
     <div className="mb-4">
@@ -45,7 +66,7 @@ export function PeopleYouMayKnow({
             .join("")
             .toUpperCase()
             .slice(0, 2);
-          const isFollowed = followed.has(user.id);
+          const isFollowed = followedIds.includes(user.id);
           return (
             <div
               key={user.id}
@@ -74,14 +95,7 @@ export function PeopleYouMayKnow({
                     ? "bg-[#FF6B35] border-[#FF6B35] text-white"
                     : "border-[#FF6B35] text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white"
                 }`}
-                onClick={() =>
-                  setFollowed((prev) => {
-                    const next = new Set(prev);
-                    if (next.has(user.id)) next.delete(user.id);
-                    else next.add(user.id);
-                    return next;
-                  })
-                }
+                onClick={() => handleFollow(user.id)}
                 data-ocid="explore.people.button"
               >
                 {isFollowed ? "Following" : "Follow"}

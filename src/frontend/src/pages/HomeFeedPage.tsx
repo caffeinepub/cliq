@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MockPostCard } from "../components/posts/MockPostCard";
 import { PostCard } from "../components/posts/PostCard";
 import { PostComposer } from "../components/posts/PostComposer";
@@ -18,9 +18,9 @@ import {
   useGetFollowingFeed,
   useGetUniversalFeed,
 } from "../hooks/useQueries";
+import { getLikedPostIds, subscribe } from "../lib/interactionStore";
 import { getUniversalFeed } from "../lib/universalAlgorithm";
 
-const DEMO_LIKED_POST_IDS = ["mock-5", "mock-7"];
 const CURRENT_USER_UNIVERSITY = "University of Lagos";
 
 export function HomeFeedPage() {
@@ -28,6 +28,15 @@ export function HomeFeedPage() {
     "following" | "campus" | "universal"
   >("campus");
   const [composerOpen, setComposerOpen] = useState(false);
+  const [likedPostIds, setLikedPostIds] = useState<string[]>(() =>
+    getLikedPostIds(),
+  );
+
+  useEffect(() => {
+    return subscribe(() => {
+      setLikedPostIds(getLikedPostIds());
+    });
+  }, []);
 
   const { data: followingFeed, isLoading: followingLoading } =
     useGetFollowingFeed();
@@ -135,7 +144,7 @@ export function HomeFeedPage() {
             ✨ Algorithmically ranked
           </p>
           <div className="px-4">
-            <BecauseYouLiked likedPostIds={DEMO_LIKED_POST_IDS} />
+            <BecauseYouLiked likedPostIds={likedPostIds} />
           </div>
           {algorithmicPosts.map((post, i) => (
             <MockPostCard key={post.id} post={post} index={i + 1} />

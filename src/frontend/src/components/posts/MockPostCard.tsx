@@ -4,6 +4,7 @@ import { Flame, Loader2, MessageCircle, Share2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { MockPost } from "../../data/mockPosts";
+import { addLikedPost, removeLikedPost } from "../../lib/interactionStore";
 import { getUniversityAcronym } from "../../lib/universityAcronyms";
 import { ShareModal } from "./ShareModal";
 
@@ -47,8 +48,14 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsLiked((prev) => !prev);
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    const nowLiked = !isLiked;
+    setIsLiked(nowLiked);
+    setLikeCount((prev) => (nowLiked ? prev + 1 : prev - 1));
+    if (nowLiked) {
+      addLikedPost(post.id);
+    } else {
+      removeLikedPost(post.id);
+    }
   };
 
   const handleRecliq = (e: React.MouseEvent) => {
@@ -72,7 +79,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
   return (
     <>
       <Card
-        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] mb-3"
+        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border-x-0 border-t-0 border-b shadow-none"
         data-ocid={`post.item.${index}`}
       >
         <CardContent className="p-5">
@@ -236,8 +243,8 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
             </div>
           </div>
 
-          {/* University tag — below the postcard */}
-          <div className="mt-3 pt-3 border-t border-[#F0F0F0] dark:border-border flex items-center gap-1.5">
+          {/* University tag — below the postcard, right-aligned */}
+          <div className="mt-3 pt-3 border-t border-[#F0F0F0] dark:border-border flex items-center gap-1.5 justify-end">
             <span className="bg-[#FF6B35] text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
               🏛️ {uniAcronym}
             </span>

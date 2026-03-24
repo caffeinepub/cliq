@@ -52,15 +52,17 @@ export function scoreFriendRecommendation(
   candidate: MockUser,
   currentUserUniversity: string,
   likedUsernames: string[],
+  followedUserIds: string[] = [],
 ): number {
   const uniScore = candidate.university === currentUserUniversity ? 0.3 : 0;
   const interactionScore = likedUsernames.includes(candidate.username)
     ? 0.25
     : 0;
+  const followBoost = followedUserIds.includes(candidate.id) ? 0.15 : 0;
   const interactionRand =
     hashString(`${candidate.username}_interaction`) * 0.25;
   const viewRand = hashString(`${candidate.username}_views`) * 0.2;
-  return uniScore + interactionScore + interactionRand + viewRand;
+  return uniScore + interactionScore + followBoost + interactionRand + viewRand;
 }
 
 export function getContentRecommendations(
