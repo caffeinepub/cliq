@@ -18,6 +18,7 @@ import { Loader2, Search, ShoppingBag } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { ExternalBlob } from "../backend";
+import { RecommendedForYou } from "../components/recommendations/RecommendedForYou";
 import { FloatingActionButton } from "../components/shared/FloatingActionButton";
 import {
   useCreateListing,
@@ -147,8 +148,7 @@ export function MarketplacePage() {
       let media: ExternalBlob | null = null;
       if (imageFile) {
         const arrayBuffer = await imageFile.arrayBuffer();
-        const uint8Array = new Uint8Array(arrayBuffer);
-        media = ExternalBlob.fromBytes(uint8Array);
+        media = ExternalBlob.fromBytes(new Uint8Array(arrayBuffer));
       }
       await createListing.mutateAsync({
         title,
@@ -169,7 +169,7 @@ export function MarketplacePage() {
   };
 
   return (
-    <div className="bg-white min-h-screen pb-24">
+    <div className="bg-white min-h-screen pb-24 max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-4">
         <h1 className="text-xl font-semibold tracking-tight">
@@ -203,14 +203,12 @@ export function MarketplacePage() {
 
       {/* Featured Services Box */}
       <div className="mx-4 mb-6 border border-[#FF6B35] rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-        {/* Header strip */}
         <div className="bg-gradient-to-r from-[#FF6B35] to-[#ff8c5a] px-4 py-3 flex items-center justify-between">
           <span className="text-white font-semibold text-sm tracking-widest uppercase">
             Services
           </span>
           <span className="text-white/80 text-xs">Campus Pros</span>
         </div>
-        {/* Services grid */}
         <div className="grid grid-cols-3 gap-2 p-4">
           {services.map((s) => (
             <button
@@ -226,7 +224,6 @@ export function MarketplacePage() {
             </button>
           ))}
         </div>
-        {/* Browse all link */}
         <div className="px-4 pb-4">
           <button
             type="button"
@@ -249,11 +246,8 @@ export function MarketplacePage() {
               key={cat.label}
               type="button"
               onClick={() => {
-                if (cat.isCreate) {
-                  setIsCreateOpen(true);
-                } else {
-                  toast.info(`${cat.label} coming soon`);
-                }
+                if (cat.isCreate) setIsCreateOpen(true);
+                else toast.info(`${cat.label} coming soon`);
               }}
               className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border cursor-pointer transition-all min-h-[72px] shadow-[0_1px_4px_rgba(0,0,0,0.04)] ${
                 cat.isCreate
@@ -266,9 +260,7 @@ export function MarketplacePage() {
             >
               <span className="text-2xl">{cat.emoji}</span>
               <span
-                className={`text-[10px] font-medium text-center leading-tight ${
-                  cat.isCreate ? "text-white" : "text-[#212529]"
-                }`}
+                className={`text-[10px] font-medium text-center leading-tight ${cat.isCreate ? "text-white" : "text-[#212529]"}`}
               >
                 {cat.label}
               </span>
@@ -277,10 +269,9 @@ export function MarketplacePage() {
         </div>
       </div>
 
-      {/* Trending Listings Section */}
+      {/* Trending Listings */}
       <div className="px-4 mb-4">
         <p className="text-sm font-semibold text-[#212529] mb-3">🔥 TRENDING</p>
-
         {isLoading ? (
           <div
             className="flex justify-center py-12"
@@ -290,14 +281,12 @@ export function MarketplacePage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {/* Hardcoded trending items */}
             {trendingItems.map((item, i) => (
               <div
                 key={item.id}
                 className="rounded-2xl border border-[#E5E5E5] overflow-hidden bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer"
                 data-ocid={`marketplace.item.${i + 1}`}
               >
-                {/* Placeholder image */}
                 <div className="aspect-square w-full bg-[#F8F9FA] flex items-center justify-center">
                   <ShoppingBag className="h-10 w-10 text-[#E5E5E5]" />
                 </div>
@@ -323,8 +312,6 @@ export function MarketplacePage() {
                 </div>
               </div>
             ))}
-
-            {/* Real listings from backend */}
             {listings?.map((listing, i) => {
               const imageUrl = listing.media?.getDirectURL();
               return (
@@ -394,12 +381,18 @@ export function MarketplacePage() {
             </p>
           </div>
         )}
+      </div>
 
-        {/* Load More */}
+      {/* Recommended For You */}
+      <RecommendedForYou />
+
+      {/* Load More */}
+      <div className="px-4 mb-4">
         <button
           type="button"
-          className="rounded-[40px] border border-[#E5E5E5] text-[#6C757D] text-sm px-8 py-2.5 mx-auto block hover:border-[#FF6B35] hover:text-[#FF6B35] transition-colors mt-4"
+          className="rounded-[40px] border border-[#E5E5E5] text-[#6C757D] text-sm px-8 py-2.5 mx-auto block hover:border-[#FF6B35] hover:text-[#FF6B35] transition-colors"
           onClick={() => toast.info("Load more coming soon")}
+          data-ocid="marketplace.load_more.button"
         >
           Load More
         </button>
@@ -582,7 +575,6 @@ export function MarketplacePage() {
         </SheetContent>
       </Sheet>
 
-      {/* FAB */}
       <FloatingActionButton onClick={() => setIsCreateOpen(true)} />
     </div>
   );

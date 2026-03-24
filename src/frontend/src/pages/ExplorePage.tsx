@@ -19,9 +19,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Search } from "lucide-react";
 import { useState } from "react";
 import { PostComposer } from "../components/posts/PostComposer";
+import { PeopleYouMayKnow } from "../components/recommendations/PeopleYouMayKnow";
 import { FloatingActionButton } from "../components/shared/FloatingActionButton";
 import { UNIVERSITIES } from "../constants/universities";
 import { useSearchUsers } from "../hooks/useQueries";
+
+const CURRENT_USER_UNIVERSITY = "University of Lagos";
 
 export function ExplorePage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,12 +37,10 @@ export function ExplorePage() {
     universityFilter,
   );
 
-  const handleSearch = () => {
-    setDebouncedTerm(searchTerm);
-  };
+  const handleSearch = () => setDebouncedTerm(searchTerm);
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4 p-4 max-w-full overflow-x-hidden">
       <div className="border-b pb-4">
         <h1 className="text-2xl font-bold">Explore</h1>
         <p className="text-sm text-muted-foreground">
@@ -57,16 +58,19 @@ export function ExplorePage() {
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               className="pl-9"
+              data-ocid="explore.search_input"
             />
           </div>
-          <Button onClick={handleSearch}>Search</Button>
+          <Button onClick={handleSearch} data-ocid="explore.search.button">
+            Search
+          </Button>
         </div>
 
         <Select
           value={universityFilter || "all"}
           onValueChange={(v) => setUniversityFilter(v === "all" ? null : v)}
         >
-          <SelectTrigger>
+          <SelectTrigger data-ocid="explore.university.select">
             <SelectValue placeholder="All universities" />
           </SelectTrigger>
           <SelectContent>
@@ -82,15 +86,27 @@ export function ExplorePage() {
 
       <Tabs defaultValue="users">
         <TabsList className="w-full">
-          <TabsTrigger value="users" className="flex-1">
+          <TabsTrigger
+            value="users"
+            className="flex-1"
+            data-ocid="explore.users.tab"
+          >
             Users
           </TabsTrigger>
-          <TabsTrigger value="posts" className="flex-1" disabled>
+          <TabsTrigger
+            value="posts"
+            className="flex-1"
+            disabled
+            data-ocid="explore.posts.tab"
+          >
             Posts
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-3">
+          {/* People You May Know */}
+          <PeopleYouMayKnow currentUserUniversity={CURRENT_USER_UNIVERSITY} />
+
           {isLoading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -104,7 +120,6 @@ export function ExplorePage() {
                 .join("")
                 .toUpperCase()
                 .slice(0, 2);
-
               return (
                 <Card
                   key={user.username}
@@ -118,7 +133,7 @@ export function ExplorePage() {
                         <AvatarFallback>{initials}</AvatarFallback>
                       )}
                     </Avatar>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <p className="font-semibold">{user.displayName}</p>
                       <p className="text-sm text-muted-foreground">
                         @{user.username}
@@ -127,7 +142,11 @@ export function ExplorePage() {
                         {user.university}
                       </p>
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      data-ocid="explore.users.follow.button"
+                    >
                       Follow
                     </Button>
                   </CardContent>
@@ -139,7 +158,7 @@ export function ExplorePage() {
               No users found matching "{debouncedTerm}"
             </div>
           ) : (
-            <div className="py-12 text-center text-muted-foreground">
+            <div className="py-8 text-center text-muted-foreground text-sm">
               Search for users by name or username
             </div>
           )}

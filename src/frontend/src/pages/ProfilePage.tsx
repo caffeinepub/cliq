@@ -23,6 +23,7 @@ export function ProfilePage() {
   const bookmarkedPosts = mockPosts.filter((p) =>
     BOOKMARKED_POST_IDS.includes(p.id),
   );
+  const mediaPosts = mockPosts.filter((p) => p.mediaUrl && p.mediaType);
 
   if (isLoading) {
     return (
@@ -41,21 +42,30 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="max-w-full overflow-x-hidden">
       <ProfileHeader profile={profile} isOwnProfile={true} />
 
-      <Tabs defaultValue="posts">
-        <TabsList className="w-full">
-          <TabsTrigger value="posts" className="flex-1">
+      <Tabs defaultValue="posts" className="w-full">
+        <TabsList className="w-full grid grid-cols-3 h-10 bg-[#F8F9FA] rounded-none border-b border-[#E5E5E5] p-0">
+          <TabsTrigger
+            value="posts"
+            className="rounded-none text-xs font-semibold h-full data-[state=active]:text-[#FF6B35] data-[state=active]:border-b-2 data-[state=active]:border-[#FF6B35] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            data-ocid="profile.posts.tab"
+          >
             Posts
           </TabsTrigger>
-          <TabsTrigger value="replies" className="flex-1">
-            Replies
-          </TabsTrigger>
-          <TabsTrigger value="media" className="flex-1">
+          <TabsTrigger
+            value="media"
+            className="rounded-none text-xs font-semibold h-full data-[state=active]:text-[#FF6B35] data-[state=active]:border-b-2 data-[state=active]:border-[#FF6B35] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            data-ocid="profile.media.tab"
+          >
             Media
           </TabsTrigger>
-          <TabsTrigger value="bookmarks" className="flex-1">
+          <TabsTrigger
+            value="bookmarks"
+            className="rounded-none text-xs font-semibold h-full data-[state=active]:text-[#FF6B35] data-[state=active]:border-b-2 data-[state=active]:border-[#FF6B35] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            data-ocid="profile.bookmarks.tab"
+          >
             🔖 Saved
           </TabsTrigger>
         </TabsList>
@@ -66,21 +76,41 @@ export function ProfilePage() {
         >
           No posts yet
         </TabsContent>
-        <TabsContent
-          value="replies"
-          className="py-6 text-center text-muted-foreground"
-        >
-          No replies yet
+
+        <TabsContent value="media">
+          {mediaPosts.length > 0 ? (
+            <div className="grid grid-cols-2 gap-0.5 mt-1">
+              {mediaPosts.map((post) => (
+                <div
+                  key={post.id}
+                  className="aspect-square bg-[#F8F9FA] overflow-hidden"
+                >
+                  {post.mediaType === "image" ? (
+                    <img
+                      src={post.mediaUrl}
+                      alt={post.content.slice(0, 30)}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <video
+                      src={post.mediaUrl}
+                      className="w-full h-full object-cover"
+                      muted
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-12 text-center text-muted-foreground">
+              No media posts yet
+            </div>
+          )}
         </TabsContent>
-        <TabsContent
-          value="media"
-          className="py-6 text-center text-muted-foreground"
-        >
-          No media yet
-        </TabsContent>
+
         <TabsContent value="bookmarks">
           {bookmarkedPosts.length > 0 ? (
-            <div className="space-y-0 mt-4">
+            <div className="space-y-0 mt-0">
               {bookmarkedPosts.map((post, i) => (
                 <MockPostCard key={post.id} post={post} index={i} />
               ))}

@@ -10,6 +10,7 @@ import { useState } from "react";
 import { MockPostCard } from "../components/posts/MockPostCard";
 import { PostCard } from "../components/posts/PostCard";
 import { PostComposer } from "../components/posts/PostComposer";
+import { BecauseYouLiked } from "../components/recommendations/BecauseYouLiked";
 import { FloatingActionButton } from "../components/shared/FloatingActionButton";
 import { mockPosts } from "../data/mockPosts";
 import {
@@ -17,6 +18,10 @@ import {
   useGetFollowingFeed,
   useGetUniversalFeed,
 } from "../hooks/useQueries";
+import { getUniversalFeed } from "../lib/universalAlgorithm";
+
+const DEMO_LIKED_POST_IDS = ["mock-5", "mock-7"];
+const CURRENT_USER_UNIVERSITY = "University of Lagos";
 
 export function HomeFeedPage() {
   const [activeTab, setActiveTab] = useState<
@@ -30,8 +35,13 @@ export function HomeFeedPage() {
   const { data: universalFeed, isLoading: universalLoading } =
     useGetUniversalFeed();
 
+  const algorithmicPosts = getUniversalFeed(mockPosts, CURRENT_USER_UNIVERSITY);
+
   return (
-    <div data-ocid="home_feed.page" className="relative pb-4">
+    <div
+      data-ocid="home_feed.page"
+      className="relative pb-4 max-w-full overflow-x-hidden"
+    >
       <Tabs
         data-ocid="home_feed.tabs"
         value={activeTab}
@@ -40,7 +50,7 @@ export function HomeFeedPage() {
         }
         className="w-full"
       >
-        {/* Sticky Tabs Header — rounded pill style */}
+        {/* Sticky Tabs Header */}
         <div className="sticky top-0 z-20 bg-background">
           <div className="px-4 py-2 border-b border-border">
             <TabsList className="flex gap-1 bg-[#F8F9FA] rounded-2xl p-1 h-auto w-full">
@@ -69,7 +79,7 @@ export function HomeFeedPage() {
           </div>
         </div>
 
-        {/* CLIQS TAB — Following feed */}
+        {/* CLIQS TAB */}
         <TabsContent value="following" className="mt-3 px-0">
           {mockPosts.map((post, i) => (
             <MockPostCard key={post.id} post={post} index={i + 1} />
@@ -119,12 +129,15 @@ export function HomeFeedPage() {
           )}
         </TabsContent>
 
-        {/* EXPLORE TAB — algorithm-curated from all universities */}
+        {/* EXPLORE TAB — algorithmic */}
         <TabsContent value="universal" className="mt-3 px-0">
-          <p className="text-xs text-muted-foreground pb-1 px-4 pt-2">
-            Trending posts from all universities
+          <p className="text-[10px] text-muted-foreground pb-1 px-4 pt-2">
+            ✨ Algorithmically ranked
           </p>
-          {mockPosts.map((post, i) => (
+          <div className="px-4">
+            <BecauseYouLiked likedPostIds={DEMO_LIKED_POST_IDS} />
+          </div>
+          {algorithmicPosts.map((post, i) => (
             <MockPostCard key={post.id} post={post} index={i + 1} />
           ))}
           {universalLoading ? (
@@ -148,7 +161,6 @@ export function HomeFeedPage() {
         </TabsContent>
       </Tabs>
 
-      {/* Post Composer Dialog */}
       <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
         <DialogContent
           className="max-w-lg"
@@ -161,7 +173,6 @@ export function HomeFeedPage() {
         </DialogContent>
       </Dialog>
 
-      {/* FAB */}
       <FloatingActionButton onClick={() => setComposerOpen(true)} />
     </div>
   );

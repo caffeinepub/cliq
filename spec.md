@@ -1,32 +1,41 @@
 # CLIQ
 
 ## Current State
-The app has a comprehensive Motoko backend (posts, comments, likes, follows, marketplace, messages, notifications, communities) and a React frontend with mock auth (any credentials accepted). There is basic mock data in `mockPosts.ts` (10 posts) but no centralized mock data for users, marketplace listings, communities, messages, or notifications.
+- HomeFeedPage has 3 tabs: CLIQS, CAMPUS, EXPLORE. EXPLORE shows mockPosts with no ranking.
+- ProfilePage shows ProfileHeader + 4 tabs (Posts, Replies, Media, Saved). Header has overflow issues and no URL detection in bio.
+- MarketplacePage shows trending items grid with no recommendation section.
+- ExplorePage shows user search with no friend recommendations.
+- mockPosts.ts has engagement data (likes, comments, shares), isBoosted, timestamps.
+- mockUsers.ts has user data with university info.
 
 ## Requested Changes (Diff)
 
 ### Add
-- `src/frontend/src/data/mockUsers.ts` — 8 mock Nigerian student user profiles with avatars, universities, bios, follow counts
-- `src/frontend/src/data/mockMarketplace.ts` — 12 mock marketplace listings across categories (gadgets, books, furniture, beauty, food)
-- `src/frontend/src/data/mockCommunities.ts` — 6 mock communities with member counts, recent posts
-- `src/frontend/src/data/mockMessages.ts` — mock conversations and messages between users
-- `src/frontend/src/data/mockNotifications.ts` — mock notifications (likes, follows, comments, mentions)
-- Demo credentials card on the SignInPage showing 3 pre-filled test accounts users can click to auto-fill
-- `DEMO_ACCOUNTS` array with email/password/profile data for 3 test users
+- `src/frontend/src/lib/universalAlgorithm.ts` — scoring function for UNIVERSAL feed algorithm
+- `src/frontend/src/lib/recommendationEngine.ts` — scoring functions for marketplace, friend, and content recommendations
+- `src/frontend/src/components/recommendations/PeopleYouMayKnow.tsx` — friend recommendations UI for ExplorePage
+- `src/frontend/src/components/recommendations/RecommendedForYou.tsx` — marketplace item recommendations UI
+- `src/frontend/src/components/recommendations/BecauseYouLiked.tsx` — content recommendation banner for feed
+- Profile bio URL detection and clickable links with 🔗 icon, orange color, hover underline, 30-char display limit
 
 ### Modify
-- `mockPosts.ts` — expand to 15 posts with richer data and cross-reference mock users
-- `SignInPage.tsx` — add demo accounts section with clickable credential cards that auto-fill the form
-- `SignUpPage.tsx` — add demo account hint pointing users back to sign-in
+- `HomeFeedPage.tsx` — EXPLORE tab uses UNIVERSAL algorithm to sort/score mockPosts. Remove duplicates. Add "Because you liked X" content recommendation strip in EXPLORE tab.
+- `ProfilePage.tsx` — Compact mobile-friendly ProfileHeader replacement inline: avatar left, single-line stats (Posts · Following · Followers), bio with URL detection, only Posts and Media tabs (no Replies). Fix all overflow.
+- `ProfileHeader.tsx` — Rewrite to be compact: smaller avatar, single-line stats row, bio text wrapping, URL → clickable anchor with 🔗 icon, 30-char ellipsis, orange color.
+- `MarketplacePage.tsx` — Add "Recommended for You" section below trending items using recommendation engine scoring.
+- `ExplorePage.tsx` — Add "People You May Know" section above search results using friend recommendation scoring.
 
 ### Remove
-- Nothing removed
+- Replies tab from ProfilePage (keep Posts, Media, Saved)
 
 ## Implementation Plan
-1. Create `mockUsers.ts` with 8 Nigerian student profiles (name, username, university, bio, avatar URL from Unsplash, follower/following counts)
-2. Create `mockMarketplace.ts` with 12 listings spanning gadgets, books, furniture, beauty, food — each with image, price in Naira, seller reference, condition, university
-3. Create `mockCommunities.ts` with 6 communities (Tech Hub, Campus Foodies, Marketplace, Study Group, Sports, Fashion)
-4. Create `mockMessages.ts` with 3 conversations and 5–8 messages each
-5. Create `mockNotifications.ts` with 10 varied notifications
-6. Update `SignInPage.tsx` to show a "Demo Accounts" card with 3 clickable accounts that auto-fill email+password
-7. Expand `mockPosts.ts` to 15 posts referencing mock user data
+1. Create `universalAlgorithm.ts` — scorePost(post, currentUser) returns number. Factors: recency decay (48h window, exponential), engagement score (likes×2 + comments×3 + shares×4), network boost (1.5x if followed), university boost (1.2x if same uni), boosted post (2×). Filter seen posts using sessionStorage. Sort descending by score.
+2. Create `recommendationEngine.ts` — three scoring functions:
+   - `scoreMarketplaceItem(item, userSearches, viewedItems)` — 40% keyword match, 30% similarity, 15% popularity, 15% recency
+   - `scoreFriendRecommendation(user, currentUser, interactions)` — 30% same dept, 25% same communities, 25% post interactions, 20% profile views
+   - `scoreContentRecommendation(post, likedPosts)` — tag/keyword overlap with liked posts
+3. Update `ProfileHeader.tsx` — compact layout: h-16 avatar, single-line "X Posts · X Following · X Followers", bio wraps, URLs detected via regex (https?://[^\s]+), rendered as <a> with 🔗 icon, orange, 30-char truncate, new tab. Remove MapPin/Calendar icons. Fix max-w-full overflow.
+4. Update `ProfilePage.tsx` — remove Replies tab, keep Posts/Media/Saved. Fix overflow with max-w-full overflow-hidden on all containers.
+5. Update `HomeFeedPage.tsx` EXPLORE tab — apply universalAlgorithm to mockPosts, show sorted results. Add BecauseYouLiked strip if user has liked posts.
+6. Update `MarketplacePage.tsx` — add RecommendedForYou section below trending with 10 items max, university-specific.
+7. Update `ExplorePage.tsx` — add PeopleYouMayKnow section using friend recommendation scoring, 10 users max, same university.
