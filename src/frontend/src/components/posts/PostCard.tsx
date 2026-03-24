@@ -219,8 +219,8 @@ export function PostCard({ post }: PostCardProps) {
                 </div>
               )}
 
-              {/* Tumblr-style engagement bar */}
-              <div className="flex justify-between items-end pt-2 border-t border-[#F0F0F0]">
+              {/* Tumblr-style engagement bar — all buttons left-aligned, evenly spaced */}
+              <div className="flex items-end justify-start gap-2 pt-2 border-t border-[#F0F0F0]">
                 {/* Like */}
                 <button
                   type="button"

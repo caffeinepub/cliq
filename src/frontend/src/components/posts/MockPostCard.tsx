@@ -160,71 +160,67 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                 </div>
               )}
 
-              {/* Engagement bar — Tumblr-bold style, left-aligned, share on far right */}
-              <div className="flex items-center pt-3 border-t border-[#F0F0F0] dark:border-border">
-                {/* Left cluster — Like, Comment, Recliq */}
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    data-ocid="post.like.button"
-                    onClick={handleLike}
-                    className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
+              {/* Engagement bar — all buttons left-aligned, evenly spaced */}
+              <div className="flex items-center justify-start gap-1 pt-3 border-t border-[#F0F0F0] dark:border-border">
+                <button
+                  type="button"
+                  data-ocid="post.like.button"
+                  onClick={handleLike}
+                  className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
+                >
+                  <Flame
+                    className={`h-6 w-6 ${
+                      isLiked
+                        ? "text-[#FF6B35] fill-[#FF6B35]"
+                        : "text-[#ADB5BD]"
+                    }`}
+                  />
+                  <span
+                    className={`text-base font-black ${
+                      isLiked ? "text-[#FF6B35]" : "text-[#6C757D]"
+                    }`}
                   >
-                    <Flame
+                    {likeCount}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  data-ocid="post.comment.button"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
+                >
+                  <MessageCircle className="h-6 w-6 text-[#ADB5BD]" />
+                  <span className="text-base font-black text-[#6C757D]">
+                    {post.comments}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  data-ocid="post.recliq.button"
+                  onClick={handleRecliq}
+                  disabled={isRecliqing}
+                  className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
+                >
+                  {isRecliqing ? (
+                    <Loader2 className="h-6 w-6 animate-spin text-[#ADB5BD]" />
+                  ) : (
+                    <ReblogIcon
                       className={`h-6 w-6 ${
-                        isLiked
-                          ? "text-[#FF6B35] fill-[#FF6B35]"
-                          : "text-[#ADB5BD]"
+                        hasRecliqed ? "text-[#FF6B35]" : "text-[#ADB5BD]"
                       }`}
                     />
-                    <span
-                      className={`text-base font-black ${
-                        isLiked ? "text-[#FF6B35]" : "text-[#6C757D]"
-                      }`}
-                    >
-                      {likeCount}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    data-ocid="post.comment.button"
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
+                  )}
+                  <span
+                    className={`text-base font-black ${
+                      hasRecliqed ? "text-[#FF6B35]" : "text-[#6C757D]"
+                    }`}
                   >
-                    <MessageCircle className="h-6 w-6 text-[#ADB5BD]" />
-                    <span className="text-base font-black text-[#6C757D]">
-                      {post.comments}
-                    </span>
-                  </button>
+                    {recliqCount}
+                  </span>
+                </button>
 
-                  <button
-                    type="button"
-                    data-ocid="post.recliq.button"
-                    onClick={handleRecliq}
-                    disabled={isRecliqing}
-                    className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
-                  >
-                    {isRecliqing ? (
-                      <Loader2 className="h-6 w-6 animate-spin text-[#ADB5BD]" />
-                    ) : (
-                      <ReblogIcon
-                        className={`h-6 w-6 ${
-                          hasRecliqed ? "text-[#FF6B35]" : "text-[#ADB5BD]"
-                        }`}
-                      />
-                    )}
-                    <span
-                      className={`text-base font-black ${
-                        hasRecliqed ? "text-[#FF6B35]" : "text-[#6C757D]"
-                      }`}
-                    >
-                      {recliqCount}
-                    </span>
-                  </button>
-                </div>
-
-                {/* Share button — pushed to far right */}
                 <button
                   type="button"
                   data-ocid="post.share.button"
@@ -232,7 +228,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                     e.stopPropagation();
                     setShareModalOpen(true);
                   }}
-                  className="ml-auto flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
                   <Share2 className="h-6 w-6 text-[#ADB5BD]" />
                 </button>
