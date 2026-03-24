@@ -86,7 +86,7 @@ export function HomeFeedPage() {
               <div
                 key={post.id.toString()}
                 data-ocid={`home_feed.following.item.${i + 1}`}
-                className="mx-3 mb-3"
+                className="ml-8 mr-2 mb-3"
               >
                 <PostCard post={post} />
               </div>
@@ -111,7 +111,7 @@ export function HomeFeedPage() {
               <div
                 key={post.id.toString()}
                 data-ocid={`home_feed.campus.item.${i + 1}`}
-                className="mx-3 mb-3"
+                className="ml-8 mr-2 mb-3"
               >
                 <PostCard post={post} />
               </div>
@@ -139,7 +139,7 @@ export function HomeFeedPage() {
               <div
                 key={post.id.toString()}
                 data-ocid={`home_feed.universal.item.${i + 1}`}
-                className="mx-3 mb-3"
+                className="ml-8 mr-2 mb-3"
               >
                 <PostCard post={post} />
               </div>
