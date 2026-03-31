@@ -103,7 +103,6 @@ export function CommunitiesPage() {
   const [newName, setNewName] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newPrivate, setNewPrivate] = useState(false);
-  const [activeTab, setActiveTab] = useState<"joined" | "discover">("joined");
 
   const filtered = communities.filter(
     (c) =>
@@ -112,7 +111,9 @@ export function CommunitiesPage() {
   );
 
   const joined = filtered.filter((c) => c.joined);
-  const discover = filtered.filter((c) => !c.joined);
+  const popular = filtered
+    .filter((c) => !c.joined)
+    .sort((a, b) => b.members - a.members);
 
   const handleJoin = (id: string) => {
     setCommunities((prev) =>
@@ -226,6 +227,7 @@ export function CommunitiesPage() {
         </Dialog>
       </div>
 
+      {/* Search bar */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
@@ -237,87 +239,65 @@ export function CommunitiesPage() {
         />
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2">
-        <Button
-          variant={activeTab === "joined" ? "default" : "ghost"}
-          size="sm"
-          className="rounded-full"
-          onClick={() => setActiveTab("joined")}
-          data-ocid="communities.joined.tab"
-        >
-          Joined ({joined.length})
-        </Button>
-        <Button
-          variant={activeTab === "discover" ? "default" : "ghost"}
-          size="sm"
-          className="rounded-full"
-          onClick={() => setActiveTab("discover")}
-          data-ocid="communities.discover.tab"
-        >
-          Discover ({discover.length})
-        </Button>
+      {/* My Communities */}
+      <div className="space-y-3">
+        <h2 className="text-base font-bold text-[#212529] dark:text-zinc-100">
+          My Communities
+        </h2>
+        {joined.length === 0 ? (
+          <div
+            className="text-center py-8 text-muted-foreground"
+            data-ocid="communities.empty_state"
+          >
+            <Users className="h-10 w-10 mx-auto mb-3 opacity-30" />
+            <p className="text-sm">Join a community to see it here</p>
+          </div>
+        ) : (
+          joined.map((c, i) => (
+            <CommunityCard
+              key={c.id}
+              community={c}
+              index={i + 1}
+              onJoin={handleJoin}
+              onLeave={handleLeave}
+              onClick={() =>
+                navigate({
+                  to: "/communities/$communityId",
+                  params: { communityId: c.id },
+                })
+              }
+            />
+          ))
+        )}
       </div>
 
-      {activeTab === "joined" && (
-        <div className="space-y-3">
-          {joined.length === 0 ? (
-            <div
-              className="text-center py-12 text-muted-foreground"
-              data-ocid="communities.empty_state"
-            >
-              <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p className="font-semibold">No communities yet</p>
-              <p className="text-sm">Discover and join communities below</p>
-            </div>
-          ) : (
-            joined.map((c, i) => (
-              <CommunityCard
-                key={c.id}
-                community={c}
-                index={i + 1}
-                onJoin={handleJoin}
-                onLeave={handleLeave}
-                onClick={() =>
-                  navigate({
-                    to: "/communities/$communityId",
-                    params: { communityId: c.id },
-                  })
-                }
-              />
-            ))
-          )}
-        </div>
-      )}
-
-      {activeTab === "discover" && (
-        <div className="space-y-3">
-          {discover.length === 0 ? (
-            <div
-              className="text-center py-12 text-muted-foreground"
-              data-ocid="communities.empty_state"
-            >
-              <p className="font-semibold">No communities to discover</p>
-            </div>
-          ) : (
-            discover.map((c, i) => (
-              <CommunityCard
-                key={c.id}
-                community={c}
-                index={i + 1}
-                onJoin={handleJoin}
-                onLeave={handleLeave}
-                onClick={() =>
-                  navigate({
-                    to: "/communities/$communityId",
-                    params: { communityId: c.id },
-                  })
-                }
-              />
-            ))
-          )}
-        </div>
-      )}
+      {/* Popular Communities */}
+      <div className="space-y-3">
+        <h2 className="text-base font-bold text-[#212529] dark:text-zinc-100">
+          🔥 Popular Communities
+        </h2>
+        {popular.length === 0 ? (
+          <div className="text-center py-6 text-muted-foreground">
+            <p className="text-sm">No other communities found</p>
+          </div>
+        ) : (
+          popular.map((c, i) => (
+            <CommunityCard
+              key={c.id}
+              community={c}
+              index={joined.length + i + 1}
+              onJoin={handleJoin}
+              onLeave={handleLeave}
+              onClick={() =>
+                navigate({
+                  to: "/communities/$communityId",
+                  params: { communityId: c.id },
+                })
+              }
+            />
+          ))
+        )}
+      </div>
 
       {/* Post Composer Dialog */}
       <Dialog open={composerOpen} onOpenChange={setComposerOpen}>

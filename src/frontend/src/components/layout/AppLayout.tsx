@@ -76,7 +76,7 @@ export function AppLayout() {
     { path: "/messages", icon: MessageCircle, label: "Messages" },
     { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
     { path: "/communities", icon: Users, label: "Communities" },
-    { path: "/rooms", icon: Skull, label: "Anonymous Rooms" },
+    { path: "/anonymous-rooms", icon: Skull, label: "Anonymous Rooms" },
     { path: "/roomie", icon: Home, label: "Roomie Matching" },
     { path: "/boosts", icon: Rocket, label: "My Boosts" },
     { path: "/settings", icon: Settings, label: "Settings" },
@@ -94,7 +94,7 @@ export function AppLayout() {
     { path: "/marketplace", icon: ShoppingBag, label: "Marketplace" },
     { path: "/messages", icon: MessageCircle, label: "Messages" },
     { path: "/communities", icon: Users, label: "Communities" },
-    { path: "/rooms", icon: Skull, label: "Anonymous Rooms" },
+    { path: "/anonymous-rooms", icon: Skull, label: "Anonymous Rooms" },
     { path: "/roomie", icon: Home, label: "Roomie" },
     { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
     { path: "/boosts", icon: Rocket, label: "My Boosts" },
@@ -107,15 +107,15 @@ export function AppLayout() {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex md:w-72 md:flex-col md:border-r md:bg-card">
         <div className="flex items-center gap-3 border-b p-6">
-          <img
-            src="/assets/uploads/IMG-20260226-WA0003-1.jpg"
-            alt="CLIQ"
-            className="h-10 w-10"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
-          />
-          <span className="text-2xl font-black tracking-tight">CLIQ</span>
+          <span
+            className="text-2xl font-black tracking-tight"
+            style={{ color: "#FF6B35" }}
+          >
+            CLIQ
+          </span>
+          <span className="text-xs text-muted-foreground font-medium">
+            Your campus, connected
+          </span>
         </div>
         <div className="flex-1 overflow-y-auto p-4">
           <nav className="flex flex-col gap-1">
@@ -331,17 +331,12 @@ export function AppLayout() {
           >
             <Menu className="h-6 w-6" />
           </Button>
-          <div className="flex items-center gap-2">
-            <img
-              src="/assets/uploads/IMG-20260226-WA0003-1.jpg"
-              alt="CLIQ"
-              className="h-7 w-7"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-            <span className="text-xl font-black tracking-tight">CLIQ</span>
-          </div>
+          <span
+            className="text-xl font-black tracking-tight"
+            style={{ color: "#FF6B35" }}
+          >
+            CLIQ
+          </span>
           <Link to="/notifications">
             <Button
               variant="ghost"

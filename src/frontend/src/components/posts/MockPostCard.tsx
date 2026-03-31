@@ -1,6 +1,32 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { Flame, Loader2, MessageCircle, Share2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  EyeOff,
+  Flame,
+  Loader2,
+  MessageCircle,
+  MoreVertical,
+  Share2,
+  ShieldAlert,
+  Trash2,
+  UserMinus,
+  UserPlus,
+  VolumeX,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { MockPost } from "../../data/mockPosts";
@@ -12,6 +38,18 @@ interface MockPostCardProps {
   post: MockPost;
   index: number;
 }
+
+const REPORT_REASONS = [
+  "Spam",
+  "Harassment",
+  "Hate speech",
+  "Illegal content",
+  "Nudity",
+  "Violence",
+  "Impersonation",
+  "Self-harm",
+  "Other",
+];
 
 function ReblogIcon({ className }: { className?: string }) {
   return (
@@ -36,6 +74,12 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
   const [hasRecliqed, setHasRecliqed] = useState(false);
   const [recliqCount, setRecliqCount] = useState(post.shares);
   const [isRecliqing, setIsRecliqing] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState(REPORT_REASONS[0]);
+
+  const isAdmin = localStorage.getItem("cliq_is_admin") === "true";
 
   const initials = post.isAnonymous
     ? "🥷"
@@ -74,116 +118,219 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
     }, 600);
   };
 
+  const handleReport = () => {
+    toast.success("Report submitted. We'll review this post.");
+    setReportOpen(false);
+  };
+
   const uniAcronym = getUniversityAcronym(post.university);
+
+  if (isDeleted) return null;
+
+  if (isHidden) {
+    return (
+      <div className="bg-[#F8F9FA] dark:bg-zinc-900 p-4 border-b border-[#E5E5E5] dark:border-zinc-800 text-center text-sm text-[#6C757D] italic">
+        Post hidden
+        <button
+          type="button"
+          onClick={() => setIsHidden(false)}
+          className="ml-2 text-[#FF6B35] underline text-xs"
+        >
+          Undo
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
-      <Card
-        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border-x-0 border-t-0 border-b shadow-none"
+      <div
+        className="bg-white dark:bg-black p-4 w-full border-b border-[#E5E5E5] dark:border-zinc-800 hover:bg-[#FAFAFA] dark:hover:bg-zinc-950 transition-colors cursor-pointer"
         data-ocid={`post.item.${index}`}
       >
-        <CardContent className="p-5">
-          {post.isBoosted && post.boostLabel && (
-            <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-border">
-              <span className="text-sm">🚀</span>
-              <span className="text-xs font-semibold text-primary uppercase tracking-wide">
-                {post.boostLabel}
-              </span>
-              {post.boostReason && (
-                <span className="text-xs text-muted-foreground ml-1">
-                  · {post.boostReason}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Top row — community tag top-right */}
-          <div className="flex items-center justify-end mb-2">
-            {post.community && (
-              <span className="bg-[#F0F0F0] dark:bg-muted text-[#212529] dark:text-foreground text-[11px] font-medium px-2 py-0.5 rounded-full">
-                {post.community}
+        {post.isBoosted && post.boostLabel && (
+          <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-[#E5E5E5] dark:border-zinc-800">
+            <span className="text-sm">🚀</span>
+            <span className="text-xs font-semibold text-[#FF6B35] uppercase tracking-wide">
+              {post.boostLabel}
+            </span>
+            {post.boostReason && (
+              <span className="text-xs text-[#6C757D] ml-1">
+                · {post.boostReason}
               </span>
             )}
           </div>
+        )}
 
-          {/* Post body — avatar top-left aligned */}
-          <div className="flex gap-4 items-start">
-            <Avatar className="h-11 w-11 border border-border flex-shrink-0 mt-0.5">
-              {post.isAnonymous ? (
-                <AvatarFallback className="bg-muted text-lg">🥷</AvatarFallback>
-              ) : (
-                <AvatarFallback
-                  className="font-semibold text-sm"
-                  style={{ backgroundColor: stringToColor(post.username) }}
+        {/* Community tag top-right + three-dot menu */}
+        <div className="flex items-center justify-between mb-2 min-h-[24px]">
+          <div />
+          <div className="flex items-center gap-2">
+            {post.community && (
+              <span className="bg-[#F0F0F0] dark:bg-zinc-800 text-[#212529] dark:text-zinc-300 text-[11px] font-medium px-2 py-0.5 rounded-full">
+                {post.community}
+              </span>
+            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="p-1 rounded-full hover:bg-[#F0F0F0] dark:hover:bg-zinc-800 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                  data-ocid="post.dropdown_menu"
+                  aria-label="Post options"
                 >
-                  <span className="text-white">{initials}</span>
-                </AvatarFallback>
-              )}
-            </Avatar>
-
-            <div className="flex-1 min-w-0 space-y-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold text-sm">
-                  {post.isAnonymous ? "Anonymous" : post.displayName}
-                </span>
-                {!post.isAnonymous && (
-                  <span className="text-sm text-[#6C757D] font-normal">
-                    @{post.username}
-                  </span>
-                )}
-                {post.isAnonymous && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                    🥷 Anonymous
-                  </span>
-                )}
-                <span className="text-sm text-muted-foreground">·</span>
-                <span className="text-xs text-muted-foreground">
-                  {post.timestamp}
-                </span>
-              </div>
-
-              <p className="text-sm font-normal leading-relaxed whitespace-pre-wrap text-foreground">
-                {post.content}
-              </p>
-
-              {post.mediaUrl && (
-                <div className="rounded-xl overflow-hidden border border-border mt-2">
-                  {post.mediaType === "image" ? (
-                    <img
-                      src={post.mediaUrl}
-                      alt="Post media"
-                      className="w-full max-h-96 object-cover"
-                    />
-                  ) : post.mediaType === "video" ? (
-                    <video
-                      src={post.mediaUrl}
-                      controls
-                      playsInline
-                      className="w-full max-h-96"
+                  <MoreVertical className="h-4 w-4 text-[#ADB5BD]" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast.success(`Following @${post.username}`);
+                  }}
+                >
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Follow @{post.username}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast.success(`Muted @${post.username}`);
+                  }}
+                >
+                  <VolumeX className="mr-2 h-4 w-4" />
+                  Mute @{post.username}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast.success(`Blocked @${post.username}`);
+                  }}
+                >
+                  <UserMinus className="mr-2 h-4 w-4" />
+                  Block @{post.username}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setReportOpen(true);
+                  }}
+                >
+                  <ShieldAlert className="mr-2 h-4 w-4" />
+                  Report post
+                </DropdownMenuItem>
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsHidden(true);
+                        toast.info("Post hidden");
+                      }}
                     >
-                      <track kind="captions" />
-                    </video>
-                  ) : null}
-                </div>
-              )}
+                      <EyeOff className="mr-2 h-4 w-4" />
+                      Hide post
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-red-500 focus:text-red-500"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsDeleted(true);
+                        toast.success("Post deleted");
+                      }}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete post
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
 
-              {/* Engagement bar — all buttons left-aligned, compact for mobile */}
-              <div className="flex items-center justify-start gap-0 pt-3 border-t border-[#F0F0F0] dark:border-border">
+        {/* Post body — avatar top-left */}
+        <div className="flex gap-3 items-start">
+          <Avatar className="h-10 w-10 border border-[#E5E5E5] flex-shrink-0 mt-0.5">
+            {post.isAnonymous ? (
+              <AvatarFallback className="bg-[#F0F0F0] dark:bg-zinc-800 text-base">
+                🥷
+              </AvatarFallback>
+            ) : (
+              <AvatarFallback
+                className="font-semibold text-sm text-white"
+                style={{ backgroundColor: stringToColor(post.username) }}
+              >
+                {initials}
+              </AvatarFallback>
+            )}
+          </Avatar>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <span className="font-semibold text-sm text-[#212529] dark:text-zinc-100">
+                {post.isAnonymous ? "Anonymous" : post.displayName}
+              </span>
+              {!post.isAnonymous && (
+                <span className="text-sm text-[#6C757D] font-normal">
+                  @{post.username}
+                </span>
+              )}
+              {post.isAnonymous && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#F0F0F0] dark:bg-zinc-800 px-2 py-0.5 text-[11px] font-medium text-[#6C757D]">
+                  🥷 Anonymous
+                </span>
+              )}
+              <span className="text-[#ADB5BD] text-xs">·</span>
+              <span className="text-xs text-[#ADB5BD]">{post.timestamp}</span>
+            </div>
+
+            <p className="text-[15px] font-normal leading-relaxed whitespace-pre-wrap text-[#212529] dark:text-zinc-200">
+              {post.content}
+            </p>
+
+            {post.mediaUrl && (
+              <div className="overflow-hidden mt-3 rounded-lg">
+                {post.mediaType === "image" ? (
+                  <img
+                    src={post.mediaUrl}
+                    alt="Post media"
+                    className="w-full max-h-96 object-cover"
+                  />
+                ) : post.mediaType === "video" ? (
+                  <video
+                    src={post.mediaUrl}
+                    controls
+                    playsInline
+                    className="w-full max-h-96"
+                  >
+                    <track kind="captions" />
+                  </video>
+                ) : null}
+              </div>
+            )}
+
+            {/* Engagement bar — left-aligned cluster + share far right */}
+            <div className="flex items-center pt-3">
+              {/* Left cluster */}
+              <div className="flex items-center gap-0">
                 <button
                   type="button"
                   data-ocid="post.like.button"
                   onClick={handleLike}
-                  className="flex items-center gap-1.5 py-2 px-2 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
+                  className="flex items-center gap-1.5 py-2 px-2 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
                 >
                   <Flame
-                    className={`h-6 w-6 ${
+                    className={`h-5 w-5 ${
                       isLiked
                         ? "text-[#FF6B35] fill-[#FF6B35]"
                         : "text-[#ADB5BD]"
                     }`}
                   />
                   <span
-                    className={`text-base font-black ${
+                    className={`text-sm font-bold ${
                       isLiked ? "text-[#FF6B35]" : "text-[#6C757D]"
                     }`}
                   >
@@ -195,10 +342,10 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                   type="button"
                   data-ocid="post.comment.button"
                   onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1.5 py-2 px-2 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
+                  className="flex items-center gap-1.5 py-2 px-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
                 >
-                  <MessageCircle className="h-6 w-6 text-[#ADB5BD]" />
-                  <span className="text-base font-black text-[#6C757D]">
+                  <MessageCircle className="h-5 w-5 text-[#ADB5BD]" />
+                  <span className="text-sm font-bold text-[#6C757D]">
                     {post.comments}
                   </span>
                 </button>
@@ -208,26 +355,29 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                   data-ocid="post.recliq.button"
                   onClick={handleRecliq}
                   disabled={isRecliqing}
-                  className="flex items-center gap-1.5 py-2 px-2 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
+                  className="flex items-center gap-1.5 py-2 px-2 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
                 >
                   {isRecliqing ? (
-                    <Loader2 className="h-6 w-6 animate-spin text-[#ADB5BD]" />
+                    <Loader2 className="h-5 w-5 animate-spin text-[#ADB5BD]" />
                   ) : (
                     <ReblogIcon
-                      className={`h-6 w-6 ${
+                      className={`h-5 w-5 ${
                         hasRecliqed ? "text-[#FF6B35]" : "text-[#ADB5BD]"
                       }`}
                     />
                   )}
                   <span
-                    className={`text-base font-black ${
+                    className={`text-sm font-bold ${
                       hasRecliqed ? "text-[#FF6B35]" : "text-[#6C757D]"
                     }`}
                   >
                     {recliqCount}
                   </span>
                 </button>
+              </div>
 
+              {/* Share pushed to far right */}
+              <div className="ml-auto">
                 <button
                   type="button"
                   data-ocid="post.share.button"
@@ -235,28 +385,71 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                     e.stopPropagation();
                     setShareModalOpen(true);
                   }}
-                  className="flex items-center gap-1.5 py-2 px-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="flex items-center gap-1.5 py-2 px-2 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
                 >
-                  <Share2 className="h-6 w-6 text-[#ADB5BD]" />
+                  <Share2 className="h-5 w-5 text-[#ADB5BD]" />
                 </button>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* University tag — below the postcard, right-aligned */}
-          <div className="mt-3 pt-3 border-t border-[#F0F0F0] dark:border-border flex items-center gap-1.5 justify-end">
-            <span className="bg-[#FF6B35] text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-              🏛️ {uniAcronym}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
+        {/* University tag — below post, right-aligned */}
+        <div className="mt-2 flex justify-end">
+          <span className="bg-[#FF6B35] text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+            🏛️ {uniAcronym}
+          </span>
+        </div>
+      </div>
 
       <ShareModal
         postId={post.id}
         open={shareModalOpen}
         onOpenChange={setShareModalOpen}
       />
+
+      {/* Report Modal */}
+      <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+        <DialogContent data-ocid="post.report.dialog">
+          <DialogHeader>
+            <DialogTitle>Report Post</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <p className="text-sm text-[#6C757D]">
+              Why are you reporting this post?
+            </p>
+            <select
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              className="w-full border border-[#E5E5E5] rounded-xl px-3 py-2 text-sm bg-white dark:bg-zinc-900 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/30"
+              data-ocid="post.report.select"
+            >
+              {REPORT_REASONS.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              className="rounded-full"
+              onClick={() => setReportOpen(false)}
+              data-ocid="post.report.cancel_button"
+            >
+              Cancel
+            </Button>
+            <Button
+              className="rounded-full bg-[#FF6B35] hover:bg-[#e8432d]"
+              onClick={handleReport}
+              data-ocid="post.report.submit_button"
+            >
+              Submit Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
