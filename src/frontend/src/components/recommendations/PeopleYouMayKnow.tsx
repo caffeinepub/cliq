@@ -70,10 +70,10 @@ export function PeopleYouMayKnow({
           return (
             <div
               key={user.id}
-              className="flex-shrink-0 w-[110px] border border-[#E5E5E5] rounded-2xl p-3 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col items-center gap-2"
+              className="flex-shrink-0 w-[110px] rounded-2xl p-3 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col items-center gap-2"
               data-ocid="explore.people.card"
             >
-              <div className="h-10 w-10 rounded-full bg-[#FF6B35] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+              <div className="h-10 w-10 rounded-full bg-[#E8432D] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                 {initials}
               </div>
               <div className="text-center min-w-0 w-full">
@@ -83,7 +83,7 @@ export function PeopleYouMayKnow({
                 <p className="text-[11px] text-[#6C757D] truncate">
                   @{user.username}
                 </p>
-                <span className="inline-block mt-1 px-1.5 py-0.5 rounded-full bg-[#FF6B35] text-white text-[10px] font-medium">
+                <span className="inline-block mt-1 px-1.5 py-0.5 rounded-full bg-[#E8432D] text-white text-[10px] font-medium">
                   {user.universityAcronym}
                 </span>
               </div>
@@ -92,8 +92,8 @@ export function PeopleYouMayKnow({
                 variant={isFollowed ? "default" : "outline"}
                 className={`w-full rounded-[40px] text-[10px] h-7 px-2 ${
                   isFollowed
-                    ? "bg-[#FF6B35] border-[#FF6B35] text-white"
-                    : "border-[#FF6B35] text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white"
+                    ? "bg-[#E8432D] border-[#E8432D] text-white"
+                    : "border-[#E8432D] text-[#E8432D] hover:bg-[#E8432D] hover:text-white"
                 }`}
                 onClick={() => handleFollow(user.id)}
                 data-ocid="explore.people.button"

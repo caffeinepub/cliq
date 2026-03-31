@@ -129,12 +129,12 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
 
   if (isHidden) {
     return (
-      <div className="bg-[#F8F9FA] dark:bg-zinc-900 p-4 border-b border-[#E5E5E5] dark:border-zinc-800 text-center text-sm text-[#6C757D] italic">
+      <div className="bg-[#F8F9FA] dark:bg-zinc-900 p-4 border-b border-[#F0F0F0] dark:border-zinc-800 text-center text-sm text-[#6C757D] italic">
         Post hidden
         <button
           type="button"
           onClick={() => setIsHidden(false)}
-          className="ml-2 text-[#FF6B35] underline text-xs"
+          className="ml-2 text-[#E8432D] underline text-xs"
         >
           Undo
         </button>
@@ -145,13 +145,13 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
   return (
     <>
       <div
-        className="bg-white dark:bg-black p-4 w-full border-b border-[#E5E5E5] dark:border-zinc-800 hover:bg-[#FAFAFA] dark:hover:bg-zinc-950 transition-colors cursor-pointer"
+        className="bg-white dark:bg-black p-4 w-full border-b border-[#F0F0F0] dark:border-zinc-800 hover:bg-[#FAFAFA] dark:hover:bg-zinc-950 transition-colors cursor-pointer"
         data-ocid={`post.item.${index}`}
       >
         {post.isBoosted && post.boostLabel && (
-          <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-[#E5E5E5] dark:border-zinc-800">
+          <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-[#F0F0F0] dark:border-zinc-800">
             <span className="text-sm">🚀</span>
-            <span className="text-xs font-semibold text-[#FF6B35] uppercase tracking-wide">
+            <span className="text-xs font-semibold text-[#E8432D] uppercase tracking-wide">
               {post.boostLabel}
             </span>
             {post.boostReason && (
@@ -253,7 +253,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
 
         {/* Post body — avatar top-left */}
         <div className="flex gap-3 items-start">
-          <Avatar className="h-10 w-10 border border-[#E5E5E5] flex-shrink-0 mt-0.5">
+          <Avatar className="h-10 w-10 border border-[#F0F0F0] flex-shrink-0 mt-0.5">
             {post.isAnonymous ? (
               <AvatarFallback className="bg-[#F0F0F0] dark:bg-zinc-800 text-base">
                 🥷
@@ -284,7 +284,9 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                 </span>
               )}
               <span className="text-[#ADB5BD] text-xs">·</span>
-              <span className="text-xs text-[#ADB5BD]">{post.timestamp}</span>
+              <span className="text-[13px] text-[#ADB5BD]">
+                {post.timestamp}
+              </span>
             </div>
 
             <p className="text-[15px] font-normal leading-relaxed whitespace-pre-wrap text-[#212529] dark:text-zinc-200">
@@ -325,13 +327,13 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                   <Flame
                     className={`h-5 w-5 ${
                       isLiked
-                        ? "text-[#FF6B35] fill-[#FF6B35]"
+                        ? "text-[#E8432D] fill-[#E8432D]"
                         : "text-[#ADB5BD]"
                     }`}
                   />
                   <span
-                    className={`text-sm font-bold ${
-                      isLiked ? "text-[#FF6B35]" : "text-[#6C757D]"
+                    className={`text-[16px] font-semibold ${
+                      isLiked ? "text-[#E8432D]" : "text-[#6C757D]"
                     }`}
                   >
                     {likeCount}
@@ -362,13 +364,13 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                   ) : (
                     <ReblogIcon
                       className={`h-5 w-5 ${
-                        hasRecliqed ? "text-[#FF6B35]" : "text-[#ADB5BD]"
+                        hasRecliqed ? "text-[#E8432D]" : "text-[#ADB5BD]"
                       }`}
                     />
                   )}
                   <span
-                    className={`text-sm font-bold ${
-                      hasRecliqed ? "text-[#FF6B35]" : "text-[#6C757D]"
+                    className={`text-[16px] font-semibold ${
+                      hasRecliqed ? "text-[#E8432D]" : "text-[#6C757D]"
                     }`}
                   >
                     {recliqCount}
@@ -396,7 +398,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
 
         {/* University tag — below post, right-aligned */}
         <div className="mt-2 flex justify-end">
-          <span className="bg-[#FF6B35] text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+          <span className="bg-[#E8432D] text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
             🏛️ {uniAcronym}
           </span>
         </div>
@@ -421,7 +423,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
             <select
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
-              className="w-full border border-[#E5E5E5] rounded-xl px-3 py-2 text-sm bg-white dark:bg-zinc-900 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/30"
+              className="w-full border border-[#EEEEEE] rounded-[40px] px-3 py-2 text-sm bg-white dark:bg-zinc-900 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-[#E8432D]/30"
               data-ocid="post.report.select"
             >
               {REPORT_REASONS.map((r) => (
@@ -441,7 +443,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
               Cancel
             </Button>
             <Button
-              className="rounded-full bg-[#FF6B35] hover:bg-[#e8432d]"
+              className="rounded-full bg-[#E8432D] hover:bg-[#e8432d]"
               onClick={handleReport}
               data-ocid="post.report.submit_button"
             >
@@ -456,7 +458,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
 
 function stringToColor(str: string): string {
   const palette = [
-    "#FF6B35",
+    "#E8432D",
     "#2D6A4F",
     "#1D4E89",
     "#7B2D8B",

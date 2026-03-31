@@ -107,7 +107,7 @@ export function RoomieLandingPage() {
           <Link to="/" className="flex items-center gap-2">
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold"
-              style={{ backgroundColor: "#FF6B35" }}
+              style={{ backgroundColor: "#E8432D" }}
             >
               C
             </div>
@@ -140,7 +140,7 @@ export function RoomieLandingPage() {
             <Button
               size="sm"
               className="rounded-full px-5 font-semibold"
-              style={{ backgroundColor: "#FF6B35", color: "white" }}
+              style={{ backgroundColor: "#E8432D", color: "white" }}
               data-ocid="roomie_landing.primary_button"
             >
               Find Your Match →
@@ -164,8 +164,8 @@ export function RoomieLandingPage() {
                 className="rounded-full px-3 py-1 text-xs font-semibold mb-4"
                 style={{
                   backgroundColor: "#FFF5F0",
-                  color: "#FF6B35",
-                  border: "1px solid #FF6B3544",
+                  color: "#E8432D",
+                  border: "1px solid #E8432D44",
                 }}
               >
                 🏠 Roommate Matching for Nigerian Students
@@ -180,7 +180,7 @@ export function RoomieLandingPage() {
               className="text-4xl md:text-5xl font-bold leading-tight tracking-tight text-foreground"
             >
               Find your perfect{" "}
-              <span style={{ color: "#FF6B35" }}>roommate</span> on campus
+              <span style={{ color: "#E8432D" }}>roommate</span> on campus
             </motion.h1>
 
             <motion.p
@@ -205,7 +205,7 @@ export function RoomieLandingPage() {
                 <Button
                   size="lg"
                   className="rounded-full px-8 font-semibold min-h-[44px] w-full sm:w-auto"
-                  style={{ backgroundColor: "#FF6B35", color: "white" }}
+                  style={{ backgroundColor: "#E8432D", color: "white" }}
                   data-ocid="roomie_landing.primary_button"
                 >
                   Find Your Match <ArrowRight className="ml-2 h-4 w-4" />
@@ -228,8 +228,8 @@ export function RoomieLandingPage() {
                     className="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium"
                     style={{
                       backgroundColor: "#FFF5F0",
-                      color: "#FF6B35",
-                      border: "1px solid #FF6B3530",
+                      color: "#E8432D",
+                      border: "1px solid #E8432D30",
                     }}
                   >
                     <CheckCircle2 className="h-3.5 w-3.5" />
@@ -252,7 +252,7 @@ export function RoomieLandingPage() {
               {/* Decorative blob */}
               <div
                 className="absolute -inset-4 rounded-3xl opacity-10 blur-2xl"
-                style={{ backgroundColor: "#FF6B35" }}
+                style={{ backgroundColor: "#E8432D" }}
               />
 
               <Card
@@ -266,7 +266,7 @@ export function RoomieLandingPage() {
                     <div
                       className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0"
                       style={{
-                        background: "linear-gradient(135deg, #FF6B35, #FF9A6C)",
+                        background: "linear-gradient(135deg, #E8432D, #FF9A6C)",
                       }}
                     >
                       S
@@ -274,7 +274,7 @@ export function RoomieLandingPage() {
                     <div>
                       <p
                         className="text-3xl font-bold leading-none"
-                        style={{ color: "#FF6B35" }}
+                        style={{ color: "#E8432D" }}
                       >
                         96% match
                       </p>
@@ -309,7 +309,7 @@ export function RoomieLandingPage() {
                     >
                       <Wallet
                         className="h-3 w-3"
-                        style={{ color: "#FF6B35" }}
+                        style={{ color: "#E8432D" }}
                       />
                       ₦15k–20k/mo
                     </div>
@@ -321,7 +321,7 @@ export function RoomieLandingPage() {
                         border: "1px solid #E5E5E5",
                       }}
                     >
-                      <Moon className="h-3 w-3" style={{ color: "#FF6B35" }} />
+                      <Moon className="h-3 w-3" style={{ color: "#E8432D" }} />
                       Night owl
                     </div>
                     <div
@@ -334,7 +334,7 @@ export function RoomieLandingPage() {
                     >
                       <Music2
                         className="h-3 w-3"
-                        style={{ color: "#FF6B35" }}
+                        style={{ color: "#E8432D" }}
                       />
                       Music lover
                     </div>
@@ -344,7 +344,7 @@ export function RoomieLandingPage() {
                   <Button
                     size="sm"
                     className="w-full rounded-full font-semibold min-h-[44px]"
-                    style={{ backgroundColor: "#FF6B35", color: "white" }}
+                    style={{ backgroundColor: "#E8432D", color: "white" }}
                     data-ocid="roomie_landing.secondary_button"
                   >
                     <MessageCircle className="mr-2 h-4 w-4" />
@@ -356,7 +356,7 @@ export function RoomieLandingPage() {
               {/* Floating compatibility pill */}
               <div
                 className="absolute -top-3 -right-3 rounded-full px-3 py-1.5 text-xs font-bold shadow-bold flex items-center gap-1"
-                style={{ backgroundColor: "#FF6B35", color: "white" }}
+                style={{ backgroundColor: "#E8432D", color: "white" }}
               >
                 ✨ Top Match
               </div>
@@ -417,7 +417,7 @@ export function RoomieLandingPage() {
                         >
                           <CheckCircle2
                             className="h-4 w-4 mt-0.5 shrink-0"
-                            style={{ color: "#FF6B35" }}
+                            style={{ color: "#E8432D" }}
                           />
                           {b}
                         </li>
@@ -455,7 +455,7 @@ export function RoomieLandingPage() {
           {/* Desktop connector line */}
           <div
             className="hidden md:block absolute top-10 left-[calc(16.67%+24px)] right-[calc(16.67%+24px)] h-px"
-            style={{ borderTop: "2px dashed #FF6B35", opacity: 0.4 }}
+            style={{ borderTop: "2px dashed #E8432D", opacity: 0.4 }}
           />
 
           <div className="grid md:grid-cols-3 gap-8 relative">
@@ -472,7 +472,7 @@ export function RoomieLandingPage() {
                 {/* Number badge */}
                 <div
                   className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg z-10 relative"
-                  style={{ backgroundColor: "#FF6B35" }}
+                  style={{ backgroundColor: "#E8432D" }}
                 >
                   {step.num}
                 </div>
@@ -503,7 +503,7 @@ export function RoomieLandingPage() {
             <Button
               size="lg"
               className="rounded-full px-10 font-semibold min-h-[44px]"
-              style={{ backgroundColor: "#FF6B35", color: "white" }}
+              style={{ backgroundColor: "#E8432D", color: "white" }}
               data-ocid="roomie_landing.primary_button"
             >
               Start Matching Now <ArrowRight className="ml-2 h-4 w-4" />
@@ -541,7 +541,7 @@ export function RoomieLandingPage() {
               className="rounded-2xl p-10 text-center space-y-4"
               style={{
                 backgroundColor: "#FFF5F0",
-                border: "2px dashed #FF6B3566",
+                border: "2px dashed #E8432D66",
               }}
               data-ocid="roomie_landing.card"
             >
@@ -557,7 +557,7 @@ export function RoomieLandingPage() {
                   variant="outline"
                   size="sm"
                   className="rounded-full mt-2 font-semibold min-h-[44px]"
-                  style={{ borderColor: "#FF6B35", color: "#FF6B35" }}
+                  style={{ borderColor: "#E8432D", color: "#E8432D" }}
                   data-ocid="roomie_landing.secondary_button"
                 >
                   I found my roommate →
@@ -623,7 +623,7 @@ export function RoomieLandingPage() {
       {/* ── FOOTER CTA ── */}
       <section
         className="py-16 md:py-24"
-        style={{ backgroundColor: "#FF6B35" }}
+        style={{ backgroundColor: "#E8432D" }}
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -648,7 +648,7 @@ export function RoomieLandingPage() {
             <Button
               size="lg"
               className="rounded-full px-10 font-semibold min-h-[44px] mt-2"
-              style={{ backgroundColor: "white", color: "#FF6B35" }}
+              style={{ backgroundColor: "white", color: "#E8432D" }}
               data-ocid="roomie_landing.primary_button"
             >
               Get Started Free →
@@ -663,7 +663,7 @@ export function RoomieLandingPage() {
           <div className="flex items-center gap-2">
             <div
               className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold"
-              style={{ backgroundColor: "#FF6B35" }}
+              style={{ backgroundColor: "#E8432D" }}
             >
               C
             </div>

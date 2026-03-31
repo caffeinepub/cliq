@@ -169,8 +169,8 @@ function ThreadedComment({
 
   const depthStyles: Record<number, string> = {
     0: "",
-    1: "ml-6 border-l-2 border-[#E5E5E5] pl-3",
-    2: "ml-12 border-l-2 border-[#FF6B35]/30 pl-3",
+    1: "ml-6 border-l-2 border-[#F0F0F0] pl-3",
+    2: "ml-12 border-l-2 border-[#E8432D]/30 pl-3",
     3: "ml-16 border-l-2 border-[#ADB5BD] pl-3",
   };
 
@@ -203,7 +203,7 @@ function ThreadedComment({
     <div className={indentClass}>
       <div className="flex gap-2 items-start py-2">
         <Avatar className="h-7 w-7 flex-shrink-0">
-          <AvatarFallback className="text-[10px] font-bold bg-[#FF6B35]/10 text-[#FF6B35]">
+          <AvatarFallback className="text-[10px] font-bold bg-[#E8432D]/10 text-[#E8432D]">
             {initials}
           </AvatarFallback>
         </Avatar>
@@ -228,7 +228,7 @@ function ThreadedComment({
                 setLikeCount((p) => (liked ? p - 1 : p + 1));
               }}
               className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-xs transition-colors ${
-                liked ? "text-[#FF6B35]" : "text-[#ADB5BD] hover:text-[#FF6B35]"
+                liked ? "text-[#E8432D]" : "text-[#ADB5BD] hover:text-[#E8432D]"
               }`}
             >
               <Flame className="h-3.5 w-3.5" />
@@ -251,8 +251,8 @@ function ThreadedComment({
               onClick={() => setRecliqed((p) => !p)}
               className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-xs transition-colors ${
                 recliqed
-                  ? "text-[#FF6B35]"
-                  : "text-[#ADB5BD] hover:text-[#FF6B35]"
+                  ? "text-[#E8432D]"
+                  : "text-[#ADB5BD] hover:text-[#E8432D]"
               }`}
             >
               <ReblogIcon className="h-3.5 w-3.5" />
@@ -279,7 +279,7 @@ function ThreadedComment({
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  className="rounded-full h-7 text-xs bg-[#FF6B35] hover:bg-[#e8432d]"
+                  className="rounded-full h-7 text-xs bg-[#E8432D] hover:bg-[#e8432d]"
                   onClick={handleReplySubmit}
                 >
                   Reply
@@ -304,7 +304,7 @@ function ThreadedComment({
           <button
             type="button"
             onClick={() => setShowReplies((p) => !p)}
-            className="flex items-center gap-1 text-[11px] text-[#FF6B35] font-semibold px-2 py-0.5 hover:underline"
+            className="flex items-center gap-1 text-[11px] text-[#E8432D] font-semibold px-2 py-0.5 hover:underline"
           >
             {showReplies ? "▼" : "▶"} {children.length} repl
             {children.length === 1 ? "y" : "ies"}
@@ -528,8 +528,8 @@ export function CommunityDetailPage() {
                         type="button"
                         className={`text-xs font-semibold transition-colors flex items-center gap-1 ${
                           likedPosts.has(post.id)
-                            ? "text-[#FF6B35]"
-                            : "text-muted-foreground hover:text-[#FF6B35]"
+                            ? "text-[#E8432D]"
+                            : "text-muted-foreground hover:text-[#E8432D]"
                         }`}
                         onClick={() => handleLike(post.id)}
                         data-ocid={`community.post.toggle.${i + 1}`}
@@ -580,7 +580,7 @@ export function CommunityDetailPage() {
                       <button
                         type="button"
                         onClick={() => toggleComments(post.id)}
-                        className="mt-2 flex items-center gap-1.5 text-xs text-[#6C757D] hover:text-[#FF6B35] transition-colors"
+                        className="mt-2 flex items-center gap-1.5 text-xs text-[#6C757D] hover:text-[#E8432D] transition-colors"
                       >
                         <MessageCircle className="h-3.5 w-3.5" />
                         {totalComments > 0
@@ -699,7 +699,7 @@ function NewTopLevelComment({
         <p className="text-[10px] text-[#ADB5BD]">Ctrl+Enter to comment</p>
         <Button
           size="sm"
-          className="rounded-full h-7 text-xs bg-[#FF6B35] hover:bg-[#e8432d]"
+          className="rounded-full h-7 text-xs bg-[#E8432D] hover:bg-[#e8432d]"
           onClick={submit}
         >
           <Send className="h-3 w-3 mr-1" /> Comment

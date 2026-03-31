@@ -97,7 +97,7 @@ export function ShareModal({ open, onOpenChange, postId }: ShareModalProps) {
           type="button"
           onClick={handleSaveBookmark}
           data-ocid="share.bookmark.button"
-          className="flex items-center gap-3 w-full p-3 rounded-xl border border-[#E5E5E5] hover:bg-accent/10 transition-colors text-left"
+          className="flex items-center gap-3 w-full p-3 rounded-xl border border-[#F0F0F0] hover:bg-accent/10 transition-colors text-left"
         >
           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
             <Bookmark className="h-5 w-5 text-primary" />

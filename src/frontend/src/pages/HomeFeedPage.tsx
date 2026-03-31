@@ -10,9 +10,11 @@ import { useEffect, useRef, useState } from "react";
 import { MockPostCard } from "../components/posts/MockPostCard";
 import { PostCard } from "../components/posts/PostCard";
 import { PostComposer } from "../components/posts/PostComposer";
+import { ProfileCompletionModal } from "../components/profile/ProfileCompletionModal";
 import { BecauseYouLiked } from "../components/recommendations/BecauseYouLiked";
 import { FloatingActionButton } from "../components/shared/FloatingActionButton";
 import { mockPosts } from "../data/mockPosts";
+import { useProfileCompletion } from "../hooks/useProfileCompletion";
 import {
   useGetCampusFeed,
   useGetFollowingFeed,
@@ -74,7 +76,14 @@ export function HomeFeedPage() {
   );
   const [uniPickerOpen, setUniPickerOpen] = useState(false);
   const [followedUsers, setFollowedUsers] = useState<string[]>([]);
+  const [showProfileCompletion, setShowProfileCompletion] = useState(false);
   const uniPickerRef = useRef<HTMLDivElement>(null);
+
+  const { shouldShow, markCompleted, markSkipped } = useProfileCompletion();
+
+  useEffect(() => {
+    if (shouldShow) setShowProfileCompletion(true);
+  }, [shouldShow]);
 
   useEffect(() => {
     return subscribe(() => {
@@ -119,6 +128,17 @@ export function HomeFeedPage() {
 
   const uniAcronym = getUniversityAcronym(selectedUniversity);
 
+  function handlePostSuccess() {
+    setTimeout(() => {
+      const completed = localStorage.getItem("cliq_profile_completed_at");
+      const skipped = localStorage.getItem("cliq_profile_skipped_at");
+      const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      const shouldShowNow =
+        !completed && (!skipped || new Date(skipped).getTime() < sevenDaysAgo);
+      if (shouldShowNow) setShowProfileCompletion(true);
+    }, 800);
+  }
+
   return (
     <div
       data-ocid="home_feed.page"
@@ -131,7 +151,7 @@ export function HomeFeedPage() {
         className="w-full"
       >
         {/* Sticky Header: Title + Tabs */}
-        <div className="sticky top-0 z-20 bg-background border-b border-[#E5E5E5] dark:border-zinc-800">
+        <div className="sticky top-0 z-20 bg-background border-b border-[#F0F0F0] dark:border-zinc-800">
           <div className="px-4 pt-4 pb-1">
             <h1 className="text-2xl font-bold text-foreground leading-tight">
               Home
@@ -141,21 +161,21 @@ export function HomeFeedPage() {
             <TabsTrigger
               value="cliqs"
               data-ocid="home_feed.cliqs.tab"
-              className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#FF6B35] data-[state=active]:text-[#FF6B35] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
+              className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#E8432D] data-[state=active]:text-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
             >
               CLIQS
             </TabsTrigger>
             <TabsTrigger
               value="campus"
               data-ocid="home_feed.campus.tab"
-              className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#FF6B35] data-[state=active]:text-[#FF6B35] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
+              className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#E8432D] data-[state=active]:text-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
             >
               CAMPUS
             </TabsTrigger>
             <TabsTrigger
               value="explore"
               data-ocid="home_feed.explore.tab"
-              className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#FF6B35] data-[state=active]:text-[#FF6B35] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
+              className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#E8432D] data-[state=active]:text-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
             >
               EXPLORE
             </TabsTrigger>
@@ -214,7 +234,7 @@ export function HomeFeedPage() {
                       <div className="flex items-center gap-3">
                         <div
                           className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                          style={{ backgroundColor: "#FF6B35" }}
+                          style={{ backgroundColor: "#E8432D" }}
                         >
                           {userInitials}
                         </div>
@@ -238,8 +258,8 @@ export function HomeFeedPage() {
                         }
                         className={`text-xs font-semibold px-4 py-1.5 rounded-full border transition-colors ${
                           followed
-                            ? "bg-transparent border-[#E5E5E5] text-muted-foreground"
-                            : "bg-[#FF6B35] border-[#FF6B35] text-white"
+                            ? "bg-transparent border-[#F0F0F0] text-muted-foreground"
+                            : "bg-[#E8432D] border-[#E8432D] text-white"
                         }`}
                         data-ocid="home_feed.follow.button"
                       >
@@ -257,7 +277,7 @@ export function HomeFeedPage() {
         <TabsContent value="campus" className="mt-0">
           {/* University picker row */}
           <div
-            className="flex items-center justify-between px-4 py-2 border-b border-[#E5E5E5] dark:border-zinc-800 bg-background"
+            className="flex items-center justify-between px-4 py-2 border-b border-[#F0F0F0] dark:border-zinc-800 bg-background"
             ref={uniPickerRef}
           >
             <span className="text-xs text-muted-foreground">
@@ -270,13 +290,13 @@ export function HomeFeedPage() {
               <button
                 type="button"
                 onClick={() => setUniPickerOpen((o) => !o)}
-                className="flex items-center gap-1 text-xs font-semibold text-[#FF6B35] px-3 py-1.5 rounded-full border border-[#FF6B35]/30 hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
+                className="flex items-center gap-1 text-xs font-semibold text-[#E8432D] px-3 py-1.5 rounded-full border border-[#E8432D]/30 hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
                 data-ocid="home_feed.campus.university.button"
               >
                 Change <ChevronDown className="h-3 w-3" />
               </button>
               {uniPickerOpen && (
-                <div className="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-zinc-900 border border-[#E5E5E5] dark:border-zinc-700 rounded-xl shadow-lg z-30 overflow-hidden">
+                <div className="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-zinc-900 border border-[#F0F0F0] dark:border-zinc-700 rounded-xl shadow-lg z-30 overflow-hidden">
                   {CAMPUS_UNIVERSITIES.map((uni) => (
                     <button
                       key={uni}
@@ -287,7 +307,7 @@ export function HomeFeedPage() {
                       }}
                       className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-orange-50 dark:hover:bg-orange-950/20 ${
                         uni === selectedUniversity
-                          ? "text-[#FF6B35] font-semibold bg-orange-50/50 dark:bg-orange-950/10"
+                          ? "text-[#E8432D] font-semibold bg-orange-50/50 dark:bg-orange-950/10"
                           : "text-foreground"
                       }`}
                       data-ocid="home_feed.campus.university.select"
@@ -315,7 +335,7 @@ export function HomeFeedPage() {
               <button
                 type="button"
                 onClick={() => setComposerOpen(true)}
-                className="px-6 py-2 rounded-full bg-[#FF6B35] text-white text-sm font-semibold hover:bg-[#e8432d] transition-colors"
+                className="px-6 py-2 rounded-full bg-[#E8432D] text-white text-sm font-semibold hover:bg-[#e8432d] transition-colors"
                 data-ocid="home_feed.campus.post_now.button"
               >
                 Post Now
@@ -388,11 +408,24 @@ export function HomeFeedPage() {
           <DialogHeader>
             <DialogTitle>Create Post</DialogTitle>
           </DialogHeader>
-          <PostComposer />
+          <PostComposer onPostSuccess={handlePostSuccess} />
         </DialogContent>
       </Dialog>
 
       <FloatingActionButton onClick={() => setComposerOpen(true)} />
+
+      <ProfileCompletionModal
+        open={showProfileCompletion}
+        onOpenChange={setShowProfileCompletion}
+        onComplete={(dept, bday) => {
+          markCompleted(dept, bday);
+          setShowProfileCompletion(false);
+        }}
+        onSkip={() => {
+          markSkipped();
+          setShowProfileCompletion(false);
+        }}
+      />
     </div>
   );
 }

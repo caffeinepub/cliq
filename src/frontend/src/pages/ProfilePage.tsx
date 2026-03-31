@@ -46,24 +46,24 @@ export function ProfilePage() {
       <ProfileHeader profile={profile} isOwnProfile={true} />
 
       <Tabs defaultValue="posts" className="w-full">
-        <TabsList className="w-full grid grid-cols-3 h-10 bg-[#F8F9FA] rounded-none border-b border-[#E5E5E5] p-0">
+        <TabsList className="w-full grid grid-cols-3 h-10 bg-[#F8F9FA] rounded-none border-b border-[#F0F0F0] p-0">
           <TabsTrigger
             value="posts"
-            className="rounded-none text-xs font-semibold h-full data-[state=active]:text-[#FF6B35] data-[state=active]:border-b-2 data-[state=active]:border-[#FF6B35] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            className="rounded-none text-xs font-semibold h-full data-[state=active]:text-[#E8432D] data-[state=active]:border-b-2 data-[state=active]:border-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             data-ocid="profile.posts.tab"
           >
             Posts
           </TabsTrigger>
           <TabsTrigger
             value="media"
-            className="rounded-none text-xs font-semibold h-full data-[state=active]:text-[#FF6B35] data-[state=active]:border-b-2 data-[state=active]:border-[#FF6B35] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            className="rounded-none text-xs font-semibold h-full data-[state=active]:text-[#E8432D] data-[state=active]:border-b-2 data-[state=active]:border-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             data-ocid="profile.media.tab"
           >
             Media
           </TabsTrigger>
           <TabsTrigger
             value="bookmarks"
-            className="rounded-none text-xs font-semibold h-full data-[state=active]:text-[#FF6B35] data-[state=active]:border-b-2 data-[state=active]:border-[#FF6B35] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            className="rounded-none text-xs font-semibold h-full data-[state=active]:text-[#E8432D] data-[state=active]:border-b-2 data-[state=active]:border-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             data-ocid="profile.bookmarks.tab"
           >
             🔖 Saved

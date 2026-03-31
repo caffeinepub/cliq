@@ -60,7 +60,7 @@ function Dots({ current }: { current: number }) {
           key={i}
           className="w-2 h-2 rounded-full transition-all duration-300"
           style={{
-            backgroundColor: i === current ? "#FF6B35" : "#E5E5E5",
+            backgroundColor: i === current ? "#E8432D" : "#333333",
             transform: i === current ? "scale(1.25)" : "scale(1)",
           }}
         />
@@ -74,25 +74,38 @@ function Splash({ onNext }: { onNext: () => void }) {
     <button
       type="button"
       className="flex flex-col items-center justify-center w-full h-full cursor-pointer select-none border-0"
-      style={{
-        background: "linear-gradient(135deg, #FF6B35 0%, #e8432d 100%)",
-      }}
+      style={{ background: "#0A0A0A" }}
       onClick={onNext}
       data-ocid="onboarding.splash.panel"
     >
       <div className="flex flex-col items-center gap-4 mb-16">
-        <img
-          src="/assets/uploads/IMG-20260226-WA0003-1.jpg"
-          alt="CLIQ"
-          className="w-24 h-24 rounded-2xl object-cover shadow-2xl"
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = "none";
-          }}
-        />
-        <h1 className="text-white text-6xl font-black tracking-tight">CLIQ</h1>
-        <p className="text-white/80 text-lg">Your campus, connected</p>
+        {/* Logo with E8432D glow ring */}
+        <div
+          className="rounded-2xl p-0.5"
+          style={{ background: "linear-gradient(135deg, #E8432D, #ff6b35)" }}
+        >
+          <img
+            src="/assets/uploads/IMG-20260226-WA0003-1.jpg"
+            alt="CLIQ"
+            className="w-24 h-24 rounded-2xl object-cover block"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
+          />
+        </div>
+        <div className="flex flex-col items-center gap-1">
+          <h1 className="text-white text-6xl font-black tracking-tight">
+            CLIQ
+          </h1>
+          {/* Accent underline */}
+          <div
+            className="h-1 rounded-full w-16"
+            style={{ background: "#E8432D", boxShadow: "0 0 12px #E8432D88" }}
+          />
+        </div>
+        <p className="text-white/60 text-lg">Your campus, connected</p>
       </div>
-      <p className="text-white/70 text-sm tracking-widest uppercase animate-pulse">
+      <p className="text-white/40 text-sm tracking-widest uppercase animate-pulse">
         Tap anywhere to start
       </p>
     </button>
@@ -127,16 +140,17 @@ function SignUp({
 
   return (
     <div
-      className="flex flex-col h-full bg-white"
+      className="flex flex-col h-full"
+      style={{ background: "#0A0A0A" }}
       data-ocid="onboarding.signup.panel"
     >
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-sm mx-auto px-5 pt-12 pb-6">
           <Dots current={0} />
-          <h2 className="text-[28px] font-black text-[#212529] mb-1">
+          <h2 className="text-[28px] font-black text-white mb-1">
             Join CLIQ \uD83E\uDDE1
           </h2>
-          <p className="text-[#6C757D] text-sm mb-8">
+          <p className="text-white/50 text-sm mb-8">
             Create your campus identity
           </p>
           <div className="flex flex-col gap-4">
@@ -146,11 +160,11 @@ function SignUp({
                 placeholder="Full Name"
                 value={data.fullName}
                 onChange={(e) => onChange({ fullName: e.target.value })}
-                className="w-full h-12 rounded-xl border border-[#E5E5E5] px-4 text-sm outline-none focus:border-[#FF6B35] transition-colors"
+                className="w-full h-12 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white placeholder-white/30 outline-none focus:border-[#E8432D] transition-colors"
                 data-ocid="onboarding.signup.input"
               />
               {errors.fullName && (
-                <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>
+                <p className="text-red-400 text-xs mt-1">{errors.fullName}</p>
               )}
             </div>
             <div>
@@ -165,11 +179,11 @@ function SignUp({
                       .replace(/[^a-z0-9_]/g, ""),
                   })
                 }
-                className="w-full h-12 rounded-xl border border-[#E5E5E5] px-4 text-sm outline-none focus:border-[#FF6B35] transition-colors"
+                className="w-full h-12 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white placeholder-white/30 outline-none focus:border-[#E8432D] transition-colors"
                 data-ocid="onboarding.username.input"
               />
               {errors.username && (
-                <p className="text-red-500 text-xs mt-1">{errors.username}</p>
+                <p className="text-red-400 text-xs mt-1">{errors.username}</p>
               )}
             </div>
             <div>
@@ -178,11 +192,11 @@ function SignUp({
                 placeholder="Email"
                 value={data.email}
                 onChange={(e) => onChange({ email: e.target.value })}
-                className="w-full h-12 rounded-xl border border-[#E5E5E5] px-4 text-sm outline-none focus:border-[#FF6B35] transition-colors"
+                className="w-full h-12 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white placeholder-white/30 outline-none focus:border-[#E8432D] transition-colors"
                 data-ocid="onboarding.email.input"
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                <p className="text-red-400 text-xs mt-1">{errors.email}</p>
               )}
             </div>
             <div>
@@ -192,19 +206,19 @@ function SignUp({
                   placeholder="Password"
                   value={data.password}
                   onChange={(e) => onChange({ password: e.target.value })}
-                  className="w-full h-12 rounded-xl border border-[#E5E5E5] px-4 pr-12 text-sm outline-none focus:border-[#FF6B35] transition-colors"
+                  className="w-full h-12 rounded-xl border border-white/10 bg-white/5 px-4 pr-12 text-sm text-white placeholder-white/30 outline-none focus:border-[#E8432D] transition-colors"
                   data-ocid="onboarding.password.input"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#ADB5BD] hover:text-[#6C757D]"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"
                 >
                   {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                <p className="text-red-400 text-xs mt-1">{errors.password}</p>
               )}
             </div>
           </div>
@@ -217,7 +231,7 @@ function SignUp({
             if (validate()) onNext();
           }}
           className="w-full h-12 rounded-full text-white font-semibold text-sm active:opacity-80"
-          style={{ backgroundColor: "#FF6B35" }}
+          style={{ backgroundColor: "#E8432D" }}
           data-ocid="onboarding.signup.submit_button"
         >
           Continue \u2192
@@ -247,7 +261,8 @@ function University({
 
   return (
     <div
-      className="flex flex-col h-full bg-white"
+      className="flex flex-col h-full"
+      style={{ background: "#0A0A0A" }}
       data-ocid="onboarding.university.panel"
     >
       <div className="flex-1 overflow-y-auto">
@@ -255,62 +270,66 @@ function University({
           <button
             type="button"
             onClick={onBack}
-            className="mb-6 text-[#6C757D] hover:text-[#212529]"
+            className="mb-6 text-white/50 hover:text-white"
             data-ocid="onboarding.university.button"
           >
             <ChevronLeft size={20} />
           </button>
           <Dots current={1} />
-          <h2 className="text-[28px] font-black text-[#212529] mb-1">
+          <h2 className="text-[28px] font-black text-white mb-1">
             Your University \uD83C\uDFDB\uFE0F
           </h2>
-          <p className="text-[#6C757D] text-sm mb-6">Where do you study?</p>
+          <p className="text-white/50 text-sm mb-6">Where do you study?</p>
           <div className="relative mb-4">
             <Search
               size={16}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ADB5BD]"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30"
             />
             <input
               type="text"
               placeholder="Search universities..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-12 rounded-full border border-[#E5E5E5] pl-10 pr-4 text-sm outline-none focus:border-[#FF6B35] transition-colors"
+              className="w-full h-12 rounded-full border border-white/10 bg-white/5 pl-10 pr-4 text-sm text-white placeholder-white/30 outline-none focus:border-[#E8432D] transition-colors"
               data-ocid="onboarding.university.search_input"
             />
           </div>
-          <div className="border border-[#E5E5E5] rounded-2xl overflow-hidden">
+          <div className="border border-white/10 rounded-2xl overflow-hidden">
             {filtered.map((uni, i) => (
               <button
                 type="button"
                 key={uni.acronym}
                 onClick={() => onSelect(uni.acronym)}
-                className="w-full flex items-center gap-3 px-4 py-4 text-left cursor-pointer transition-colors hover:bg-orange-50"
+                className="w-full flex items-center gap-3 px-4 py-4 text-left cursor-pointer transition-colors"
                 style={{
                   borderBottom:
-                    i < filtered.length - 1 ? "1px solid #E5E5E5" : undefined,
+                    i < filtered.length - 1
+                      ? "1px solid rgba(255,255,255,0.08)"
+                      : undefined,
                   backgroundColor:
-                    selected === uni.acronym ? "#fff8f5" : undefined,
+                    selected === uni.acronym
+                      ? "rgba(232,67,45,0.1)"
+                      : "rgba(255,255,255,0.02)",
                   borderLeft:
                     selected === uni.acronym
-                      ? "3px solid #FF6B35"
+                      ? "3px solid #E8432D"
                       : "3px solid transparent",
                 }}
                 data-ocid={`onboarding.university.item.${i + 1}`}
               >
-                <span className="font-black text-[#FF6B35] text-sm w-16 shrink-0">
+                <span className="font-black text-[#E8432D] text-sm w-16 shrink-0">
                   {uni.acronym}
                 </span>
-                <span className="text-[#212529] text-sm flex-1 text-left">
+                <span className="text-white/80 text-sm flex-1 text-left">
                   {uni.name}
                 </span>
                 {uni.badge && (
-                  <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full shrink-0">
+                  <span className="text-xs bg-[#E8432D]/20 text-[#E8432D] px-2 py-0.5 rounded-full shrink-0">
                     {uni.badge}
                   </span>
                 )}
                 {selected === uni.acronym && (
-                  <Check size={16} className="text-[#FF6B35] shrink-0" />
+                  <Check size={16} className="text-[#E8432D] shrink-0" />
                 )}
               </button>
             ))}
@@ -323,7 +342,7 @@ function University({
           onClick={onNext}
           disabled={!selected}
           className="w-full h-12 rounded-full text-white font-semibold text-sm disabled:opacity-40"
-          style={{ backgroundColor: "#FF6B35" }}
+          style={{ backgroundColor: "#E8432D" }}
           data-ocid="onboarding.university.submit_button"
         >
           Continue \u2192
@@ -348,7 +367,8 @@ function Follow({
 }) {
   return (
     <div
-      className="flex flex-col h-full bg-white"
+      className="flex flex-col h-full"
+      style={{ background: "#0A0A0A" }}
       data-ocid="onboarding.follow.panel"
     >
       <div className="flex-1 overflow-y-auto">
@@ -356,43 +376,49 @@ function Follow({
           <button
             type="button"
             onClick={onBack}
-            className="mb-6 text-[#6C757D] hover:text-[#212529]"
+            className="mb-6 text-white/50 hover:text-white"
             data-ocid="onboarding.follow.button"
           >
             <ChevronLeft size={20} />
           </button>
           <Dots current={2} />
-          <h2 className="text-[28px] font-black text-[#212529] mb-1">
+          <h2 className="text-[28px] font-black text-white mb-1">
             Follow People \uD83D\uDC65
           </h2>
-          <p className="text-[#6C757D] text-sm mb-6">Get your feed started</p>
+          <p className="text-white/50 text-sm mb-6">Get your feed started</p>
           <div className="grid grid-cols-2 gap-3">
             {SUGGESTED.map((acc, i) => {
               const isFollowing = followed.includes(acc.handle);
               return (
                 <div
                   key={acc.handle}
-                  className="rounded-2xl border border-[#E5E5E5] p-3 flex flex-col items-center gap-2 text-center"
+                  className="rounded-2xl border border-white/10 bg-white/3 p-3 flex flex-col items-center gap-2 text-center"
+                  style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
                   data-ocid={`onboarding.follow.item.${i + 1}`}
                 >
                   <div
                     className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
-                    style={{ backgroundColor: "#FF6B35" }}
+                    style={{
+                      backgroundColor: "rgba(232,67,45,0.15)",
+                      border: "1px solid rgba(232,67,45,0.3)",
+                    }}
                   >
                     {acc.emoji}
                   </div>
-                  <p className="font-bold text-sm text-[#212529] leading-tight">
+                  <p className="font-bold text-sm text-white leading-tight">
                     {acc.name}
                   </p>
-                  <p className="text-xs text-[#6C757D]">{acc.handle}</p>
+                  <p className="text-xs text-white/40">{acc.handle}</p>
                   <button
                     type="button"
                     onClick={() => onToggle(acc.handle)}
                     className="w-full h-8 rounded-full text-xs font-semibold transition-all"
                     style={{
-                      backgroundColor: isFollowing ? "transparent" : "#FF6B35",
-                      color: isFollowing ? "#6C757D" : "white",
-                      border: isFollowing ? "1px solid #E5E5E5" : "none",
+                      backgroundColor: isFollowing ? "transparent" : "#E8432D",
+                      color: isFollowing ? "rgba(255,255,255,0.4)" : "white",
+                      border: isFollowing
+                        ? "1px solid rgba(255,255,255,0.15)"
+                        : "none",
                     }}
                     data-ocid={`onboarding.follow.toggle.${i + 1}`}
                   >
@@ -405,7 +431,7 @@ function Follow({
           <button
             type="button"
             onClick={onSkip}
-            className="w-full text-center text-sm text-[#6C757D] mt-6 py-2"
+            className="w-full text-center text-sm text-white/40 mt-6 py-2"
             data-ocid="onboarding.follow.secondary_button"
           >
             Skip for now \u2192
@@ -417,7 +443,7 @@ function Follow({
           type="button"
           onClick={onNext}
           className="w-full h-12 rounded-full text-white font-semibold text-sm active:opacity-80"
-          style={{ backgroundColor: "#FF6B35" }}
+          style={{ backgroundColor: "#E8432D" }}
           data-ocid="onboarding.follow.submit_button"
         >
           Continue \u2192

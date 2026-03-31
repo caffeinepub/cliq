@@ -25,7 +25,7 @@ export const MOCK_COMMUNITIES: MockCommunity[] = [
     postsThisWeek: 87,
     isPrivate: false,
     category: "Marketplace",
-    coverColor: "#FF6B35",
+    coverColor: "#E8432D",
     emoji: "🛒",
     joined: true,
   },

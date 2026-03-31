@@ -16,7 +16,7 @@ export function BecauseYouLiked({ likedPostIds }: BecauseYouLikedProps) {
 
   return (
     <div className="mx-0 mb-3 border border-[#FFE0D6] bg-[#FFF5F2] rounded-xl overflow-hidden">
-      <p className="text-[11px] text-[#FF6B35] font-semibold px-3 pt-2.5 pb-1">
+      <p className="text-[11px] text-[#E8432D] font-semibold px-3 pt-2.5 pb-1">
         Because you liked:{" "}
         <span className="font-normal text-[#6C757D]">"{preview}"</span>
       </p>
@@ -27,7 +27,7 @@ export function BecauseYouLiked({ likedPostIds }: BecauseYouLikedProps) {
         {recommendations.map((post) => (
           <div
             key={post.id}
-            className="flex-shrink-0 w-[160px] border border-[#E5E5E5] rounded-xl bg-white p-2.5 shadow-sm"
+            className="flex-shrink-0 w-[160px] rounded-xl bg-white p-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
           >
             <p className="text-[11px] font-semibold text-[#212529] truncate">
               {post.displayName}

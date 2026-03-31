@@ -109,7 +109,7 @@ export function AppLayout() {
         <div className="flex items-center gap-3 border-b p-6">
           <span
             className="text-2xl font-black tracking-tight"
-            style={{ color: "#FF6B35" }}
+            style={{ color: "#E8432D" }}
           >
             CLIQ
           </span>
@@ -322,7 +322,7 @@ export function AppLayout() {
       {/* Main Content */}
       <main className="flex-1 pb-20 md:pb-0 min-h-0 min-w-0">
         {/* Mobile Top Bar */}
-        <div className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-card border-b md:hidden">
+        <div className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-card border-b border-[#F0F0F0] md:hidden">
           <Button
             variant="ghost"
             size="icon"
@@ -333,7 +333,7 @@ export function AppLayout() {
           </Button>
           <span
             className="text-xl font-black tracking-tight"
-            style={{ color: "#FF6B35" }}
+            style={{ color: "#E8432D" }}
           >
             CLIQ
           </span>
@@ -360,7 +360,7 @@ export function AppLayout() {
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t bg-card md:hidden shadow-sm">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-[#F0F0F0] bg-card md:hidden shadow-[0_-1px_0_#F0F0F0]">
         {bottomNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentPath === item.path;

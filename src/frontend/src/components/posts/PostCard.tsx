@@ -141,7 +141,7 @@ export function PostCard({ post }: PostCardProps) {
   return (
     <>
       <Card
-        className="hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer border rounded-none shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+        className="hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all cursor-pointer rounded-none shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
         onClick={handleCardClick}
       >
         <CardContent className="p-5">
@@ -149,13 +149,13 @@ export function PostCard({ post }: PostCardProps) {
 
           {/* University tag */}
           <div className="flex justify-end mb-2">
-            <span className="bg-[#FF6B35] text-white text-[11px] font-medium px-2 py-0.5 rounded-full">
+            <span className="bg-[#E8432D] text-white text-[11px] font-medium px-2 py-0.5 rounded-full">
               🏛️ Campus
             </span>
           </div>
 
           <div className="flex gap-4">
-            <Avatar className="h-11 w-11 border border-border">
+            <Avatar className="h-11 w-11 border border-[#F0F0F0]">
               {isAnonymous ? (
                 <AvatarFallback className="bg-muted text-lg">🥷</AvatarFallback>
               ) : avatarUrl ? (
@@ -174,7 +174,7 @@ export function PostCard({ post }: PostCardProps) {
                       ? "Anonymous"
                       : authorProfile?.displayName || "Unknown"}
                   </span>
-                  <span className="text-sm text-[#6C757D] font-normal">
+                  <span className="text-[13px] text-[#6C757D] font-normal">
                     @
                     {isAnonymous
                       ? "anonymous"
@@ -199,7 +199,7 @@ export function PostCard({ post }: PostCardProps) {
               </p>
 
               {mediaUrl && (
-                <div className="rounded-none overflow-hidden border border-border mt-2">
+                <div className="rounded-none overflow-hidden mt-2">
                   {post.media?.__kind__ === "image" ? (
                     <img
                       src={mediaUrl}
@@ -228,10 +228,10 @@ export function PostCard({ post }: PostCardProps) {
                   className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-accent/10 transition-colors"
                 >
                   <Flame
-                    className={`h-5 w-5 ${isLiked ? "text-[#FF6B35] fill-[#FF6B35]" : "text-[#ADB5BD]"}`}
+                    className={`h-5 w-5 ${isLiked ? "text-[#E8432D] fill-[#E8432D]" : "text-[#ADB5BD]"}`}
                   />
                   <span
-                    className={`text-base font-bold leading-tight ${isLiked ? "text-[#FF6B35]" : "text-[#212529]"}`}
+                    className={`text-[16px] font-semibold leading-tight ${isLiked ? "text-[#E8432D]" : "text-[#212529]"}`}
                   >
                     {Number(post.likes)}
                   </span>
@@ -247,7 +247,7 @@ export function PostCard({ post }: PostCardProps) {
                   className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-accent/10 transition-colors"
                 >
                   <MessageCircle className="h-5 w-5 text-[#ADB5BD]" />
-                  <span className="text-base font-bold leading-tight text-[#212529]">
+                  <span className="text-[16px] font-semibold leading-tight text-[#212529]">
                     0
                   </span>
                   <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">
@@ -266,13 +266,13 @@ export function PostCard({ post }: PostCardProps) {
                     <Loader2 className="h-5 w-5 animate-spin text-[#ADB5BD]" />
                   ) : (
                     <span
-                      className={`text-xl font-black leading-none ${hasAlreadyRecliqed ? "text-[#FF6B35]" : "text-[#ADB5BD]"}`}
+                      className={`text-xl font-black leading-none ${hasAlreadyRecliqed ? "text-[#E8432D]" : "text-[#ADB5BD]"}`}
                     >
                       ∞
                     </span>
                   )}
                   <span
-                    className={`text-base font-bold leading-tight ${hasAlreadyRecliqed ? "text-[#FF6B35]" : "text-[#212529]"}`}
+                    className={`text-[16px] font-semibold leading-tight ${hasAlreadyRecliqed ? "text-[#E8432D]" : "text-[#212529]"}`}
                   >
                     {recliqCount}
                   </span>
@@ -291,7 +291,7 @@ export function PostCard({ post }: PostCardProps) {
                   className="flex flex-col items-center gap-0.5 min-w-[56px] py-2 px-1 rounded-xl hover:bg-[#2C8A7A]/10 transition-colors"
                 >
                   <Share2 className="h-5 w-5 text-[#ADB5BD]" />
-                  <span className="text-base font-bold leading-tight text-[#212529]">
+                  <span className="text-[16px] font-semibold leading-tight text-[#212529]">
                     —
                   </span>
                   <span className="text-[11px] uppercase tracking-widest text-[#ADB5BD] font-medium">

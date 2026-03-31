@@ -74,17 +74,19 @@ export default {
             },
             boxShadow: {
                 xs: '0 1px 2px 0 rgba(0,0,0,0.05)',
+                card: '0 1px 2px rgba(0,0,0,0.03)',
+                'card-hover': '0 4px 12px rgba(0,0,0,0.08)',
                 'bold': '0 4px 12px rgba(0,0,0,0.1)',
                 'bold-lg': '0 8px 24px rgba(0,0,0,0.12)'
             },
             fontFamily: {
                 sans: [
-                    'Inter',
-                    'system-ui',
                     '-apple-system',
                     'BlinkMacSystemFont',
                     'Segoe UI',
                     'Roboto',
+                    'Helvetica',
+                    'Arial',
                     'sans-serif'
                 ]
             },

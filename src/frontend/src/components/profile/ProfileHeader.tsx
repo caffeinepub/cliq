@@ -55,7 +55,7 @@ function renderBioWithLinks(bio: string) {
         href={part.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-[#FF6B35] hover:underline inline-flex items-center gap-0.5 break-all"
+        className="text-[#E8432D] hover:underline inline-flex items-center gap-0.5 break-all"
         onClick={(e) => e.stopPropagation()}
       >
         <Link size={12} className="flex-shrink-0" />
@@ -84,11 +84,11 @@ export function ProfileHeader({
   return (
     <div className="p-4 max-w-full overflow-hidden">
       <div className="flex items-start gap-3 max-w-full overflow-hidden">
-        <Avatar className="h-14 w-14 flex-shrink-0 border border-[#E5E5E5]">
+        <Avatar className="h-14 w-14 flex-shrink-0 border border-[#F0F0F0]">
           {avatarUrl ? (
             <AvatarImage src={avatarUrl} alt={profile.displayName} />
           ) : (
-            <AvatarFallback className="bg-[#FF6B35] text-white text-base font-bold">
+            <AvatarFallback className="bg-[#E8432D] text-white text-base font-bold">
               {initials}
             </AvatarFallback>
           )}
@@ -97,7 +97,7 @@ export function ProfileHeader({
           <h1 className="text-base font-semibold text-[#212529] truncate">
             {profile.displayName}
             {isOwnProfile && (
-              <span className="ml-2 text-[10px] font-normal bg-[#FFF5F2] text-[#FF6B35] border border-[#FFE0D6] px-1.5 py-0.5 rounded-full align-middle">
+              <span className="ml-2 text-[10px] font-normal bg-[#FFF5F2] text-[#E8432D] border border-[#FFE0D6] px-1.5 py-0.5 rounded-full align-middle">
                 You
               </span>
             )}
@@ -124,7 +124,7 @@ export function ProfileHeader({
           </div>
 
           {profile.university && (
-            <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-[#FF6B35] text-white text-[10px] font-medium">
+            <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-[#E8432D] text-white text-[10px] font-medium">
               🏛️ {uniAcronym}
             </span>
           )}

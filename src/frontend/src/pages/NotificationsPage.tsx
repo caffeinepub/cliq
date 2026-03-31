@@ -166,11 +166,11 @@ export function NotificationsPage() {
 
       {/* Weekly Digest card */}
       <Card
-        className="border border-[#FF6B35]/30 cursor-pointer hover:shadow-md transition rounded-2xl bg-gradient-to-r from-[#FF6B35]/5 to-transparent"
+        className="border border-[#E8432D]/30 cursor-pointer hover:shadow-md transition rounded-2xl bg-gradient-to-r from-[#E8432D]/5 to-transparent"
         onClick={() => setDigestOpen(true)}
       >
         <CardContent className="p-4 flex items-center gap-3">
-          <div className="h-11 w-11 rounded-2xl bg-[#FF6B35] flex items-center justify-center text-xl shrink-0 shadow-sm">
+          <div className="h-11 w-11 rounded-2xl bg-[#E8432D] flex items-center justify-center text-xl shrink-0 shadow-sm">
             📊
           </div>
           <div className="flex-1">
@@ -180,10 +180,10 @@ export function NotificationsPage() {
             </p>
           </div>
           <div className="flex items-center gap-1">
-            <span className="text-xs text-[#FF6B35] font-semibold">
+            <span className="text-xs text-[#E8432D] font-semibold">
               5 slides
             </span>
-            <ChevronRight className="h-4 w-4 text-[#FF6B35]" />
+            <ChevronRight className="h-4 w-4 text-[#E8432D]" />
           </div>
         </CardContent>
       </Card>

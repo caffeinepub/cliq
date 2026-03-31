@@ -15,6 +15,7 @@ type PostDestination = "campus" | "followers";
 
 interface PostComposerProps {
   isAnonymous?: boolean;
+  onPostSuccess?: () => void;
 }
 
 /** Extracts unique @username mentions from post content */
@@ -25,7 +26,10 @@ function extractMentions(content: string): string[] {
   return unique;
 }
 
-export function PostComposer({ isAnonymous = false }: PostComposerProps) {
+export function PostComposer({
+  isAnonymous = false,
+  onPostSuccess,
+}: PostComposerProps) {
   const [content, setContent] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
@@ -117,6 +121,10 @@ export function PostComposer({ isAnonymous = false }: PostComposerProps) {
           : "Posted to your followers!",
       );
 
+      // Mark that user has posted (used for profile completion prompt)
+      localStorage.setItem("cliq_has_posted", "true");
+      onPostSuccess?.();
+
       // Fire mention notifications after successful post
       if (mentions.length > 0) {
         setTimeout(() => {
@@ -156,7 +164,7 @@ export function PostComposer({ isAnonymous = false }: PostComposerProps) {
 
   return (
     <>
-      <Card className="border shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+      <Card className="shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
         <CardContent className="p-5">
           {/* Anonymous banner */}
           {isAnonymous && (

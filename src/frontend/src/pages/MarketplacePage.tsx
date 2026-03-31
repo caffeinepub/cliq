@@ -195,15 +195,15 @@ export function MarketplacePage() {
             placeholder="Search listings..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-[40px] border border-[#E5E5E5] pl-10 pr-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-white"
+            className="w-full rounded-[40px] border border-[#EEEEEE] pl-10 pr-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-white"
             data-ocid="marketplace.search_input"
           />
         </div>
       </div>
 
       {/* Featured Services Box */}
-      <div className="mx-4 mb-6 border border-[#FF6B35] rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-        <div className="bg-gradient-to-r from-[#FF6B35] to-[#ff8c5a] px-4 py-3 flex items-center justify-between">
+      <div className="mx-4 mb-6 border border-[#E8432D] rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+        <div className="bg-gradient-to-r from-[#E8432D] to-[#ff8c5a] px-4 py-3 flex items-center justify-between">
           <span className="text-white font-semibold text-sm tracking-widest uppercase">
             Services
           </span>
@@ -227,7 +227,7 @@ export function MarketplacePage() {
         <div className="px-4 pb-4">
           <button
             type="button"
-            className="text-xs font-medium text-[#FF6B35] hover:underline"
+            className="text-xs font-medium text-[#E8432D] hover:underline"
             onClick={() => toast.info("Browse all services coming soon")}
           >
             Browse All Services →
@@ -251,8 +251,8 @@ export function MarketplacePage() {
               }}
               className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border cursor-pointer transition-all min-h-[72px] shadow-[0_1px_4px_rgba(0,0,0,0.04)] ${
                 cat.isCreate
-                  ? "bg-[#FF6B35] border-[#FF6B35] hover:bg-[#e55a26]"
-                  : "border-[#E5E5E5] bg-white hover:border-[#FF6B35] hover:bg-[#FFF5F2]"
+                  ? "bg-[#E8432D] border-[#E8432D] hover:bg-[#e55a26]"
+                  : "border-[#F0F0F0] bg-white hover:border-[#E8432D] hover:bg-[#FFF5F2]"
               }`}
               data-ocid={
                 cat.isCreate ? "marketplace.open_modal_button" : undefined
@@ -284,7 +284,7 @@ export function MarketplacePage() {
             {trendingItems.map((item, i) => (
               <div
                 key={item.id}
-                className="rounded-2xl border border-[#E5E5E5] overflow-hidden bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer"
+                className="rounded-2xl overflow-hidden bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all cursor-pointer"
                 data-ocid={`marketplace.item.${i + 1}`}
               >
                 <div className="aspect-square w-full bg-[#F8F9FA] flex items-center justify-center">
@@ -295,14 +295,14 @@ export function MarketplacePage() {
                     {item.title}
                   </p>
                   <p className="text-xs text-[#6C757D]">⭐ {item.rating}</p>
-                  <p className="text-sm font-semibold text-[#FF6B35]">
+                  <p className="text-sm font-semibold text-[#E8432D]">
                     ₦{item.price.toLocaleString()}
                   </p>
                   <p className="text-[10px] text-[#ADB5BD]">{item.seller}</p>
                   <p className="text-[10px] text-[#6C757D]">🏛️ {item.uni}</p>
                   <button
                     type="button"
-                    className="w-full rounded-[40px] border border-[#FF6B35] text-[#FF6B35] text-xs py-1.5 hover:bg-[#FF6B35] hover:text-white transition-colors mt-1"
+                    className="w-full rounded-[40px] border border-[#E8432D] text-[#E8432D] text-xs py-1.5 hover:bg-[#E8432D] hover:text-white transition-colors mt-1"
                     onClick={() =>
                       toast.info("Open messages to contact seller")
                     }
@@ -318,7 +318,7 @@ export function MarketplacePage() {
                 <button
                   type="button"
                   key={listing.id.toString()}
-                  className="rounded-2xl border border-[#E5E5E5] overflow-hidden bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.10)] transition-all cursor-pointer text-left w-full"
+                  className="rounded-2xl overflow-hidden bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all cursor-pointer text-left w-full"
                   onClick={() =>
                     navigate({
                       to: "/marketplace/$listingId",
@@ -344,7 +344,7 @@ export function MarketplacePage() {
                     <p className="text-xs font-medium text-[#212529] line-clamp-2">
                       {listing.title}
                     </p>
-                    <p className="text-sm font-semibold text-[#FF6B35]">
+                    <p className="text-sm font-semibold text-[#E8432D]">
                       ₦{Number(listing.price).toLocaleString()}
                     </p>
                     <p className="text-[10px] text-[#6C757D]">
@@ -352,7 +352,7 @@ export function MarketplacePage() {
                     </p>
                     <button
                       type="button"
-                      className="w-full rounded-[40px] border border-[#FF6B35] text-[#FF6B35] text-xs py-1.5 hover:bg-[#FF6B35] hover:text-white transition-colors mt-1"
+                      className="w-full rounded-[40px] border border-[#E8432D] text-[#E8432D] text-xs py-1.5 hover:bg-[#E8432D] hover:text-white transition-colors mt-1"
                       onClick={(e) => {
                         e.stopPropagation();
                         toast.info("Open messages to contact seller");
@@ -390,7 +390,7 @@ export function MarketplacePage() {
       <div className="px-4 mb-4">
         <button
           type="button"
-          className="rounded-[40px] border border-[#E5E5E5] text-[#6C757D] text-sm px-8 py-2.5 mx-auto block hover:border-[#FF6B35] hover:text-[#FF6B35] transition-colors"
+          className="rounded-[40px] border border-[#F0F0F0] text-[#6C757D] text-sm px-8 py-2.5 mx-auto block hover:border-[#E8432D] hover:text-[#E8432D] transition-colors"
           onClick={() => toast.info("Load more coming soon")}
           data-ocid="marketplace.load_more.button"
         >

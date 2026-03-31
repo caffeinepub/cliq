@@ -49,7 +49,7 @@ export function SettingsPage() {
 
   function SectionHeader({ title }: { title: string }) {
     return (
-      <p className="text-[11px] font-semibold tracking-widest text-[#FF6B35] uppercase px-4 mb-1 mt-6">
+      <p className="text-[11px] font-semibold tracking-widest text-[#E8432D] uppercase px-4 mb-1 mt-6">
         {title}
       </p>
     );
@@ -76,7 +76,7 @@ export function SettingsPage() {
       <button
         type="button"
         className={`flex items-center justify-between px-4 min-h-[44px] py-2 w-full bg-background hover:bg-muted/50 cursor-pointer transition-colors text-left ${
-          !isLast ? "border-b border-[#E5E5E5] dark:border-zinc-800" : ""
+          !isLast ? "border-b border-[#F0F0F0] dark:border-zinc-800" : ""
         }`}
         onClick={onClick || (() => toast.info("Coming soon"))}
         data-ocid={ocid}
@@ -123,7 +123,7 @@ export function SettingsPage() {
     return (
       <div
         className={`flex items-center justify-between px-4 min-h-[44px] py-2 bg-background ${
-          !isLast ? "border-b border-[#E5E5E5] dark:border-zinc-800" : ""
+          !isLast ? "border-b border-[#F0F0F0] dark:border-zinc-800" : ""
         }`}
       >
         <span className="text-sm font-medium text-foreground">{label}</span>
@@ -150,7 +150,7 @@ export function SettingsPage() {
     return (
       <div
         className={`flex items-center justify-between px-4 min-h-[44px] py-2 bg-background ${
-          !isLast ? "border-b border-[#E5E5E5] dark:border-zinc-800" : ""
+          !isLast ? "border-b border-[#F0F0F0] dark:border-zinc-800" : ""
         }`}
       >
         <div className="flex flex-col justify-center mr-3">
@@ -165,7 +165,7 @@ export function SettingsPage() {
           checked={checked}
           onCheckedChange={onChange}
           data-ocid={ocid}
-          className="data-[state=checked]:bg-[#FF6B35] flex-shrink-0"
+          className="data-[state=checked]:bg-[#E8432D] flex-shrink-0"
         />
       </div>
     );
@@ -173,7 +173,7 @@ export function SettingsPage() {
 
   function SectionBlock({ children }: { children: React.ReactNode }) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-[#E5E5E5] dark:border-zinc-800 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-zinc-950 rounded-xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03)] dark:shadow-none">
         {children}
       </div>
     );
@@ -184,10 +184,10 @@ export function SettingsPage() {
       {/* Page header */}
       <div className="px-4 pt-5 pb-4">
         <div className="flex items-center gap-3">
-          <Avatar className="h-14 w-14 border-2 border-[#FF6B35]">
+          <Avatar className="h-14 w-14 border-2 border-[#E8432D]">
             <AvatarFallback
               className="font-bold text-lg text-white"
-              style={{ backgroundColor: "#FF6B35" }}
+              style={{ backgroundColor: "#E8432D" }}
             >
               {initials}
             </AvatarFallback>
@@ -451,7 +451,7 @@ export function SettingsPage() {
           href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
           target="_blank"
           rel="noreferrer"
-          className="text-[#FF6B35] font-semibold"
+          className="text-[#E8432D] font-semibold"
         >
           caffeine.ai
         </a>

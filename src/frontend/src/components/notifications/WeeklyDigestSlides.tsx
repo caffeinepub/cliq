@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { mockPosts } from "../../data/mockPosts";
 import { getUniversityAcronym } from "../../lib/universityAcronyms";
@@ -7,7 +8,8 @@ interface WeeklyDigestSlidesProps {
   onClose: () => void;
 }
 
-const BRAND = "#e8432d";
+const ORANGE = "#E8432D";
+const BG = "#0A0A0A";
 
 function ReblogIcon({ className }: { className?: string }) {
   return (
@@ -24,8 +26,87 @@ function ReblogIcon({ className }: { className?: string }) {
   );
 }
 
+function PostCard({
+  post,
+  glowBorder,
+}: {
+  post: (typeof mockPosts)[0];
+  glowBorder?: boolean;
+}) {
+  const initials = post.isAnonymous
+    ? "🥷"
+    : post.displayName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+
+  return (
+    <div
+      className="rounded-2xl overflow-hidden"
+      style={{
+        background: "#1a1a1a",
+        border: glowBorder
+          ? `2px solid ${ORANGE}`
+          : "1px solid rgba(255,255,255,0.12)",
+        boxShadow: glowBorder ? `0 0 24px ${ORANGE}44` : undefined,
+      }}
+    >
+      <div className="flex items-center gap-3 p-4 pb-2">
+        <div
+          className="h-9 w-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+          style={{ backgroundColor: ORANGE }}
+        >
+          {post.isAnonymous ? "🥷" : initials}
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-white leading-tight truncate">
+            {post.isAnonymous ? "Anonymous" : post.displayName}
+          </p>
+          <p className="text-xs text-zinc-400">
+            {getUniversityAcronym(post.university)}
+          </p>
+        </div>
+      </div>
+
+      <p className="px-4 pb-3 text-sm text-zinc-200 leading-relaxed">
+        {post.content}
+      </p>
+
+      {post.mediaUrl && post.mediaType === "image" && (
+        <img
+          src={post.mediaUrl}
+          alt="Post media"
+          className="w-full object-cover"
+          style={{ maxHeight: 180 }}
+        />
+      )}
+
+      <div
+        className="flex items-center gap-5 px-4 py-3"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+      >
+        <span className="flex items-center gap-1.5 text-xs text-zinc-400">
+          <span style={{ color: ORANGE }}>🔥</span>
+          <span className="font-bold text-zinc-200">{post.likes}</span>
+        </span>
+        <span className="flex items-center gap-1.5 text-xs text-zinc-400">
+          <span>💬</span>
+          <span className="font-bold text-zinc-200">{post.comments}</span>
+        </span>
+        <span className="flex items-center gap-1.5 text-xs text-zinc-400">
+          <ReblogIcon className="h-3 w-3" />
+          <span className="font-bold text-zinc-200">{post.shares}</span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [direction, setDirection] = useState(1);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
@@ -34,15 +115,10 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
   }, [open]);
 
   const mostLiked = [...mockPosts].sort((a, b) => b.likes - a.likes)[0];
-  const mostRecliqed = [...mockPosts].sort((a, b) => b.shares - a.shares)[0];
-  const mostViewed = [...mockPosts].sort(
-    (a, b) =>
-      b.likes +
-      b.comments * 2 +
-      b.shares * 3 -
-      (a.likes + a.comments * 2 + a.shares * 3),
+  const mostCommented = [...mockPosts].sort(
+    (a, b) => b.comments - a.comments,
   )[0];
-  const newFollowers = 8;
+  const mostRecliqed = [...mockPosts].sort((a, b) => b.shares - a.shares)[0];
   const topPost = [...mockPosts].sort(
     (a, b) =>
       b.likes +
@@ -50,50 +126,27 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
       b.shares * 3 -
       (a.likes + a.comments * 2 + a.shares * 3),
   )[0];
+  const totalInteractions = mockPosts.reduce(
+    (sum, p) => sum + p.likes + p.comments + p.shares,
+    0,
+  );
+  const newFollowers = 8;
+  const topScore = topPost
+    ? topPost.likes + topPost.comments * 2 + topPost.shares * 3
+    : 0;
 
-  const slides = [
-    {
-      id: "most-viewed",
-      label: "👁️ MOST VIEWED",
-      post: mostViewed,
-      stat: `${mostViewed.likes + mostViewed.comments + mostViewed.shares} interactions`,
-      statIcon: "👁️",
-    },
-    {
-      id: "most-liked",
-      label: "🔥 MOST LIKED",
-      post: mostLiked,
-      stat: `${mostLiked.likes} likes`,
-      statIcon: "🔥",
-    },
-    {
-      id: "most-recliqed",
-      label: "🔁 MOST RECLIQED",
-      post: mostRecliqed,
-      stat: `${mostRecliqed.shares} recliqs`,
-      statIcon: "🔁",
-    },
-    {
-      id: "followers",
-      label: "👥 NEW FOLLOWERS",
-      post: null,
-      stat: `${newFollowers} new followers this week`,
-      statIcon: "👥",
-      isFollowers: true,
-    },
-    {
-      id: "top-post",
-      label: "🏆 TOP POST OF THE WEEK",
-      post: topPost,
-      stat: `${topPost.likes} 🔥 · ${topPost.comments} 💬 · ${topPost.shares} 🔁`,
-      statIcon: "🏆",
-      isTop: true,
-    },
-  ];
+  const TOTAL = 5;
 
-  const TOTAL = slides.length;
-  const goNext = () => setCurrentSlide((p) => Math.min(p + 1, TOTAL - 1));
-  const goPrev = () => setCurrentSlide((p) => Math.max(p - 1, 0));
+  const goTo = (idx: number) => {
+    setDirection(idx > currentSlide ? 1 : -1);
+    setCurrentSlide(idx);
+  };
+  const goNext = () => {
+    if (currentSlide < TOTAL - 1) goTo(currentSlide + 1);
+  };
+  const goPrev = () => {
+    if (currentSlide > 0) goTo(currentSlide - 1);
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -112,203 +165,305 @@ export function WeeklyDigestSlides({ open, onClose }: WeeklyDigestSlidesProps) {
     touchEndX.current = null;
   };
 
+  const now = new Date();
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - 6);
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("en-NG", { month: "short", day: "numeric" });
+  const weekRange = `${fmt(weekStart)} – ${fmt(now)}`;
+
   if (!open) return null;
 
-  const slide = slides[currentSlide];
+  const slideVariants = {
+    enter: (dir: number) => ({ x: dir * 40, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir * -40, opacity: 0 }),
+  };
 
-  return (
-    <>
-      {/* Full-screen overlay */}
-      <div className="fixed inset-0 z-50 flex items-end justify-center">
-        {/* Backdrop */}
-        <button
-          type="button"
-          aria-label="Close digest"
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-default"
-          onClick={onClose}
-        />
+  const renderSlide = () => {
+    switch (currentSlide) {
+      case 0:
+        return (
+          <div className="flex flex-col gap-6">
+            <div className="text-center">
+              <p
+                className="text-5xl font-black tracking-tight leading-none"
+                style={{ color: ORANGE }}
+              >
+                YOUR WEEK
+              </p>
+              <p className="text-zinc-400 text-sm mt-2 font-medium">
+                Week of {weekRange}
+              </p>
+            </div>
 
-        {/* Sheet panel — white in light mode, dark surface in dark mode */}
-        <div
-          className="relative w-full max-w-lg mx-auto rounded-t-3xl bg-white dark:bg-zinc-900 overflow-hidden"
-          style={{ maxHeight: "88vh" }}
-        >
-          {/* Handle bar */}
-          <div className="flex justify-center pt-3 pb-1">
-            <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-zinc-700" />
-          </div>
+            <div className="flex flex-col gap-3">
+              <div
+                className="rounded-2xl p-6 text-center"
+                style={{
+                  background: "#1a1a1a",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <p className="text-6xl font-black text-white leading-none">
+                  {totalInteractions}
+                </p>
+                <p className="mt-2 uppercase text-xs font-semibold text-zinc-400 tracking-wide">
+                  Total Interactions
+                </p>
+              </div>
+              <div
+                className="rounded-2xl p-6 text-center"
+                style={{
+                  background: "#1a1a1a",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <p className="text-6xl font-black text-white leading-none">
+                  +{newFollowers}
+                </p>
+                <p className="mt-2 uppercase text-xs font-semibold text-zinc-400 tracking-wide">
+                  New Followers
+                </p>
+              </div>
+            </div>
 
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 py-3">
-            <p
-              className="text-sm font-black uppercase tracking-widest"
-              style={{ color: BRAND }}
-            >
-              Weekly Digest
+            <p className="text-center text-zinc-500 text-sm">
+              This was your week on CLIQ 🔥
             </p>
+          </div>
+        );
+
+      case 1:
+        return (
+          <div className="flex flex-col gap-5">
+            <div>
+              <p className="text-2xl font-black" style={{ color: ORANGE }}>
+                🔥 MOST LIKED
+              </p>
+              <p className="text-5xl font-black text-white leading-none mt-1">
+                {mostLiked.likes}{" "}
+                <span className="text-2xl font-semibold text-zinc-400">
+                  likes
+                </span>
+              </p>
+            </div>
+            <PostCard post={mostLiked} />
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close"
-              className="h-8 w-8 rounded-full flex items-center justify-center text-white text-lg font-bold transition-opacity hover:opacity-80"
-              style={{ backgroundColor: BRAND }}
+              className="w-full py-3 rounded-full font-bold text-sm text-white"
+              style={{ background: ORANGE }}
+              data-ocid="digest.view_post.button"
             >
-              ×
+              View Post
             </button>
           </div>
+        );
 
-          {/* Progress dots */}
-          <div className="flex items-center justify-center gap-1.5 pb-3">
-            {slides.map((s, i) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setCurrentSlide(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                className="transition-all duration-200 rounded-full"
-                style={{
-                  width: i === currentSlide ? 20 : 6,
-                  height: 6,
-                  backgroundColor: i === currentSlide ? BRAND : "#E5E5E5",
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Slide */}
-          <div
-            className="px-5 pb-8 select-none"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div
-              className="rounded-2xl overflow-hidden"
-              style={{ border: `2px solid ${BRAND}30` }}
+      case 2:
+        return (
+          <div className="flex flex-col gap-5">
+            <div>
+              <p className="text-2xl font-black" style={{ color: ORANGE }}>
+                💬 MOST COMMENTED
+              </p>
+              <p className="text-5xl font-black text-white leading-none mt-1">
+                {mostCommented.comments}{" "}
+                <span className="text-2xl font-semibold text-zinc-400">
+                  comments
+                </span>
+              </p>
+            </div>
+            <PostCard post={mostCommented} />
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full py-3 rounded-full font-bold text-sm text-white"
+              style={{ background: ORANGE }}
+              data-ocid="digest.view_post.button"
             >
-              {/* Slide header stripe — always #e8432d */}
-              <div className="px-5 py-4" style={{ backgroundColor: BRAND }}>
-                <p className="text-white text-xs font-black uppercase tracking-widest opacity-80">
-                  {slide.label}
-                </p>
-                <p className="text-white text-xl font-black mt-1">
-                  {slide.statIcon} {slide.stat}
-                </p>
-              </div>
-
-              {/* Slide body */}
-              {slide.isFollowers ? (
-                <div className="bg-white dark:bg-zinc-800 p-6 text-center">
-                  <div className="text-6xl mb-4" style={{ lineHeight: 1 }}>
-                    👥
-                  </div>
-                  <p className="text-4xl font-black" style={{ color: BRAND }}>
-                    +{newFollowers}
-                  </p>
-                  <p className="text-base font-semibold text-gray-500 dark:text-gray-400 mt-2">
-                    New followers this week
-                  </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                    Keep posting — your audience is growing 🚀
-                  </p>
-                </div>
-              ) : slide.post ? (
-                <div className="bg-white dark:bg-zinc-800 p-4">
-                  {slide.isTop && (
-                    <div
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold text-white mb-3"
-                      style={{ backgroundColor: BRAND }}
-                    >
-                      🏆 Top Post
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2 mb-2">
-                    <div
-                      className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                      style={{ backgroundColor: BRAND }}
-                    >
-                      {slide.post.isAnonymous
-                        ? "🥷"
-                        : slide.post.displayName
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .toUpperCase()
-                            .slice(0, 2)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 leading-none">
-                        {slide.post.isAnonymous
-                          ? "Anonymous"
-                          : slide.post.displayName}
-                      </p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500">
-                        🏛️ {getUniversityAcronym(slide.post.university)}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-3">
-                    {slide.post.content}
-                  </p>
-                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100 dark:border-zinc-700">
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
-                      🔥{" "}
-                      <span className="font-bold text-gray-700 dark:text-gray-300">
-                        {slide.post.likes}
-                      </span>
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
-                      💬{" "}
-                      <span className="font-bold text-gray-700 dark:text-gray-300">
-                        {slide.post.comments}
-                      </span>
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
-                      <ReblogIcon className="h-3 w-3" />
-                      <span className="font-bold text-gray-700 dark:text-gray-300">
-                        {slide.post.shares}
-                      </span>
-                    </span>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-
-            {/* Nav arrows */}
-            <div className="flex items-center justify-between mt-5">
-              <button
-                type="button"
-                onClick={goPrev}
-                disabled={currentSlide === 0}
-                className="h-10 px-4 rounded-full text-sm font-bold transition-all disabled:opacity-30"
-                style={{
-                  backgroundColor:
-                    currentSlide === 0 ? "#F0F0F0" : `${BRAND}18`,
-                  color: currentSlide === 0 ? "#ADB5BD" : BRAND,
-                }}
-              >
-                ← Prev
-              </button>
-              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">
-                {currentSlide + 1} / {TOTAL}
-              </span>
-              <button
-                type="button"
-                onClick={goNext}
-                disabled={currentSlide === TOTAL - 1}
-                className="h-10 px-4 rounded-full text-sm font-bold transition-all disabled:opacity-30 text-white"
-                style={{
-                  backgroundColor:
-                    currentSlide === TOTAL - 1 ? "#E5E5E5" : BRAND,
-                  color: currentSlide === TOTAL - 1 ? "#ADB5BD" : "white",
-                }}
-              >
-                Next →
-              </button>
-            </div>
+              View Post
+            </button>
           </div>
+        );
+
+      case 3:
+        return (
+          <div className="flex flex-col gap-5">
+            <div>
+              <p className="text-2xl font-black" style={{ color: ORANGE }}>
+                🔁 MOST RECLIQED
+              </p>
+              <p className="text-5xl font-black text-white leading-none mt-1">
+                {mostRecliqed.shares}{" "}
+                <span className="text-2xl font-semibold text-zinc-400">
+                  recliqs
+                </span>
+              </p>
+            </div>
+            <PostCard post={mostRecliqed} />
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full py-3 rounded-full font-bold text-sm text-white"
+              style={{ background: ORANGE }}
+              data-ocid="digest.view_post.button"
+            >
+              View Post
+            </button>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="flex flex-col gap-5">
+            <div
+              className="rounded-2xl p-5 text-center"
+              style={{
+                background: "linear-gradient(135deg, #E8432D 0%, #e8432d 100%)",
+              }}
+            >
+              <p className="text-2xl font-black text-white">
+                🏆 TOP POST OF THE WEEK
+              </p>
+              <p className="text-white/80 text-xs mt-1">
+                Highest combined engagement score
+              </p>
+            </div>
+
+            <p className="text-center">
+              <span className="text-4xl font-black text-white">{topScore}</span>
+              <span className="text-zinc-400 text-sm ml-2">
+                engagement score
+              </span>
+            </p>
+
+            <PostCard post={topPost} glowBorder />
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full py-3 rounded-full font-bold text-sm text-white"
+              style={{ background: ORANGE }}
+              data-ocid="digest.view_post.button"
+            >
+              View Post
+            </button>
+
+            <p className="text-center text-zinc-500 text-sm">
+              Keep it up — your content is on fire 🔥
+            </p>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex flex-col"
+      style={{ background: BG }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      data-ocid="digest.modal"
+    >
+      {/* Backdrop button for tap-outside-to-close */}
+      <button
+        type="button"
+        aria-label="Close digest"
+        className="absolute inset-0 cursor-default"
+        onClick={onClose}
+        tabIndex={-1}
+      />
+
+      {/* Main content — stop propagation so clicks here don't close */}
+      <div
+        role="presentation"
+        className="relative z-10 flex flex-col w-full h-full max-w-lg mx-auto"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        {/* Top bar: progress + close */}
+        <div className="flex items-center gap-3 px-5 pt-12 pb-4 flex-shrink-0">
+          <div className="flex-1 h-1 rounded-full bg-zinc-800 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${((currentSlide + 1) / TOTAL) * 100}%`,
+                background: ORANGE,
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="h-8 w-8 rounded-full flex items-center justify-center text-zinc-400 hover:text-white transition-colors flex-shrink-0"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+            data-ocid="digest.close_button"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Slide content */}
+        <div className="flex-1 overflow-y-auto px-5 pb-4">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentSlide}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+            >
+              {renderSlide()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Bottom nav */}
+        <div
+          className="flex items-center justify-between px-5 pb-10 pt-4 flex-shrink-0"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          <button
+            type="button"
+            onClick={goPrev}
+            disabled={currentSlide === 0}
+            aria-label="Previous slide"
+            className="h-11 w-11 rounded-full flex items-center justify-center text-lg font-bold transition-all disabled:opacity-20"
+            style={{ background: "rgba(255,255,255,0.08)", color: "white" }}
+            data-ocid="digest.pagination_prev"
+          >
+            ←
+          </button>
+
+          <span className="text-zinc-400 text-sm font-semibold">
+            {currentSlide + 1} / {TOTAL}
+          </span>
+
+          <button
+            type="button"
+            onClick={goNext}
+            disabled={currentSlide === TOTAL - 1}
+            aria-label="Next slide"
+            className="h-11 w-11 rounded-full flex items-center justify-center text-lg font-bold transition-all disabled:opacity-20 text-white"
+            style={{
+              background:
+                currentSlide === TOTAL - 1 ? "rgba(255,255,255,0.08)" : ORANGE,
+            }}
+            data-ocid="digest.pagination_next"
+          >
+            →
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

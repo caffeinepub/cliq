@@ -82,7 +82,7 @@ export function MediaPreviewModal({
 
         {/* Filter strip */}
         {mediaType === "image" && (
-          <div className="px-4 py-3 border-b border-[#E5E5E5]">
+          <div className="px-4 py-3 border-b border-[#F0F0F0]">
             <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
               Filter
             </p>
@@ -94,8 +94,8 @@ export function MediaPreviewModal({
                   onClick={() => setSelectedFilter(f)}
                   className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                     selectedFilter === f
-                      ? "bg-[#FF6B35] text-white border-[#FF6B35]"
-                      : "bg-white text-[#212529] border-[#E5E5E5] hover:border-[#FF6B35]"
+                      ? "bg-[#E8432D] text-white border-[#E8432D]"
+                      : "bg-white text-[#212529] border-[#F0F0F0] hover:border-[#E8432D]"
                   }`}
                 >
                   {f}
@@ -107,7 +107,7 @@ export function MediaPreviewModal({
 
         {/* Edit tools */}
         {mediaType === "image" && (
-          <div className="flex gap-2 px-4 py-3 border-b border-[#E5E5E5]">
+          <div className="flex gap-2 px-4 py-3 border-b border-[#F0F0F0]">
             {[
               { emoji: "✂️", label: "Crop", msg: "Crop tool coming soon" },
               { emoji: "🔤", label: "Text", msg: "Text overlay coming soon" },
@@ -117,7 +117,7 @@ export function MediaPreviewModal({
                 key={tool.label}
                 type="button"
                 onClick={() => toast.info(tool.msg)}
-                className="flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border border-[#E5E5E5] hover:border-[#FF6B35] hover:bg-primary/5 transition-all"
+                className="flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border border-[#EEEEEE] hover:border-[#E8432D] hover:bg-primary/5 transition-all"
               >
                 <span className="text-xl">{tool.emoji}</span>
                 <span className="text-[11px] font-medium text-[#6C757D]">
@@ -137,7 +137,7 @@ export function MediaPreviewModal({
             Cancel
           </Button>
           <Button
-            className="flex-1 rounded-full bg-[#FF6B35] hover:bg-[#FF6B35]/90 text-white font-semibold"
+            className="flex-1 rounded-full bg-[#E8432D] hover:bg-[#E8432D]/90 text-white font-semibold"
             onClick={handleConfirm}
           >
             Add to Post
