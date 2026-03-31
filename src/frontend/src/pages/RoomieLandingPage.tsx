@@ -82,7 +82,7 @@ const STEPS = [
 const FAQS = [
   {
     q: "Is it free?",
-    a: "Yes, CLIQ Roomie is completely free for all students. No hidden fees, no premium tiers — just connect and find your match.",
+    a: "Yes, CONNECT is completely free for all students. No hidden fees, no premium tiers — just connect and find your match.",
   },
   {
     q: "Which universities are supported?",
@@ -111,7 +111,7 @@ export function RoomieLandingPage() {
             >
               C
             </div>
-            <span className="font-bold text-foreground">CLIQ Roomie</span>
+            <span className="font-bold text-foreground">CONNECT</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
             <a
@@ -550,7 +550,7 @@ export function RoomieLandingPage() {
                 Real student stories coming soon
               </p>
               <p className="text-muted-foreground text-sm">
-                Be the first to share your Roomie success story!
+                Be the first to share your CONNECT success story!
               </p>
               <Link to="/roomie-match">
                 <Button
@@ -642,7 +642,7 @@ export function RoomieLandingPage() {
             Ready to find your person?
           </h2>
           <p className="text-white/80 text-lg">
-            Join 5,000+ students already matched on CLIQ
+            Join 5,000+ students already matched on CONNECT
           </p>
           <Link to="/roomie-match">
             <Button
@@ -667,7 +667,7 @@ export function RoomieLandingPage() {
             >
               C
             </div>
-            <span>CLIQ Roomie — Your campus, connected</span>
+            <span>CONNECT — Your campus, connected</span>
           </div>
           <p>
             © {new Date().getFullYear()}. Built with ❤️ using{" "}

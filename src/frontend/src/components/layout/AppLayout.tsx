@@ -77,7 +77,7 @@ export function AppLayout() {
     { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
     { path: "/communities", icon: Users, label: "Communities" },
     { path: "/anonymous-rooms", icon: Skull, label: "Anonymous Rooms" },
-    { path: "/roomie", icon: Home, label: "Roomie Matching" },
+    { path: "/roomie", icon: Home, label: "CONNECT" },
     { path: "/boosts", icon: Rocket, label: "My Boosts" },
     { path: "/settings", icon: Settings, label: "Settings" },
   ];
@@ -95,7 +95,7 @@ export function AppLayout() {
     { path: "/messages", icon: MessageCircle, label: "Messages" },
     { path: "/communities", icon: Users, label: "Communities" },
     { path: "/anonymous-rooms", icon: Skull, label: "Anonymous Rooms" },
-    { path: "/roomie", icon: Home, label: "Roomie" },
+    { path: "/roomie", icon: Home, label: "CONNECT" },
     { path: "/bookmarks", icon: Bookmark, label: "Bookmarks" },
     { path: "/boosts", icon: Rocket, label: "My Boosts" },
     { path: "/profile", icon: User, label: "Profile" },

@@ -18,19 +18,76 @@ import {
 import { GraduationCap } from "lucide-react";
 import { useState } from "react";
 
-const DEPARTMENTS = [
+const UNIVERSITY_DEPARTMENTS: Record<string, string[]> = {
+  UNILAG: [
+    "Arts",
+    "Sciences",
+    "Engineering",
+    "Law",
+    "Medicine",
+    "Education",
+    "Business",
+    "Social Sciences",
+    "Environmental Sciences",
+  ],
+  UI: [
+    "Arts",
+    "Sciences",
+    "Engineering",
+    "Law",
+    "Medicine",
+    "Pharmacy",
+    "Agriculture",
+    "Public Health",
+  ],
+  OAU: [
+    "Arts",
+    "Sciences",
+    "Engineering",
+    "Law",
+    "Medicine",
+    "Education",
+    "Agriculture",
+    "Technology",
+  ],
+  UNN: [
+    "Arts",
+    "Sciences",
+    "Engineering",
+    "Law",
+    "Medicine",
+    "Education",
+    "Business",
+    "Social Sciences",
+  ],
+  ABU: [
+    "Arts",
+    "Sciences",
+    "Engineering",
+    "Law",
+    "Medicine",
+    "Education",
+    "Agriculture",
+    "Administration",
+  ],
+};
+
+const DEFAULT_DEPARTMENTS = [
   "Arts",
   "Sciences",
   "Engineering",
   "Law",
   "Medicine",
   "Education",
+  "Business",
   "Social Sciences",
-  "Business & Management",
-  "Agriculture",
-  "Pharmacy",
-  "Architecture",
 ];
+
+function getDepartmentsForUniversity(uni: string | null): string[] {
+  if (!uni) return DEFAULT_DEPARTMENTS;
+  const key = uni.toUpperCase();
+  return UNIVERSITY_DEPARTMENTS[key] ?? DEFAULT_DEPARTMENTS;
+}
 
 interface ProfileCompletionModalProps {
   open: boolean;
@@ -47,6 +104,10 @@ export function ProfileCompletionModal({
 }: ProfileCompletionModalProps) {
   const [department, setDepartment] = useState("");
   const [birthday, setBirthday] = useState("");
+
+  const university = localStorage.getItem("cliq_university");
+  const departments = getDepartmentsForUniversity(university);
+  const uniLabel = university ? university.toUpperCase() : null;
 
   function handleSave() {
     if (!department) return;
@@ -93,7 +154,7 @@ export function ProfileCompletionModal({
               htmlFor="department-select"
               className="text-sm font-semibold text-foreground"
             >
-              Department / Faculty
+              {uniLabel ? `Department at ${uniLabel}` : "Department / Faculty"}
             </Label>
             <Select value={department} onValueChange={setDepartment}>
               <SelectTrigger
@@ -104,7 +165,7 @@ export function ProfileCompletionModal({
                 <SelectValue placeholder="Select your faculty" />
               </SelectTrigger>
               <SelectContent>
-                {DEPARTMENTS.map((dept) => (
+                {departments.map((dept) => (
                   <SelectItem key={dept} value={dept}>
                     {dept}
                   </SelectItem>
