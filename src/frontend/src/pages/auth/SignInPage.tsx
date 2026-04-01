@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { CheckCircle, Eye, EyeOff, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { DEMO_ACCOUNTS } from "../../data/mockUsers";
@@ -44,7 +44,7 @@ function AppleIcon() {
 
 export function SignInPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -52,15 +52,20 @@ export function SignInPage() {
     null,
   );
 
+  // Forgot password state
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
+
   const fillDemoAccount = (demoEmail: string, demoPassword: string) => {
-    setEmail(demoEmail);
+    setIdentifier(demoEmail);
     setPassword(demoPassword);
   };
 
   const handleGoogleSignIn = async () => {
     setOauthLoading("google");
     await new Promise((r) => setTimeout(r, 1000));
-    // Mock: simulate Google OAuth response
     const mockGoogleUser = {
       id: `google_${Math.random().toString(36).slice(2, 10)}`,
       email: "student@gmail.com",
@@ -78,7 +83,6 @@ export function SignInPage() {
   const handleAppleSignIn = async () => {
     setOauthLoading("apple");
     await new Promise((r) => setTimeout(r, 1000));
-    // Mock: simulate Apple OAuth response (privacy relay email)
     const appleId = Math.random().toString(36).slice(2, 10);
     const mockAppleUser = {
       id: `apple_${appleId}`,
@@ -96,15 +100,17 @@ export function SignInPage() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) {
-      toast.error("Please enter your email and password");
+    if (!identifier.trim() || !password.trim()) {
+      toast.error("Please enter your username or email and password");
       return;
     }
     setLoading(true);
     await new Promise((r) => setTimeout(r, 800));
 
     const demoAccount = DEMO_ACCOUNTS.find(
-      (a) => a.email === email.trim().toLowerCase(),
+      (a) =>
+        a.email === identifier.trim().toLowerCase() ||
+        a.username === identifier.trim().toLowerCase(),
     );
 
     if (demoAccount) {
@@ -116,14 +122,17 @@ export function SignInPage() {
         university: demoAccount.university,
       });
     } else {
+      const isEmail = identifier.includes("@");
       setMockUser({
         id: `user_${Math.random().toString(36).slice(2, 10)}`,
-        email: email.trim(),
-        username: email
-          .split("@")[0]
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, "_"),
-        displayName: email.split("@")[0],
+        email: isEmail ? identifier.trim() : `${identifier.trim()}@cliq.app`,
+        username: isEmail
+          ? identifier
+              .split("@")[0]
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, "_")
+          : identifier.trim().toLowerCase(),
+        displayName: isEmail ? identifier.split("@")[0] : identifier.trim(),
         university: "University of Lagos",
       });
     }
@@ -132,6 +141,25 @@ export function SignInPage() {
     toast.success("Welcome back!");
     navigate({ to: "/" });
     window.location.reload();
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail.trim()) {
+      toast.error("Please enter your email address");
+      return;
+    }
+    setForgotLoading(true);
+    await new Promise((r) => setTimeout(r, 1500));
+    setForgotLoading(false);
+    setForgotSent(true);
+  };
+
+  const closeForgotModal = () => {
+    setShowForgotPassword(false);
+    setForgotEmail("");
+    setForgotLoading(false);
+    setForgotSent(false);
   };
 
   return (
@@ -242,29 +270,40 @@ export function SignInPage() {
             />
           </div>
 
-          {/* Email / Password form */}
+          {/* Identifier / Password form */}
           <form onSubmit={handleSignIn} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="font-bold text-white">
-                Email
+              <Label htmlFor="identifier" className="font-bold text-white">
+                Username or Email
               </Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="identifier"
+                type="text"
+                placeholder="Username or email"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 className="h-12 rounded-xl font-medium text-white placeholder:text-gray-500"
                 style={{ backgroundColor: "#1a1a1a", borderColor: "#333" }}
-                autoComplete="email"
+                autoComplete="username"
                 data-ocid="signin.email.input"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="font-bold text-white">
-                Password
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="font-bold text-white">
+                  Password
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-xs font-medium hover:underline"
+                  style={{ color: "#E8432D" }}
+                  data-ocid="signin.forgot_password.button"
+                >
+                  Forgot password?
+                </button>
+              </div>
               <div className="relative">
                 <Input
                   id="password"
@@ -305,7 +344,7 @@ export function SignInPage() {
                   Signing in...
                 </>
               ) : (
-                "Sign In with Email"
+                "Sign In"
               )}
             </Button>
           </form>
@@ -415,6 +454,145 @@ export function SignInPage() {
           caffeine.ai
         </a>
       </footer>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ backgroundColor: "rgba(0,0,0,0.85)" }}
+          onClick={closeForgotModal}
+          onKeyDown={(e) => e.key === "Escape" && closeForgotModal()}
+          data-ocid="forgot_password.modal"
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl p-6 space-y-5"
+            style={{ backgroundColor: "#161616", border: "1px solid #2a2a2a" }}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
+            {/* Modal header */}
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <h2 className="text-xl font-black text-white">
+                  Reset Password
+                </h2>
+                <p className="text-sm" style={{ color: "#9ca3af" }}>
+                  Enter your email and we&apos;ll send you a reset link
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeForgotModal}
+                className="rounded-full p-1 transition-colors hover:bg-white/10"
+                style={{ color: "#6b7280" }}
+                data-ocid="forgot_password.close.button"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {forgotSent ? (
+              /* Success state */
+              <div className="space-y-5">
+                <div className="flex flex-col items-center gap-3 py-4 text-center">
+                  <CheckCircle
+                    className="h-14 w-14"
+                    style={{ color: "#E8432D" }}
+                  />
+                  <div className="space-y-1">
+                    <p className="text-lg font-bold text-white">
+                      Check your email!
+                    </p>
+                    <p className="text-sm" style={{ color: "#9ca3af" }}>
+                      We&apos;ve sent a reset link to
+                    </p>
+                    <p
+                      className="text-sm font-semibold"
+                      style={{ color: "#E8432D" }}
+                    >
+                      {forgotEmail}
+                    </p>
+                  </div>
+                  <div
+                    className="w-full rounded-xl px-4 py-3 text-xs text-center"
+                    style={{
+                      backgroundColor: "#1a1a1a",
+                      color: "#9ca3af",
+                      border: "1px solid #2a2a2a",
+                    }}
+                  >
+                    🧪 Demo mode: reset link would be sent to{" "}
+                    <span className="font-semibold text-white">
+                      {forgotEmail}
+                    </span>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  onClick={closeForgotModal}
+                  className="w-full h-12 rounded-full font-bold"
+                  style={{ backgroundColor: "#E8432D", color: "white" }}
+                  data-ocid="forgot_password.done.button"
+                >
+                  Done
+                </Button>
+              </div>
+            ) : (
+              /* Form state */
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="forgot-email"
+                    className="font-bold text-white text-sm"
+                  >
+                    Email address
+                  </Label>
+                  <Input
+                    id="forgot-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    className="h-12 rounded-xl font-medium text-white placeholder:text-gray-500"
+                    style={{ backgroundColor: "#1a1a1a", borderColor: "#333" }}
+                    autoComplete="email"
+                    data-ocid="forgot_password.email.input"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={forgotLoading}
+                  className="w-full h-12 rounded-full font-bold"
+                  style={{ backgroundColor: "#E8432D", color: "white" }}
+                  data-ocid="forgot_password.submit.button"
+                >
+                  {forgotLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Reset Link"
+                  )}
+                </Button>
+
+                <p className="text-center">
+                  <button
+                    type="button"
+                    onClick={closeForgotModal}
+                    className="text-sm font-medium hover:underline"
+                    style={{ color: "#9ca3af" }}
+                    data-ocid="forgot_password.cancel.button"
+                  >
+                    Back to Sign In
+                  </button>
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

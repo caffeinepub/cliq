@@ -1,18 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { CheckCircle, Eye, EyeOff, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { UNIVERSITIES } from "../../constants/universities";
 import { setMockUser } from "../../hooks/useMockAuth";
 
 function GoogleIcon() {
@@ -49,20 +41,23 @@ function AppleIcon() {
 export function SignUpPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [university, setUniversity] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(
     null,
   );
 
+  // Forgot password state
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
+
   const handleGoogleSignUp = async () => {
     setOauthLoading("google");
     await new Promise((r) => setTimeout(r, 1000));
-    // Mock: simulate Google OAuth — name and email from Google, username from email prefix
     const mockEmail = "student@gmail.com";
     const emailPrefix = mockEmail
       .split("@")[0]
@@ -84,7 +79,6 @@ export function SignUpPage() {
   const handleAppleSignUp = async () => {
     setOauthLoading("apple");
     await new Promise((r) => setTimeout(r, 1000));
-    // Mock: simulate Apple OAuth with privacy relay email
     const appleId = Math.random().toString(36).slice(2, 10);
     const relayEmail = `${appleId}@privaterelay.appleid.com`;
     setMockUser({
@@ -102,13 +96,7 @@ export function SignUpPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !email.trim() ||
-      !password.trim() ||
-      !username.trim() ||
-      !displayName.trim() ||
-      !university
-    ) {
+    if (!email.trim() || !password.trim() || !username.trim()) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -122,13 +110,32 @@ export function SignUpPage() {
       id: `user_${Math.random().toString(36).slice(2, 10)}`,
       email: email.trim(),
       username: username.trim().toLowerCase(),
-      displayName: displayName.trim(),
-      university,
+      displayName: username.trim(),
+      university: "University of Lagos",
     });
     setLoading(false);
     toast.success("Account created! Welcome to CLIQ 🧡");
     navigate({ to: "/" });
     window.location.reload();
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail.trim()) {
+      toast.error("Please enter your email address");
+      return;
+    }
+    setForgotLoading(true);
+    await new Promise((r) => setTimeout(r, 1500));
+    setForgotLoading(false);
+    setForgotSent(true);
+  };
+
+  const closeForgotModal = () => {
+    setShowForgotPassword(false);
+    setForgotEmail("");
+    setForgotLoading(false);
+    setForgotSent(false);
   };
 
   return (
@@ -169,7 +176,7 @@ export function SignUpPage() {
         </Link>
       </header>
 
-      <main className="flex flex-1 justify-center px-4 py-10">
+      <main className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-black tracking-tight text-white">
@@ -244,41 +251,8 @@ export function SignUpPage() {
             />
           </div>
 
-          {/* Email form */}
+          {/* Email form — Email, Username, Password */}
           <form onSubmit={handleSignUp} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="displayName" className="font-bold text-white">
-                Full Name
-              </Label>
-              <Input
-                id="displayName"
-                placeholder="Ada Okonkwo"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                className="h-12 rounded-xl font-medium text-white placeholder:text-gray-500"
-                style={{ backgroundColor: "#1a1a1a", borderColor: "#333" }}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="username" className="font-bold text-white">
-                Username
-              </Label>
-              <Input
-                id="username"
-                placeholder="ada_okonkwo"
-                value={username}
-                onChange={(e) =>
-                  setUsername(
-                    e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""),
-                  )
-                }
-                className="h-12 rounded-xl font-medium text-white placeholder:text-gray-500"
-                style={{ backgroundColor: "#1a1a1a", borderColor: "#333" }}
-                data-ocid="signup.username.input"
-              />
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="su-email" className="font-bold text-white">
                 Email
@@ -297,9 +271,40 @@ export function SignUpPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="su-password" className="font-bold text-white">
-                Password
+              <Label htmlFor="username" className="font-bold text-white">
+                Username
               </Label>
+              <Input
+                id="username"
+                placeholder="ada_okonkwo"
+                value={username}
+                onChange={(e) =>
+                  setUsername(
+                    e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""),
+                  )
+                }
+                className="h-12 rounded-xl font-medium text-white placeholder:text-gray-500"
+                style={{ backgroundColor: "#1a1a1a", borderColor: "#333" }}
+                autoComplete="username"
+                data-ocid="signup.username.input"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="su-password" className="font-bold text-white">
+                  Password
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-xs font-medium hover:underline"
+                  style={{ color: "#E8432D" }}
+                  data-ocid="signup.forgot_password.button"
+                >
+                  Forgot password?
+                </button>
+              </div>
               <div className="relative">
                 <Input
                   id="su-password"
@@ -327,26 +332,6 @@ export function SignUpPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label className="font-bold text-white">University</Label>
-              <Select value={university} onValueChange={setUniversity}>
-                <SelectTrigger
-                  className="h-12 rounded-xl font-medium text-white"
-                  style={{ backgroundColor: "#1a1a1a", borderColor: "#333" }}
-                  data-ocid="signup.university.select"
-                >
-                  <SelectValue placeholder="Select your university" />
-                </SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {UNIVERSITIES.map((uni) => (
-                    <SelectItem key={uni} value={uni} className="font-medium">
-                      {uni}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
             <Button
               type="submit"
               disabled={loading || !!oauthLoading}
@@ -360,7 +345,7 @@ export function SignUpPage() {
                   Creating account...
                 </>
               ) : (
-                "Create Account with Email"
+                "Create Account"
               )}
             </Button>
           </form>
@@ -396,6 +381,145 @@ export function SignUpPage() {
           caffeine.ai
         </a>
       </footer>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ backgroundColor: "rgba(0,0,0,0.85)" }}
+          onClick={closeForgotModal}
+          onKeyDown={(e) => e.key === "Escape" && closeForgotModal()}
+          data-ocid="forgot_password.modal"
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl p-6 space-y-5"
+            style={{ backgroundColor: "#161616", border: "1px solid #2a2a2a" }}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
+            {/* Modal header */}
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <h2 className="text-xl font-black text-white">
+                  Reset Password
+                </h2>
+                <p className="text-sm" style={{ color: "#9ca3af" }}>
+                  Enter your email and we&apos;ll send you a reset link
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeForgotModal}
+                className="rounded-full p-1 transition-colors hover:bg-white/10"
+                style={{ color: "#6b7280" }}
+                data-ocid="forgot_password.close.button"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {forgotSent ? (
+              /* Success state */
+              <div className="space-y-5">
+                <div className="flex flex-col items-center gap-3 py-4 text-center">
+                  <CheckCircle
+                    className="h-14 w-14"
+                    style={{ color: "#E8432D" }}
+                  />
+                  <div className="space-y-1">
+                    <p className="text-lg font-bold text-white">
+                      Check your email!
+                    </p>
+                    <p className="text-sm" style={{ color: "#9ca3af" }}>
+                      We&apos;ve sent a reset link to
+                    </p>
+                    <p
+                      className="text-sm font-semibold"
+                      style={{ color: "#E8432D" }}
+                    >
+                      {forgotEmail}
+                    </p>
+                  </div>
+                  <div
+                    className="w-full rounded-xl px-4 py-3 text-xs text-center"
+                    style={{
+                      backgroundColor: "#1a1a1a",
+                      color: "#9ca3af",
+                      border: "1px solid #2a2a2a",
+                    }}
+                  >
+                    🧪 Demo mode: reset link would be sent to{" "}
+                    <span className="font-semibold text-white">
+                      {forgotEmail}
+                    </span>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  onClick={closeForgotModal}
+                  className="w-full h-12 rounded-full font-bold"
+                  style={{ backgroundColor: "#E8432D", color: "white" }}
+                  data-ocid="forgot_password.done.button"
+                >
+                  Done
+                </Button>
+              </div>
+            ) : (
+              /* Form state */
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="forgot-email"
+                    className="font-bold text-white text-sm"
+                  >
+                    Email address
+                  </Label>
+                  <Input
+                    id="forgot-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    className="h-12 rounded-xl font-medium text-white placeholder:text-gray-500"
+                    style={{ backgroundColor: "#1a1a1a", borderColor: "#333" }}
+                    autoComplete="email"
+                    data-ocid="forgot_password.email.input"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={forgotLoading}
+                  className="w-full h-12 rounded-full font-bold"
+                  style={{ backgroundColor: "#E8432D", color: "white" }}
+                  data-ocid="forgot_password.submit.button"
+                >
+                  {forgotLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Reset Link"
+                  )}
+                </Button>
+
+                <p className="text-center">
+                  <button
+                    type="button"
+                    onClick={closeForgotModal}
+                    className="text-sm font-medium hover:underline"
+                    style={{ color: "#9ca3af" }}
+                    data-ocid="forgot_password.cancel.button"
+                  >
+                    Back to Sign Up
+                  </button>
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
