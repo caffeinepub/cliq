@@ -14,10 +14,75 @@ export interface MockPost {
   boostLabel?: string;
   boostReason?: string;
   mediaUrl?: string;
-  mediaType?: "image" | "video";
+  mediaType?: "image" | "video" | "gif";
 }
 
 export const mockPosts: MockPost[] = [
+  // ── User-uploaded assets (pinned near top) ──
+  {
+    id: "user-upload-video-1",
+    displayName: "Temi Adeyemi",
+    username: "temi_ade",
+    university: "University of Lagos",
+    community: "UNILAG Vibes",
+    content:
+      "Campus energy never hits different 🔥 Caught this moment outside the main gate and had to share. UNILAG stay winning! #UNILAG #CampusLife #NaijaStudent",
+    timestamp: "5m",
+    likes: 241,
+    comments: 58,
+    shares: 34,
+    mediaUrl:
+      "/assets/be47774ccdf4d56cc6a777f61345cbf7_1770144629500-019d5006-4476-764d-9c57-1a38d8602a6f.mp4",
+    mediaType: "video",
+  },
+  {
+    id: "user-upload-video-2",
+    displayName: "Chidi Okafor",
+    username: "chidi_ok",
+    university: "University of Nigeria, Nsukka",
+    community: "UNN Tech Hub",
+    content:
+      "When the squad links up after finals week 😂🙌 The relief is unreal, we survived another semester. Shoutout to everyone who stayed strong through the stress. #UNN #StudentLife #FinalsWeek",
+    timestamp: "18m",
+    likes: 189,
+    comments: 44,
+    shares: 27,
+    mediaUrl:
+      "/assets/fff7960add69b25709da08ef81ffb982_1763383154899-019d5006-564d-70f8-bf65-e2ce2e3b8af3.mp4",
+    mediaType: "video",
+  },
+  {
+    id: "user-upload-photo-1",
+    displayName: "Bukola Fashola",
+    username: "bukky_f",
+    university: "Ahmadu Bello University",
+    community: "ABU Photography Club",
+    content:
+      "Shot this between lectures today — the light was too perfect to ignore 📸✨ Sometimes campus is genuinely beautiful when you slow down and look. #ABU #CampusPhotography #GoldenHour",
+    timestamp: "32m",
+    likes: 312,
+    comments: 67,
+    shares: 41,
+    mediaUrl:
+      "/assets/dfe0b16a4eb4b4f917def36e0301d0df-019d5006-0a6a-7627-a4f7-9522ec10a1ed.jpg",
+    mediaType: "image",
+  },
+  {
+    id: "user-upload-gif-1",
+    displayName: "Favour Eze",
+    username: "favour_ez",
+    university: "University of Benin",
+    content:
+      "Me waiting for my GPA to reflect after staying up 3 nights straight 💀 The audacity of this semester, honestly. We move sha 😭 #UNIBEN #StudentLife #ExamSeason",
+    timestamp: "1h",
+    likes: 534,
+    comments: 112,
+    shares: 89,
+    mediaUrl:
+      "/assets/tumblr_l_3151490320322-019d5006-6f97-72f9-aed9-31beaed1c9aa.gif",
+    mediaType: "image",
+  },
+  // ── Regular mock posts ──
   {
     id: "mock-1",
     displayName: "Temi Adeyemi",

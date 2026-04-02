@@ -20,12 +20,14 @@ import {
   Loader2,
   MessageCircle,
   MoreHorizontal,
+  Pause,
   Play,
   Share2,
   ShieldAlert,
   Trash2,
   UserMinus,
   UserPlus,
+  Volume2,
   VolumeX,
 } from "lucide-react";
 import { useRef, useState } from "react";
@@ -75,56 +77,73 @@ interface VideoPlayerProps {
 function VideoPlayer({ src }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPaused, setIsPaused] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
 
-  const handleMouseEnter = () => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {
-        // Autoplay blocked by browser — ignore silently
-      });
+  const handleVideoClick = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
     }
   };
 
-  const handleMouseLeave = () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    videoRef.current.muted = !videoRef.current.muted;
+    setIsMuted(videoRef.current.muted);
   };
 
   const handlePlay = () => setIsPaused(false);
   const handlePause = () => setIsPaused(true);
 
   return (
-    <div
-      className="relative w-full overflow-hidden bg-black"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className="relative w-full overflow-hidden bg-black">
       {/* VIDEO pill badge */}
-      <span className="absolute top-2 left-2 z-10 bg-[#E8432D] text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wider uppercase pointer-events-none">
+      <span className="absolute top-2 left-2 z-20 bg-[#E8432D] text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wider uppercase pointer-events-none">
         VIDEO
       </span>
 
-      {/* Play overlay — only visible when paused */}
-      {isPaused && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-          <div className="bg-black/50 backdrop-blur-sm rounded-full p-3">
-            <Play className="h-8 w-8 text-white fill-white" />
-          </div>
-        </div>
-      )}
+      {/* Mute/unmute button */}
+      <button
+        type="button"
+        onClick={toggleMute}
+        className="absolute top-2 right-2 z-20 bg-black/50 backdrop-blur-sm rounded-full p-1.5 text-white hover:bg-black/70 transition-colors"
+        aria-label={isMuted ? "Unmute" : "Mute"}
+      >
+        {isMuted ? (
+          <VolumeX className="h-4 w-4" />
+        ) : (
+          <Volume2 className="h-4 w-4" />
+        )}
+      </button>
 
+      {/* Play/Pause overlay */}
+      <div
+        className={`absolute inset-0 z-10 flex items-center justify-center pointer-events-none transition-opacity duration-150 ${isPaused ? "opacity-100" : "opacity-0"}`}
+      >
+        <div className="bg-black/50 backdrop-blur-sm rounded-full p-3">
+          {isPaused ? (
+            <Play className="h-8 w-8 text-white fill-white" />
+          ) : (
+            <Pause className="h-8 w-8 text-white fill-white" />
+          )}
+        </div>
+      </div>
+
+      {/* biome-ignore lint/a11y/useMediaCaption: video player with custom controls */}
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: video tap-to-play is supplemental; keyboard handled by parent */}
       <video
         ref={videoRef}
         src={src}
-        controls
         playsInline
-        muted
+        onClick={handleVideoClick}
         onPlay={handlePlay}
         onPause={handlePause}
-        className="w-full max-h-96 object-cover"
-      >
-        <track kind="captions" />
-      </video>
+        className="w-full max-h-96 object-cover cursor-pointer"
+        preload="metadata"
+      />
     </div>
   );
 }
