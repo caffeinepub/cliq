@@ -108,6 +108,53 @@ export const mockPosts: MockPost[] = [
     mediaType: "image",
   },
   {
+    id: "mock-video-1",
+    displayName: "Tunde Adewale",
+    username: "tunde_law",
+    university: "University of Lagos",
+    community: "UNILAG Law Faculty",
+    content:
+      "UNILAG Law Week 2026 opening ceremony — the energy was insane 🔥 Shoutout to every 300L and 400L student who made it happen. This is history! #UNILAG #LawWeek2026 #CampusLife",
+    timestamp: "30m",
+    likes: 156,
+    comments: 42,
+    shares: 28,
+    mediaUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    mediaType: "video",
+  },
+  {
+    id: "mock-video-2",
+    displayName: "Ngozi Eze",
+    username: "ngozi_ez",
+    university: "University of Ibadan",
+    content:
+      "When the generator comes on during your midnight read 😂 This is why we can't have nice things at UI. The whole hostel just woke up like it's 8am 💀 #UI #CampusLife #StudentProblems",
+    timestamp: "2h",
+    likes: 312,
+    comments: 89,
+    shares: 67,
+    mediaUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    mediaType: "video",
+  },
+  {
+    id: "mock-video-3",
+    displayName: "Seun Oladipo",
+    username: "seun_prints",
+    university: "Obafemi Awolowo University",
+    community: "OAU Creative Hub",
+    content:
+      "Made this custom printed tee in 20 minutes! DM for orders — custom designs from ₦2,500 🎨 Fast turnaround, campus delivery available. #OAU #StudentHustle #CustomPrints",
+    timestamp: "4h",
+    likes: 78,
+    comments: 31,
+    shares: 19,
+    mediaUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+    mediaType: "video",
+  },
+  {
     id: "mock-7",
     displayName: "Favour Eze",
     username: "favour_ez",

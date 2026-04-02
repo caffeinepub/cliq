@@ -20,6 +20,7 @@ import {
   Loader2,
   MessageCircle,
   MoreHorizontal,
+  Play,
   Share2,
   ShieldAlert,
   Trash2,
@@ -27,7 +28,7 @@ import {
   UserPlus,
   VolumeX,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import type { MockPost } from "../../data/mockPosts";
 import { addLikedPost, removeLikedPost } from "../../lib/interactionStore";
@@ -64,6 +65,67 @@ function ReblogIcon({ className }: { className?: string }) {
       <title>Recliq</title>
       <path d="M7 4v4H3l5 6 5-6H9V4H7zm10 16v-4h4l-5-6-5 6h4v4h2z" />
     </svg>
+  );
+}
+
+interface VideoPlayerProps {
+  src: string;
+}
+
+function VideoPlayer({ src }: VideoPlayerProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPaused, setIsPaused] = useState(true);
+
+  const handleMouseEnter = () => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {
+        // Autoplay blocked by browser — ignore silently
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
+
+  const handlePlay = () => setIsPaused(false);
+  const handlePause = () => setIsPaused(true);
+
+  return (
+    <div
+      className="relative w-full overflow-hidden bg-black"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* VIDEO pill badge */}
+      <span className="absolute top-2 left-2 z-10 bg-[#E8432D] text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wider uppercase pointer-events-none">
+        VIDEO
+      </span>
+
+      {/* Play overlay — only visible when paused */}
+      {isPaused && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+          <div className="bg-black/50 backdrop-blur-sm rounded-full p-3">
+            <Play className="h-8 w-8 text-white fill-white" />
+          </div>
+        </div>
+      )}
+
+      <video
+        ref={videoRef}
+        src={src}
+        controls
+        playsInline
+        muted
+        onPlay={handlePlay}
+        onPause={handlePause}
+        className="w-full max-h-96 object-cover"
+      >
+        <track kind="captions" />
+      </video>
+    </div>
   );
 }
 
@@ -281,7 +343,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
           </div>
         </div>
 
-        {/* ── Media (edge-to-edge, no padding) ── */}
+        {/* ── Media (edge-to-edge, no padding) — media-only posts ── */}
         {post.mediaUrl && !post.content && (
           <div className="w-full overflow-hidden">
             {post.mediaType === "image" ? (
@@ -291,14 +353,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                 className="w-full max-h-96 object-cover"
               />
             ) : post.mediaType === "video" ? (
-              <video
-                src={post.mediaUrl}
-                controls
-                playsInline
-                className="w-full max-h-96"
-              >
-                <track kind="captions" />
-              </video>
+              <VideoPlayer src={post.mediaUrl} />
             ) : null}
           </div>
         )}
@@ -322,14 +377,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                 className="w-full max-h-96 object-cover"
               />
             ) : post.mediaType === "video" ? (
-              <video
-                src={post.mediaUrl}
-                controls
-                playsInline
-                className="w-full max-h-96"
-              >
-                <track kind="captions" />
-              </video>
+              <VideoPlayer src={post.mediaUrl} />
             ) : null}
           </div>
         )}
