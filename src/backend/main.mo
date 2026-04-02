@@ -10,11 +10,11 @@ import Principal "mo:core/Principal";
 import Nat "mo:core/Nat";
 import Option "mo:core/Option";
 import Int "mo:core/Int";
+
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
 import Storage "blob-storage/Storage";
 import MixinStorage "blob-storage/Mixin";
-
 
 
 actor {
@@ -173,11 +173,25 @@ actor {
       Runtime.trap("Search term cannot be empty");
     };
 
+    let callerProfile = switch (userProfiles.get(caller)) {
+      case (null) { Runtime.trap("Profile required to search users") };
+      case (?p) { p };
+    };
+
     let filteredUsers = userProfiles.values().toArray().filter(
       func(profile) {
-        let matchesUniversity = switch (universityFilter) {
-          case (null) { true };
-          case (?university) { profile.university == university };
+        let matchesUniversity = if (AccessControl.isAdmin(accessControlState, caller)) {
+          switch (universityFilter) {
+            case (null) { true };
+            case (?university) { profile.university == university };
+          };
+        } else {
+          switch (universityFilter) {
+            case (null) { profile.university == callerProfile.university };
+            case (?university) { 
+              profile.university == callerProfile.university and profile.university == university 
+            };
+          };
         };
 
         matchesUniversity and (profile.username.contains(#text term) or profile.displayName.contains(#text term));
@@ -255,7 +269,9 @@ actor {
       case (?p) { p };
     };
 
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (AccessControl.isAdmin(accessControlState, caller)) {
+      // Admins can delete any post
+    } else {
       if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
         Runtime.trap("Unauthorized: Only users can delete posts");
       };
@@ -381,7 +397,9 @@ actor {
       case (?c) { c };
     };
 
-    if (not AccessControl.isAdmin(accessControlState, requestingCaller)) {
+    if (AccessControl.isAdmin(accessControlState, requestingCaller)) {
+      // Admins can delete any comment
+    } else {
       if (comment.author != requestingCaller) {
         Runtime.trap("Unauthorized: Can only delete your own comments!");
       };
@@ -599,13 +617,16 @@ actor {
       func(listing) {
         if (listing.sold) { return false };
 
-        let matchesUniversity = switch (universityFilter) {
-          case (null) { listing.university == callerProfile.university };
-          case (?university) {
-            if (not AccessControl.isAdmin(accessControlState, caller)) {
+        let matchesUniversity = if (AccessControl.isAdmin(accessControlState, caller)) {
+          switch (universityFilter) {
+            case (null) { true };
+            case (?university) { listing.university == university };
+          };
+        } else {
+          switch (universityFilter) {
+            case (null) { listing.university == callerProfile.university };
+            case (?university) {
               listing.university == callerProfile.university and listing.university == university;
-            } else {
-              listing.university == university;
             };
           };
         };
@@ -644,7 +665,9 @@ actor {
       case (?l) { l };
     };
 
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (AccessControl.isAdmin(accessControlState, caller)) {
+      // Admins can mark any listing as sold
+    } else {
       if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
         Runtime.trap("Unauthorized: Only users can mark listings as sold");
       };
@@ -665,7 +688,9 @@ actor {
       case (?l) { l };
     };
 
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (AccessControl.isAdmin(accessControlState, caller)) {
+      // Admins can delete any listing
+    } else {
       if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
         Runtime.trap("Unauthorized: Only users can delete listings");
       };
@@ -790,8 +815,10 @@ actor {
     };
 
     let isParticipant = conversation.participants.find(func(p : Principal) : Bool { p == caller });
-    if (isParticipant == null and not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Not a participant in this conversation");
+    if (isParticipant == null) {
+      if (not AccessControl.isAdmin(accessControlState, caller)) {
+        Runtime.trap("Unauthorized: Not a participant in this conversation");
+      };
     };
 
     let conversationMessages = messages.values().toArray().filter(
@@ -962,8 +989,12 @@ actor {
       case (?e) { e };
     };
 
-    if (event.creator != caller and not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Only event creator can issue tickets");
+    if (AccessControl.isAdmin(accessControlState, caller)) {
+      // Admins can issue tickets for any event
+    } else {
+      if (event.creator != caller) {
+        Runtime.trap("Unauthorized: Only event creator can issue tickets");
+      };
     };
 
     if (tickets.containsKey(code)) {
@@ -1054,13 +1085,16 @@ actor {
 
     let filtered = ticketEvents.values().toArray().filter(
       func(event) {
-        switch (universityFilter) {
-          case (null) { event.university == callerProfile.university };
-          case (?university) {
-            if (not AccessControl.isAdmin(accessControlState, caller)) {
+        if (AccessControl.isAdmin(accessControlState, caller)) {
+          switch (universityFilter) {
+            case (null) { true };
+            case (?university) { event.university == university };
+          };
+        } else {
+          switch (universityFilter) {
+            case (null) { event.university == callerProfile.university };
+            case (?university) {
               event.university == callerProfile.university and event.university == university;
-            } else {
-              event.university == university;
             };
           };
         };

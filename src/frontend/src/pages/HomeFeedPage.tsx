@@ -183,94 +183,97 @@ export function HomeFeedPage() {
         </div>
 
         {/* CLIQS TAB — following feed, never changes with university */}
-        <TabsContent
-          value="cliqs"
-          className="mt-0 divide-y divide-[#E5E5E5] dark:divide-zinc-800"
-        >
-          {cliqsMockPosts.map((post, i) => (
-            <MockPostCard key={post.id} post={post} index={i + 1} />
-          ))}
-          {followingLoading ? (
-            <div
-              className="flex justify-center py-12"
-              data-ocid="home_feed.cliqs.loading_state"
-            >
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            followingFeed?.map((post, i) => (
+        <TabsContent value="cliqs" className="mt-0">
+          <div className="px-3 pt-3">
+            {cliqsMockPosts.map((post, i) => (
+              <MockPostCard key={post.id} post={post} index={i + 1} />
+            ))}
+            {followingLoading ? (
               <div
-                key={post.id.toString()}
-                data-ocid={`home_feed.cliqs.item.${i + 1}`}
+                className="flex justify-center py-12"
+                data-ocid="home_feed.cliqs.loading_state"
               >
-                <PostCard post={post} />
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
-            ))
-          )}
+            ) : (
+              followingFeed?.map((post, i) => (
+                <div
+                  key={post.id.toString()}
+                  data-ocid={`home_feed.cliqs.item.${i + 1}`}
+                >
+                  <PostCard post={post} />
+                </div>
+              ))
+            )}
 
-          {/* Empty following state — show suggestions */}
-          {hasNoFollowing && (
-            <div className="px-4 py-6" data-ocid="home_feed.cliqs.empty_state">
-              <p className="text-sm font-semibold text-foreground mb-1">
-                People to Follow
-              </p>
-              <p className="text-xs text-muted-foreground mb-4">
-                Follow people to see their posts here
-              </p>
-              <div className="space-y-3">
-                {SUGGESTED_USERS.map((u) => {
-                  const followed = followedUsers.includes(u.id);
-                  const userInitials = u.displayName
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase()
-                    .slice(0, 2);
-                  return (
-                    <div
-                      key={u.id}
-                      className="flex items-center justify-between py-2"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                          style={{ backgroundColor: "#E8432D" }}
-                        >
-                          {userInitials}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">
-                            {u.displayName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            @{u.username} · {getUniversityAcronym(u.university)}
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFollowedUsers((prev) =>
-                            followed
-                              ? prev.filter((id) => id !== u.id)
-                              : [...prev, u.id],
-                          )
-                        }
-                        className={`text-xs font-semibold px-4 py-1.5 rounded-full border transition-colors ${
-                          followed
-                            ? "bg-transparent border-[#F0F0F0] text-muted-foreground"
-                            : "bg-[#E8432D] border-[#E8432D] text-white"
-                        }`}
-                        data-ocid="home_feed.follow.button"
+            {/* Empty following state — show suggestions */}
+            {hasNoFollowing && (
+              <div
+                className="px-1 py-6"
+                data-ocid="home_feed.cliqs.empty_state"
+              >
+                <p className="text-sm font-semibold text-foreground mb-1">
+                  People to Follow
+                </p>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Follow people to see their posts here
+                </p>
+                <div className="space-y-3">
+                  {SUGGESTED_USERS.map((u) => {
+                    const followed = followedUsers.includes(u.id);
+                    const userInitials = u.displayName
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 2);
+                    return (
+                      <div
+                        key={u.id}
+                        className="flex items-center justify-between py-2"
                       >
-                        {followed ? "Following" : "Follow"}
-                      </button>
-                    </div>
-                  );
-                })}
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                            style={{ backgroundColor: "#E8432D" }}
+                          >
+                            {userInitials}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">
+                              {u.displayName}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              @{u.username} ·{" "}
+                              {getUniversityAcronym(u.university)}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFollowedUsers((prev) =>
+                              followed
+                                ? prev.filter((id) => id !== u.id)
+                                : [...prev, u.id],
+                            )
+                          }
+                          className={`text-xs font-semibold px-4 py-1.5 rounded-full border transition-colors ${
+                            followed
+                              ? "bg-transparent border-[#F0F0F0] text-muted-foreground"
+                              : "bg-[#E8432D] border-[#E8432D] text-white"
+                          }`}
+                          data-ocid="home_feed.follow.button"
+                        >
+                          {followed ? "Following" : "Follow"}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </TabsContent>
 
         {/* CAMPUS TAB — filtered by selectedUniversity */}
@@ -335,14 +338,14 @@ export function HomeFeedPage() {
               <button
                 type="button"
                 onClick={() => setComposerOpen(true)}
-                className="px-6 py-2 rounded-full bg-[#E8432D] text-white text-sm font-semibold hover:bg-[#e8432d] transition-colors"
+                className="px-6 py-2 rounded-full bg-[#E8432D] text-white text-sm font-semibold hover:bg-[#d43827] transition-colors"
                 data-ocid="home_feed.campus.post_now.button"
               >
                 Post Now
               </button>
             </div>
           ) : (
-            <div className="divide-y divide-[#E5E5E5] dark:divide-zinc-800">
+            <div className="px-3 pt-3">
               {campusMockPosts.map((post, i) => (
                 <MockPostCard key={post.id} post={post} index={i + 1} />
               ))}
@@ -375,7 +378,7 @@ export function HomeFeedPage() {
           <div className="px-4">
             <BecauseYouLiked likedPostIds={likedPostIds} />
           </div>
-          <div className="divide-y divide-[#E5E5E5] dark:divide-zinc-800">
+          <div className="px-3 pt-1">
             {algorithmicPosts.map((post, i) => (
               <MockPostCard key={post.id} post={post} index={i + 1} />
             ))}
@@ -388,14 +391,16 @@ export function HomeFeedPage() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : (
-            universalFeed?.map((post, i) => (
-              <div
-                key={post.id.toString()}
-                data-ocid={`home_feed.explore.item.${i + 1}`}
-              >
-                <PostCard post={post} />
-              </div>
-            ))
+            <div className="px-3">
+              {universalFeed?.map((post, i) => (
+                <div
+                  key={post.id.toString()}
+                  data-ocid={`home_feed.explore.item.${i + 1}`}
+                >
+                  <PostCard post={post} />
+                </div>
+              ))}
+            </div>
           )}
         </TabsContent>
       </Tabs>

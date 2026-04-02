@@ -19,7 +19,7 @@ import {
   Flame,
   Loader2,
   MessageCircle,
-  MoreVertical,
+  MoreHorizontal,
   Share2,
   ShieldAlert,
   Trash2,
@@ -124,12 +124,13 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
   };
 
   const uniAcronym = getUniversityAcronym(post.university);
+  const totalNotes = likeCount + post.comments + recliqCount;
 
   if (isDeleted) return null;
 
   if (isHidden) {
     return (
-      <div className="bg-[#F8F9FA] dark:bg-zinc-900 p-4 border-b border-[#F0F0F0] dark:border-zinc-800 text-center text-sm text-[#6C757D] italic">
+      <div className="bg-white dark:bg-[#1a1a1a] mb-4 rounded-2xl border border-[#E8E8E8] dark:border-zinc-800 p-4 text-center text-sm text-muted-foreground italic">
         Post hidden
         <button
           type="button"
@@ -144,30 +145,59 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
 
   return (
     <>
-      <div
-        className="bg-white dark:bg-black p-4 w-full border-b border-[#F0F0F0] dark:border-zinc-800 hover:bg-[#FAFAFA] dark:hover:bg-zinc-950 transition-colors cursor-pointer"
+      {/* Tumblr-style postcard */}
+      <article
+        className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-[#E8E8E8] dark:border-zinc-800 shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden mb-4 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.11)] transition-shadow"
         data-ocid={`post.item.${index}`}
       >
-        {post.isBoosted && post.boostLabel && (
-          <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-[#F0F0F0] dark:border-zinc-800">
-            <span className="text-sm">🚀</span>
-            <span className="text-xs font-semibold text-[#E8432D] uppercase tracking-wide">
-              {post.boostLabel}
-            </span>
-            {post.boostReason && (
-              <span className="text-xs text-[#6C757D] ml-1">
-                · {post.boostReason}
+        {/* ── Card Header ── */}
+        <div className="flex items-center gap-2.5 px-4 pt-4 pb-3">
+          {/* Avatar */}
+          <Avatar className="h-9 w-9 flex-shrink-0 border border-[#F0F0F0] dark:border-zinc-700">
+            {post.isAnonymous ? (
+              <AvatarFallback className="bg-[#F0F0F0] dark:bg-zinc-800 text-base">
+                🥷
+              </AvatarFallback>
+            ) : (
+              <AvatarFallback
+                className="font-semibold text-sm text-white"
+                style={{ backgroundColor: stringToColor(post.username) }}
+              >
+                {initials}
+              </AvatarFallback>
+            )}
+          </Avatar>
+
+          {/* Name + username + timestamp */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="font-semibold text-sm text-foreground leading-tight">
+                {post.isAnonymous ? "Anonymous" : post.displayName}
+              </span>
+              {!post.isAnonymous && (
+                <span className="text-xs text-muted-foreground">
+                  @{post.username}
+                </span>
+              )}
+              {post.isAnonymous && (
+                <span className="text-xs text-muted-foreground">🥷 anon</span>
+              )}
+              <span className="text-xs text-muted-foreground">·</span>
+              <span className="text-xs text-muted-foreground">
+                {post.timestamp}
+              </span>
+            </div>
+          </div>
+
+          {/* Right side: boost tag + community pill + three-dot */}
+          <div className="flex items-center gap-1.5 flex-shrink-0 ml-auto">
+            {post.isBoosted && post.boostLabel && (
+              <span className="text-[10px] text-[#E8432D] font-semibold uppercase tracking-wide">
+                🚀 {post.boostLabel}
               </span>
             )}
-          </div>
-        )}
-
-        {/* Community tag top-right + three-dot menu */}
-        <div className="flex items-center justify-between mb-2 min-h-[24px]">
-          <div />
-          <div className="flex items-center gap-2">
             {post.community && (
-              <span className="bg-[#F0F0F0] dark:bg-zinc-800 text-[#212529] dark:text-zinc-300 text-[11px] font-medium px-2 py-0.5 rounded-full">
+              <span className="bg-[#F0F0F0] dark:bg-zinc-800 text-muted-foreground text-[10px] font-medium px-2 py-0.5 rounded-full">
                 {post.community}
               </span>
             )}
@@ -180,7 +210,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
                   data-ocid="post.dropdown_menu"
                   aria-label="Post options"
                 >
-                  <MoreVertical className="h-4 w-4 text-[#ADB5BD]" />
+                  <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
@@ -251,158 +281,162 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
           </div>
         </div>
 
-        {/* Post body — avatar top-left */}
-        <div className="flex gap-3 items-start">
-          <Avatar className="h-10 w-10 border border-[#F0F0F0] flex-shrink-0 mt-0.5">
-            {post.isAnonymous ? (
-              <AvatarFallback className="bg-[#F0F0F0] dark:bg-zinc-800 text-base">
-                🥷
-              </AvatarFallback>
-            ) : (
-              <AvatarFallback
-                className="font-semibold text-sm text-white"
-                style={{ backgroundColor: stringToColor(post.username) }}
+        {/* ── Media (edge-to-edge, no padding) ── */}
+        {post.mediaUrl && !post.content && (
+          <div className="w-full overflow-hidden">
+            {post.mediaType === "image" ? (
+              <img
+                src={post.mediaUrl}
+                alt="Post media"
+                className="w-full max-h-96 object-cover"
+              />
+            ) : post.mediaType === "video" ? (
+              <video
+                src={post.mediaUrl}
+                controls
+                playsInline
+                className="w-full max-h-96"
               >
-                {initials}
-              </AvatarFallback>
-            )}
-          </Avatar>
+                <track kind="captions" />
+              </video>
+            ) : null}
+          </div>
+        )}
 
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap mb-1">
-              <span className="font-semibold text-sm text-[#212529] dark:text-zinc-100">
-                {post.isAnonymous ? "Anonymous" : post.displayName}
-              </span>
-              {!post.isAnonymous && (
-                <span className="text-sm text-[#6C757D] font-normal">
-                  @{post.username}
-                </span>
-              )}
-              {post.isAnonymous && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#F0F0F0] dark:bg-zinc-800 px-2 py-0.5 text-[11px] font-medium text-[#6C757D]">
-                  🥷 Anonymous
-                </span>
-              )}
-              <span className="text-[#ADB5BD] text-xs">·</span>
-              <span className="text-[13px] text-[#ADB5BD]">
-                {post.timestamp}
-              </span>
-            </div>
-
-            <p className="text-[15px] font-normal leading-relaxed whitespace-pre-wrap text-[#212529] dark:text-zinc-200">
+        {/* ── Post body ── */}
+        {post.content && (
+          <div className="px-4 py-3">
+            <p className="text-[15px] font-normal leading-relaxed text-foreground whitespace-pre-wrap">
               {post.content}
             </p>
-
-            {post.mediaUrl && (
-              <div className="overflow-hidden mt-3 rounded-lg">
-                {post.mediaType === "image" ? (
-                  <img
-                    src={post.mediaUrl}
-                    alt="Post media"
-                    className="w-full max-h-96 object-cover"
-                  />
-                ) : post.mediaType === "video" ? (
-                  <video
-                    src={post.mediaUrl}
-                    controls
-                    playsInline
-                    className="w-full max-h-96"
-                  >
-                    <track kind="captions" />
-                  </video>
-                ) : null}
-              </div>
-            )}
-
-            {/* Engagement bar — left-aligned cluster + share far right */}
-            <div className="flex items-center pt-3">
-              {/* Left cluster */}
-              <div className="flex items-center gap-0">
-                <button
-                  type="button"
-                  data-ocid="post.like.button"
-                  onClick={handleLike}
-                  className="flex items-center gap-1.5 py-2 px-2 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
-                >
-                  <Flame
-                    className={`h-5 w-5 ${
-                      isLiked
-                        ? "text-[#E8432D] fill-[#E8432D]"
-                        : "text-[#ADB5BD]"
-                    }`}
-                  />
-                  <span
-                    className={`text-[16px] font-semibold ${
-                      isLiked ? "text-[#E8432D]" : "text-[#6C757D]"
-                    }`}
-                  >
-                    {likeCount}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  data-ocid="post.comment.button"
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1.5 py-2 px-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
-                >
-                  <MessageCircle className="h-5 w-5 text-[#ADB5BD]" />
-                  <span className="text-sm font-bold text-[#6C757D]">
-                    {post.comments}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  data-ocid="post.recliq.button"
-                  onClick={handleRecliq}
-                  disabled={isRecliqing}
-                  className="flex items-center gap-1.5 py-2 px-2 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors"
-                >
-                  {isRecliqing ? (
-                    <Loader2 className="h-5 w-5 animate-spin text-[#ADB5BD]" />
-                  ) : (
-                    <ReblogIcon
-                      className={`h-5 w-5 ${
-                        hasRecliqed ? "text-[#E8432D]" : "text-[#ADB5BD]"
-                      }`}
-                    />
-                  )}
-                  <span
-                    className={`text-[16px] font-semibold ${
-                      hasRecliqed ? "text-[#E8432D]" : "text-[#6C757D]"
-                    }`}
-                  >
-                    {recliqCount}
-                  </span>
-                </button>
-              </div>
-
-              {/* Share pushed to far right */}
-              <div className="ml-auto">
-                <button
-                  type="button"
-                  data-ocid="post.share.button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShareModalOpen(true);
-                  }}
-                  className="flex items-center gap-1.5 py-2 px-2 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
-                >
-                  <Share2 className="h-5 w-5 text-[#ADB5BD]" />
-                </button>
-              </div>
-            </div>
           </div>
-        </div>
+        )}
 
-        {/* University tag — below post, right-aligned */}
-        <div className="mt-2 flex justify-end">
-          <span className="bg-[#E8432D] text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-            🏛️ {uniAcronym}
+        {/* ── Media below text (if both exist) ── */}
+        {post.mediaUrl && post.content && (
+          <div className="w-full overflow-hidden">
+            {post.mediaType === "image" ? (
+              <img
+                src={post.mediaUrl}
+                alt="Post media"
+                className="w-full max-h-96 object-cover"
+              />
+            ) : post.mediaType === "video" ? (
+              <video
+                src={post.mediaUrl}
+                controls
+                playsInline
+                className="w-full max-h-96"
+              >
+                <track kind="captions" />
+              </video>
+            ) : null}
+          </div>
+        )}
+
+        {/* ── Source/attribution line ── */}
+        <div className="px-4 pb-2 pt-1">
+          <span className="text-[11px] text-muted-foreground">
+            🏛️ {uniAcronym} · campus
           </span>
         </div>
-      </div>
+
+        {/* ── Notes count bar ── */}
+        {totalNotes > 0 && (
+          <div className="px-4 py-1.5 border-t border-[#F0F0F0] dark:border-zinc-800">
+            <span className="text-xs font-semibold text-muted-foreground">
+              {totalNotes.toLocaleString()}{" "}
+              {totalNotes === 1 ? "note" : "notes"}
+            </span>
+          </div>
+        )}
+
+        {/* ── Engagement footer ── */}
+        <div className="flex items-center px-3 py-2 border-t border-[#F0F0F0] dark:border-zinc-800">
+          {/* Left cluster: Like · Comment · Recliq */}
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              data-ocid="post.like.button"
+              onClick={handleLike}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded-lg transition-colors ${
+                isLiked
+                  ? "hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                  : "hover:bg-[#F8F8F8] dark:hover:bg-zinc-800"
+              }`}
+            >
+              <Flame
+                className={`h-5 w-5 ${
+                  isLiked
+                    ? "text-[#E8432D] fill-[#E8432D]"
+                    : "text-muted-foreground"
+                }`}
+              />
+              <span
+                className={`text-sm font-semibold ${
+                  isLiked ? "text-[#E8432D]" : "text-muted-foreground"
+                }`}
+              >
+                {likeCount}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              data-ocid="post.comment.button"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-[#F8F8F8] dark:hover:bg-zinc-800 transition-colors"
+            >
+              <MessageCircle className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm font-semibold text-muted-foreground">
+                {post.comments}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              data-ocid="post.recliq.button"
+              onClick={handleRecliq}
+              disabled={isRecliqing}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded-lg transition-colors ${
+                hasRecliqed
+                  ? "hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                  : "hover:bg-[#F8F8F8] dark:hover:bg-zinc-800"
+              }`}
+            >
+              {isRecliqing ? (
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              ) : (
+                <ReblogIcon
+                  className={`h-5 w-5 ${
+                    hasRecliqed ? "text-[#E8432D]" : "text-muted-foreground"
+                  }`}
+                />
+              )}
+              <span
+                className={`text-sm font-semibold ${
+                  hasRecliqed ? "text-[#E8432D]" : "text-muted-foreground"
+                }`}
+              >
+                {recliqCount}
+              </span>
+            </button>
+          </div>
+
+          {/* Share pushed to far right */}
+          <button
+            type="button"
+            data-ocid="post.share.button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShareModalOpen(true);
+            }}
+            className="ml-auto flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-[#F8F8F8] dark:hover:bg-zinc-800 transition-colors"
+          >
+            <Share2 className="h-5 w-5 text-muted-foreground" />
+          </button>
+        </div>
+      </article>
 
       <ShareModal
         postId={post.id}
@@ -417,7 +451,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
             <DialogTitle>Report Post</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <p className="text-sm text-[#6C757D]">
+            <p className="text-sm text-muted-foreground">
               Why are you reporting this post?
             </p>
             <select
@@ -443,7 +477,7 @@ export function MockPostCard({ post, index }: MockPostCardProps) {
               Cancel
             </Button>
             <Button
-              className="rounded-full bg-[#E8432D] hover:bg-[#e8432d]"
+              className="rounded-full bg-[#E8432D] hover:bg-[#d43827]"
               onClick={handleReport}
               data-ocid="post.report.submit_button"
             >
