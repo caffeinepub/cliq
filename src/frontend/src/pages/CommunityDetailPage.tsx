@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate, useParams } from "@tanstack/react-router";
@@ -12,6 +11,7 @@ import {
   Lock,
   MessageCircle,
   Send,
+  Share2,
   Trash2,
   Users,
 } from "lucide-react";
@@ -131,7 +131,7 @@ const MOCK_MEMBERS = [
 ];
 
 // ─────────────────────────────────────────────
-// ThreadedComment component
+// Reblog icon
 // ─────────────────────────────────────────────
 
 function ReblogIcon({ className }: { className?: string }) {
@@ -148,6 +148,10 @@ function ReblogIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+// ─────────────────────────────────────────────
+// ThreadedComment component
+// ─────────────────────────────────────────────
 
 function ThreadedComment({
   comment,
@@ -415,12 +419,20 @@ export function CommunityDetailPage() {
     });
   };
 
+  const formatTime = (d: Date) => {
+    const mins = Math.floor((Date.now() - d.getTime()) / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  };
+
   const visiblePosts = posts.filter((p) => !p.isHidden);
 
   return (
     <div className="space-y-0">
       {/* Header */}
-      <div className="sticky top-0 bg-card border-b-2 p-4 z-10">
+      <div className="sticky top-0 bg-card border-b border-[#F0F0F0] dark:border-zinc-800 p-4 z-10">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -441,7 +453,7 @@ export function CommunityDetailPage() {
       </div>
 
       <Tabs defaultValue="posts" className="w-full">
-        <TabsList className="w-full grid grid-cols-2 h-11 rounded-none border-b-2">
+        <TabsList className="w-full grid grid-cols-2 h-11 rounded-none border-b border-[#F0F0F0] dark:border-zinc-800">
           <TabsTrigger value="posts" data-ocid="community.posts.tab">
             Posts
           </TabsTrigger>
@@ -451,9 +463,9 @@ export function CommunityDetailPage() {
         </TabsList>
 
         <TabsContent value="posts" className="p-4 space-y-4">
-          {/* Post composer */}
-          <Card className="border-2">
-            <CardContent className="p-4 space-y-2">
+          {/* Post composer — Tumblr card style */}
+          <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-[#E8E8E8] dark:border-zinc-800 shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden">
+            <div className="p-4 space-y-2">
               <Textarea
                 placeholder="Share something with this community..."
                 value={newPost}
@@ -463,7 +475,6 @@ export function CommunityDetailPage() {
                     e.preventDefault();
                     handlePost();
                   }
-                  // plain Enter adds newline (default behavior)
                 }}
                 className="resize-none border-0 p-0 focus-visible:ring-0 text-sm"
                 rows={3}
@@ -480,10 +491,12 @@ export function CommunityDetailPage() {
                   <Send className="h-4 w-4" /> Post
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {visiblePosts.map((post, i) => {
+            const isLiked = likedPosts.has(post.id);
+            const notesCount = post.likes + (isLiked ? 1 : 0);
             const postComments = comments.filter(
               (c) => c.postId === post.id && c.parentId === null,
             );
@@ -491,109 +504,150 @@ export function CommunityDetailPage() {
               (c) => c.postId === post.id,
             ).length;
             const commentsExpanded = expandedComments.has(post.id);
+            const initials = post.author
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2);
 
             return (
               <div key={post.id}>
-                <Card
-                  className="border-2"
+                <article
+                  className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-[#E8E8E8] dark:border-zinc-800 shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden mb-4 hover:shadow-[0_4px_20px_rgba(0,0,0,0.11)] transition-shadow"
                   data-ocid={`community.item.${i + 1}`}
                 >
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
-                          {post.author
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <p className="font-bold text-sm">{post.author}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {post.timestamp.toLocaleTimeString()}
-                        </p>
-                      </div>
+                  {/* Card header */}
+                  <div className="flex items-start gap-3 px-4 pt-4 pb-1">
+                    <Avatar className="h-9 w-9 flex-shrink-0">
+                      <AvatarFallback className="text-xs font-bold bg-[#E8432D]/10 text-[#E8432D]">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-[14px] leading-tight">
+                        {post.author}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {formatTime(post.timestamp)}
+                      </p>
+                    </div>
+                    {/* Admin + lock badges in header */}
+                    <div className="flex items-center gap-1 shrink-0">
                       {post.isLocked && (
                         <span className="text-[11px] bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
                           <Lock className="h-3 w-3" /> Locked
                         </span>
                       )}
-                    </div>
-
-                    <p className="text-sm">{post.content}</p>
-
-                    <div className="mt-3 flex items-center gap-3 flex-wrap">
-                      <button
-                        type="button"
-                        className={`text-xs font-semibold transition-colors flex items-center gap-1 ${
-                          likedPosts.has(post.id)
-                            ? "text-[#E8432D]"
-                            : "text-muted-foreground hover:text-[#E8432D]"
-                        }`}
-                        onClick={() => handleLike(post.id)}
-                        data-ocid={`community.post.toggle.${i + 1}`}
-                      >
-                        <Flame className="h-4 w-4" />
-                        {post.likes + (likedPosts.has(post.id) ? 1 : 0)}
-                      </button>
-
-                      {/* Admin moderation buttons */}
                       {isAdmin && (
-                        <div className="flex items-center gap-1 ml-auto">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-2 text-[#ADB5BD] hover:text-yellow-500"
+                        <>
+                          <button
+                            type="button"
+                            className="h-7 w-7 flex items-center justify-center rounded-full text-[#ADB5BD] hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 transition-colors"
                             onClick={() => handleLockPost(post.id)}
                             title={post.isLocked ? "Unlock post" : "Lock post"}
                             data-ocid={`community.post.lock.${i + 1}`}
                           >
                             <Lock className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-2 text-[#ADB5BD] hover:text-gray-600"
+                          </button>
+                          <button
+                            type="button"
+                            className="h-7 w-7 flex items-center justify-center rounded-full text-[#ADB5BD] hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
                             onClick={() => handleHidePost(post.id)}
                             title="Hide post"
                             data-ocid={`community.post.hide.${i + 1}`}
                           >
                             <EyeOff className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-2 text-[#ADB5BD] hover:text-red-500"
+                          </button>
+                          <button
+                            type="button"
+                            className="h-7 w-7 flex items-center justify-center rounded-full text-[#ADB5BD] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                             onClick={() => handleDeletePost(post.id)}
                             title="Delete post"
                             data-ocid={`community.post.delete.${i + 1}`}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
+                          </button>
+                        </>
                       )}
                     </div>
+                  </div>
 
-                    {/* Comments toggle — only if not locked */}
-                    {!post.isLocked && (
+                  {/* Post content */}
+                  <div className="px-4 py-3">
+                    <p className="text-[15px] font-normal leading-relaxed">
+                      {post.content}
+                    </p>
+                  </div>
+
+                  {/* Attribution line */}
+                  <div className="px-4 pb-2 pt-1">
+                    <span className="text-[11px] text-muted-foreground">
+                      🏛️ Campus
+                    </span>
+                  </div>
+
+                  {/* Notes count bar */}
+                  <div className="px-4 py-1.5 border-t border-[#F0F0F0] dark:border-zinc-800">
+                    <span className="text-xs font-semibold text-muted-foreground">
+                      {notesCount} {notesCount === 1 ? "note" : "notes"}
+                    </span>
+                  </div>
+
+                  {/* Engagement footer */}
+                  <div className="flex items-center px-3 py-2 border-t border-[#F0F0F0] dark:border-zinc-800">
+                    {/* Left cluster */}
+                    <div className="flex items-center gap-1">
                       <button
                         type="button"
-                        onClick={() => toggleComments(post.id)}
-                        className="mt-2 flex items-center gap-1.5 text-xs text-[#6C757D] hover:text-[#E8432D] transition-colors"
+                        className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-bold transition-colors ${
+                          isLiked
+                            ? "text-[#E8432D]"
+                            : "text-[#ADB5BD] hover:text-[#E8432D]"
+                        }`}
+                        onClick={() => handleLike(post.id)}
+                        data-ocid={`community.post.toggle.${i + 1}`}
                       >
-                        <MessageCircle className="h-3.5 w-3.5" />
-                        {totalComments > 0
-                          ? `💬 ${totalComments} comment${totalComments === 1 ? "" : "s"}`
-                          : "💬 Comment"}
+                        <Flame className="h-5 w-5" />
+                        <span className="text-base font-bold">
+                          {notesCount}
+                        </span>
                       </button>
-                    )}
-                  </CardContent>
-                </Card>
+
+                      {!post.isLocked && (
+                        <button
+                          type="button"
+                          onClick={() => toggleComments(post.id)}
+                          className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-bold text-[#ADB5BD] hover:text-blue-500 transition-colors"
+                        >
+                          <MessageCircle className="h-5 w-5" />
+                          <span className="text-base font-bold">
+                            {totalComments}
+                          </span>
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-bold text-[#ADB5BD] hover:text-[#E8432D] transition-colors"
+                      >
+                        <ReblogIcon className="h-5 w-5" />
+                      </button>
+                    </div>
+
+                    {/* Share pushed right */}
+                    <button
+                      type="button"
+                      className="ml-auto flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-bold text-[#ADB5BD] hover:text-[#E8432D] transition-colors"
+                    >
+                      <Share2 className="h-5 w-5" />
+                    </button>
+                  </div>
+                </article>
 
                 {/* Threaded comments section */}
                 {commentsExpanded && !post.isLocked && (
-                  <div className="border-x-2 border-b-2 rounded-b-xl px-4 pb-4 bg-[#FAFAFA] dark:bg-zinc-950">
+                  <div className="-mt-2 rounded-b-2xl border border-t-0 border-[#E8E8E8] dark:border-zinc-800 px-4 pb-4 bg-[#FAFAFA] dark:bg-zinc-950">
                     <div className="divide-y divide-[#E5E5E5] dark:divide-zinc-800">
                       {postComments.length === 0 ? (
                         <p className="py-4 text-xs text-center text-[#ADB5BD]">

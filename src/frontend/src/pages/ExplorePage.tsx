@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -41,7 +40,7 @@ export function ExplorePage() {
 
   return (
     <div className="space-y-4 p-4 max-w-full overflow-x-hidden">
-      <div className="border-b pb-4">
+      <div className="border-b border-[#F0F0F0] dark:border-zinc-800 pb-4">
         <h1 className="text-2xl font-bold">Explore</h1>
         <p className="text-sm text-muted-foreground">
           Discover students and posts
@@ -121,11 +120,11 @@ export function ExplorePage() {
                 .toUpperCase()
                 .slice(0, 2);
               return (
-                <Card
+                <div
                   key={user.username}
-                  className="hover:bg-accent/5 transition-colors"
+                  className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-[#E8E8E8] dark:border-zinc-800 shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden mb-3 hover:shadow-[0_4px_20px_rgba(0,0,0,0.11)] transition-shadow"
                 >
-                  <CardContent className="flex items-center gap-3 pt-6">
+                  <div className="flex items-center gap-3 p-4">
                     <Avatar className="h-12 w-12">
                       {avatarUrl ? (
                         <AvatarImage src={avatarUrl} alt={user.displayName} />
@@ -145,12 +144,13 @@ export function ExplorePage() {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="rounded-full shrink-0"
                       data-ocid="explore.users.follow.button"
                     >
                       Follow
                     </Button>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               );
             })
           ) : debouncedTerm ? (

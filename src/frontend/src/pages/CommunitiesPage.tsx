@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -331,45 +330,50 @@ function CommunityCard({
   onClick: () => void;
 }) {
   return (
-    <Card
-      className="cursor-pointer hover:shadow-bold transition-all border-2"
-      onClick={onClick}
+    <div
+      className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-[#E8E8E8] dark:border-zinc-800 shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden mb-3 hover:shadow-[0_4px_20px_rgba(0,0,0,0.11)] transition-shadow"
       data-ocid={`communities.item.${index}`}
     >
-      <CardContent className="p-4 flex items-center gap-4">
-        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl shrink-0">
-          {community.avatar}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="font-bold truncate">{community.name}</span>
-            {community.isPrivate ? (
-              <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-            ) : (
-              <Globe className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-            )}
-          </div>
-          <p className="text-sm text-muted-foreground truncate">
-            {community.description}
-          </p>
-          <div className="flex items-center gap-2 mt-1">
-            <Badge variant="secondary" className="text-xs">
-              {community.members} members
-            </Badge>
-            <span className="text-xs text-muted-foreground truncate">
-              {community.university}
-            </span>
-          </div>
-        </div>
-        <div
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => e.stopPropagation()}
+      <div className="p-4 flex items-center gap-4">
+        {/* Clickable left area */}
+        <button
+          type="button"
+          className="flex items-center gap-4 flex-1 min-w-0 text-left cursor-pointer"
+          onClick={onClick}
         >
+          <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl shrink-0">
+            {community.avatar}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-bold truncate">{community.name}</span>
+              {community.isPrivate ? (
+                <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              ) : (
+                <Globe className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground truncate">
+              {community.description}
+            </p>
+            <div className="flex items-center gap-2 mt-1">
+              <Badge variant="secondary" className="text-xs">
+                {community.members} members
+              </Badge>
+              <span className="text-xs text-muted-foreground truncate">
+                {community.university}
+              </span>
+            </div>
+          </div>
+        </button>
+
+        {/* Join/Leave actions */}
+        <div className="shrink-0">
           {community.joined ? (
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full shrink-0"
+              className="rounded-full"
               onClick={() => onLeave(community.id)}
               data-ocid={`communities.leave.button.${index}`}
             >
@@ -382,15 +386,14 @@ function CommunityCard({
           ) : (
             <Button
               size="sm"
-              className="rounded-full shrink-0"
+              className="rounded-full"
               onClick={() => onJoin(community.id)}
-              data-ocid={`communities.item.${index}`}
             >
               {community.isPrivate ? "Request" : "Join"}
             </Button>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
