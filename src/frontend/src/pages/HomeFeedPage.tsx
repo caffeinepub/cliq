@@ -5,7 +5,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { ChevronDown, Loader2, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { MockPostCard } from "../components/posts/MockPostCard";
 import { PostCard } from "../components/posts/PostCard";
@@ -62,6 +63,188 @@ const SUGGESTED_USERS = [
     bio: "Memes, vibes & student life 😂",
   },
 ];
+
+const MOCK_COMMUNITIES = [
+  {
+    id: "c1",
+    name: "UNILAG Confessions",
+    icon: "🎭",
+    members: 4821,
+    newPosts: 12,
+    slug: "unilag-confessions",
+  },
+  {
+    id: "c2",
+    name: "Campus Foodies",
+    icon: "🍔",
+    members: 3102,
+    newPosts: 5,
+    slug: "campus-foodies",
+  },
+  {
+    id: "c3",
+    name: "Tech Builders NG",
+    icon: "💻",
+    members: 2567,
+    newPosts: 8,
+    slug: "tech-builders-ng",
+  },
+  {
+    id: "c4",
+    name: "UNILAG Marketplace",
+    icon: "🛒",
+    members: 6034,
+    newPosts: 21,
+    slug: "unilag-marketplace",
+  },
+  {
+    id: "c5",
+    name: "Study Groups 101",
+    icon: "📚",
+    members: 1890,
+    newPosts: 3,
+    slug: "study-groups-101",
+  },
+  {
+    id: "c6",
+    name: "Campus Fashion",
+    icon: "👗",
+    members: 2240,
+    newPosts: 7,
+    slug: "campus-fashion",
+  },
+];
+
+function CommunitiesDropdown() {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const filtered = MOCK_COMMUNITIES.filter((c) =>
+    c.name.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  function formatCount(n: number) {
+    if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+    return String(n);
+  }
+
+  return (
+    <div ref={dropdownRef} className="relative flex-shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1 py-3 text-sm font-bold text-muted-foreground hover:text-[#E8432D] transition-colors whitespace-nowrap"
+        data-ocid="home_feed.communities.button"
+      >
+        <span>🏛️</span>
+        <span>Communities</span>
+        <ChevronDown
+          className={`h-3.5 w-3.5 transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {open && (
+        <div
+          className="absolute right-0 top-full mt-1 w-72 bg-white dark:bg-zinc-900 border border-[#F0F0F0] dark:border-zinc-700 rounded-2xl shadow-xl z-40 overflow-hidden"
+          data-ocid="home_feed.communities.dropdown"
+        >
+          {/* Search bar */}
+          <div className="p-3 border-b border-[#F0F0F0] dark:border-zinc-800">
+            <div className="flex items-center gap-2 bg-[#F8F8F8] dark:bg-zinc-800 rounded-xl px-3 py-2">
+              <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search your communities..."
+                className="flex-1 text-sm bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+                data-ocid="home_feed.communities.search"
+              />
+            </div>
+          </div>
+
+          {/* Section header */}
+          <div className="px-4 pt-3 pb-1">
+            <span className="text-[11px] font-bold text-muted-foreground tracking-wide uppercase">
+              My Communities ({filtered.length})
+            </span>
+          </div>
+
+          {/* Community list */}
+          <div className="max-h-64 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+                No communities found
+              </div>
+            ) : (
+              filtered.map((community) => (
+                <button
+                  key={community.id}
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    navigate({ to: "/communities" });
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors text-left"
+                  data-ocid={`home_feed.communities.item.${community.id}`}
+                >
+                  <span className="text-xl flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[#F0F0F0] dark:bg-zinc-800 rounded-full">
+                    {community.icon}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground truncate">
+                      {community.name}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {formatCount(community.members)} members
+                    </p>
+                  </div>
+                  {community.newPosts > 0 && (
+                    <span className="flex-shrink-0 text-[11px] font-bold text-white bg-[#E8432D] rounded-full px-2 py-0.5">
+                      {community.newPosts} new
+                    </span>
+                  )}
+                </button>
+              ))
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="border-t border-[#F0F0F0] dark:border-zinc-800 px-4 py-3">
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                navigate({ to: "/communities" });
+              }}
+              className="text-sm font-semibold text-[#E8432D] hover:underline flex items-center gap-1"
+              data-ocid="home_feed.communities.view_all"
+            >
+              View all communities →
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function HomeFeedPage() {
   const [activeTab, setActiveTab] = useState<"cliqs" | "campus" | "explore">(
@@ -150,36 +333,43 @@ export function HomeFeedPage() {
         onValueChange={(v) => setActiveTab(v as "cliqs" | "campus" | "explore")}
         className="w-full"
       >
-        {/* Sticky Header: Title + Tabs */}
+        {/* Sticky Header: Title + Tabs + Communities */}
         <div className="sticky top-0 z-20 bg-background border-b border-[#F0F0F0] dark:border-zinc-800">
           <div className="px-4 pt-4 pb-1">
             <h1 className="text-2xl font-bold text-foreground leading-tight">
               Home
             </h1>
           </div>
-          <TabsList className="flex gap-0 bg-transparent rounded-none p-0 h-auto w-full border-b-0">
-            <TabsTrigger
-              value="cliqs"
-              data-ocid="home_feed.cliqs.tab"
-              className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#E8432D] data-[state=active]:text-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
-            >
-              CLIQS
-            </TabsTrigger>
-            <TabsTrigger
-              value="campus"
-              data-ocid="home_feed.campus.tab"
-              className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#E8432D] data-[state=active]:text-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
-            >
-              CAMPUS
-            </TabsTrigger>
-            <TabsTrigger
-              value="explore"
-              data-ocid="home_feed.explore.tab"
-              className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#E8432D] data-[state=active]:text-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
-            >
-              EXPLORE
-            </TabsTrigger>
-          </TabsList>
+          {/* Tab row with Communities button on the right */}
+          <div className="flex items-center w-full pr-4">
+            <TabsList className="flex gap-0 bg-transparent rounded-none p-0 h-auto flex-1 border-b-0">
+              <TabsTrigger
+                value="cliqs"
+                data-ocid="home_feed.cliqs.tab"
+                className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#E8432D] data-[state=active]:text-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
+              >
+                CLIQS
+              </TabsTrigger>
+              <TabsTrigger
+                value="campus"
+                data-ocid="home_feed.campus.tab"
+                className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#E8432D] data-[state=active]:text-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
+              >
+                CAMPUS
+              </TabsTrigger>
+              <TabsTrigger
+                value="explore"
+                data-ocid="home_feed.explore.tab"
+                className="flex-1 py-3 text-sm font-semibold text-muted-foreground rounded-none border-b-2 border-transparent data-[state=active]:border-[#E8432D] data-[state=active]:text-[#E8432D] data-[state=active]:bg-transparent data-[state=active]:shadow-none transition-all"
+              >
+                EXPLORE
+              </TabsTrigger>
+            </TabsList>
+            {/* Communities button — right of tabs, same row */}
+            <div className="border-l border-[#F0F0F0] dark:border-zinc-800 pl-3 ml-1">
+              <CommunitiesDropdown />
+            </div>
+          </div>
         </div>
 
         {/* CLIQS TAB — following feed, never changes with university */}
